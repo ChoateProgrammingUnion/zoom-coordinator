@@ -1,4 +1,5 @@
 config.py
+.idea/
 data/
 data/**
 
