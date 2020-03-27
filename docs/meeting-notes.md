@@ -9,3 +9,7 @@ Questions:
 - How do we get access to their schedule (if teachers do it)?
 - How are you generating the PDFs?
 - Can we reuse your ChoateSIS css verbatim? (plagiarism)
+
+Plan (frameworks)
+Backend: flask + sqlite
+Frontend: html + css (vanilla, maybe some frameworks)
