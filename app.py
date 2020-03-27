@@ -35,19 +35,31 @@ app.register_blueprint(google_bp, url_prefix="/login")
 @google_bp.session.authorization_required
 @app.route('/restricted')
 def restricted():
-    return "Hello, world!"
+    """
+    Example of a restricted endpoint
+    """
+    email = get_email()
+    if email:
+        return "Hello, world!"
 
 @app.route('/')
 def index():
+    """
+    Will contain the default views for faculty, students, and teachers
+    """
     # if email := get_email():
     email = get_email()
     if email:
+        # render_template here
         return email
     else:
         return redirect("/login")
 
 @app.route('/login')
 def login():
+    """
+    Redirects to the proper login page (right now /google/login), but may change
+    """
     if not google.authorized:
         return redirect(url_for("google.login"))
 
@@ -70,6 +82,13 @@ def get_email():
 
 
 def check_choate_email(email: str) -> bool:
+    """
+    Checks to make sure that it is a valid email from Choate
+    TODO: improve email validation
+
+    The email validation should not be necessary since this is coming from 
+    Google, but it also comes from client side, so we gotta check and sanitize.
+    """
     if email.endswith("@choate.edu") and email.count("@") == 1 and email.count(".") == 1:
         return True
     else:
