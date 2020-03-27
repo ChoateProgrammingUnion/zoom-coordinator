@@ -33,8 +33,8 @@ def restricted():
     """
     Example of a restricted endpoint
     """
-    email = get_email()
-    if email:
+    email, name = get_profile()
+    if email and name:
         return "Hello, world!"
 
 @app.route('/update', methods=['POST'])
@@ -46,8 +46,8 @@ def update():
     section = request.args.get('section')
     meeting_id = request.args.get('section')
 
-    email = get_email()
-    if email:
+    email, name = get_profile()
+    if email and name:
         # return Schedule(email).update_schedule(teacher_name, course, section)
         return "Hello, world!"
 
@@ -57,8 +57,8 @@ def index():
     Will contain the default views for faculty, students, and teachers
     """
     # if email := get_email():
-    email = get_email()
-    if email:
+    email, name = get_profile()
+    if email and name:
         # render_template here
         return Schedule(email).fetch_schedule()
     else:
@@ -72,7 +72,7 @@ def login():
     if not google.authorized:
         return redirect(url_for("google.login"))
 
-def get_email():
+def get_profile():
     """
     Checks and sanitizes email. 
     Returns false if not logged in or not choate email.
@@ -83,9 +83,11 @@ def get_email():
             if resp.ok and resp.text:
                 response = resp.json()
                 if response.get("verified_email") == True and response.get("hd") == "choate.edu":
+                    print(response)
                     email = str(response.get("email"))
+                    name = str(response.get("name"))
                     if check_choate_email(email):
-                        return email
+                        return email, name
                 else:
                     print(response) # log next
     except:
