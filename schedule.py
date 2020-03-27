@@ -2,6 +2,7 @@ import dataset
 import validators
 
 from preprocess import DB_LOC
+from fuzzysearch import find_near_matches
 
 def check_choate_email(email: str) -> bool:
     """
@@ -42,6 +43,8 @@ class Schedule(metaclass=SingletonMeta):
 
     db = dataset.connect(DB_LOC)
     courses_database = db['courses']
+    teachers_database = db['teachers']
+
     schedule = {'A': None,
                 'B': None,
                 'C': None,
@@ -96,3 +99,13 @@ class Schedule(metaclass=SingletonMeta):
 
             c['meeting_id'] = meeting_id
             self.courses_database.upsert(c, ['id'])
+
+    def search_teacher(self, teacher_name):
+        matched_teachers = []
+        all_teachers = self.teachers_database.find()
+
+        for teacher in all_teachers:
+            if (len(find_near_matches(teacher_name, teacher['name'], max_l_dist=1)) > 0):
+                matched_teachers += [teacher]
+
+        return matched_teachers
