@@ -15,7 +15,7 @@ def import_data(filename: str):
     with open(filename) as f:
         reader = csv.DictReader(f)
         for count, each_row in enumerate(reader):
-            print(each_row["Student Name"])
+            print(each_row["student_name"])
             courses.upsert(dict(each_row), ["id"]) #upserting info
 
 def upsert_db(db, email):
