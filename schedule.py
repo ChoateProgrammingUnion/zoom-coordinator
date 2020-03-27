@@ -41,14 +41,16 @@ class Schedule:
             self.email = email
         else:
             raise ValueError(email + " is not a valid Choate provided email address")
-    
+
     def fetch_schedule(self):
         out = ""
 
         for block in "ABCDEFG":
             c = self.courses_database.find_one(student_email=self.email, block=block)
-            if c is None: continue
 
-            out += block + " Block: " + c['course_name'] + " (" + c['course'] + ") with " + c['teacher_name'] + '<br>'
+            if c is None:
+                out += block + " Block: FREE<br>"
+            else:
+                out += block + " Block: " + c['course_name'] + " (" + c['course'] + ") with " + c['teacher_name'] + '<br>'
 
         return out
