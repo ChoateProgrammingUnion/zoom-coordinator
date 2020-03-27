@@ -46,6 +46,9 @@ def update():
     section = request.args.get('section')
     meeting_id = request.args.get('section')
 
+    if not meeting_id.isdigit():
+        return False
+
     email, teacher_name = get_profile()
     if email and teacher_name:
         return ScheduleStudent(email).update_schedule(teacher_name, course, section, meeting_id)
