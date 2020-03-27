@@ -79,9 +79,20 @@ class Schedule(metaclass=SingletonMeta):
 
             if course is None:
                 out += block + " Block: FREE<br>"
+            elif course['meeting_id'] != 0:
+                out += block + " Block: " + course['course_name'] + " (" + course['course'] + " " + course['sec'] + ") with " + course['teacher_name'] + ' (Meeting id ' + str(course['meeting_id']) + ')<br>'
             else:
-                out += block + " Block: " + course['course_name'] + " (" + course['course'] + ") with " + course['teacher_name'] + '<br>'
+                out += block + " Block: " + course['course_name'] + " (" + course['course'] + " " + course['sec'] + ") with " + course['teacher_name'] + '<br>'
 
         return out
 
-    def update_schedule(self):
+    def update_schedule(self, teacher_name, course, section, meeting_id):
+        classes_to_update = list(self.courses_database.find(course=course, sec=section))  # TODO Teacher name
+
+        print(str(len(classes_to_update)) + " entries to update")
+
+        for c in classes_to_update:
+            print("Updated " + c['student_name'])
+
+            c['meeting_id'] = meeting_id
+            self.courses_database.upsert(c, ['id'])

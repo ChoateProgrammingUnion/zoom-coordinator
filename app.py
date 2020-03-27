@@ -46,10 +46,9 @@ def update():
     section = request.args.get('section')
     meeting_id = request.args.get('section')
 
-    email, name = get_profile()
-    if email and name:
-        # return Schedule(email).update_schedule(teacher_name, course, section)
-        return "Hello, world!"
+    email, teacher_name = get_profile()
+    if email and teacher_name:
+        return Schedule(email).update_schedule(teacher_name, course, section, meeting_id)
 
 @app.route('/')
 def index():
@@ -60,6 +59,7 @@ def index():
     email, name = get_profile()
     if email and name:
         # render_template here
+        Schedule(email).update_schedule("", "SP250S-HO", 11, 100)
         return Schedule(email).fetch_schedule()
     else:
         return redirect("/login")
