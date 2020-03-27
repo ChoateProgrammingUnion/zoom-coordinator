@@ -62,7 +62,8 @@ def index():
     email, name = get_profile()
     if email and name:
         # render_template here
-        ScheduleStudent(email).update_schedule("", "SP250S-HO", 11, 100)
+        print(ScheduleStudent(email).search_teacher("Guelakis Patrick"))
+
         ScheduleStudent(email).fetch_schedule()
 
         cards = ""
