@@ -83,7 +83,6 @@ def get_profile():
             if resp.ok and resp.text:
                 response = resp.json()
                 if response.get("verified_email") == True and response.get("hd") == "choate.edu":
-                    print(response)
                     email = str(response.get("email"))
                     name = str(response.get("name"))
                     if check_choate_email(email):
@@ -92,4 +91,4 @@ def get_profile():
                     print(response) # log next
     except:
         pass
-    return False
+    return False, False
