@@ -14,3 +14,13 @@ Each meeting will be documented so people in different timezone/otherwise unable
 Backend: flask + sqlite
 
 Frontend: html + css (vanilla, maybe some frameworks)
+
+## Meeting overview
+- we're given more or less free rein in terms of UI/UX
+- they want us to be able to export to SQL/csv/excel eventually (using dataset/datafreeze will make this easy)
+- we're allowed to use their CSS
+- Ryan is in charge of frontend, seeing as she has good experience with SASS
+- teachers will not be able to enter in their zoom meeting IDs in time, so we also need to allow students to overwrite/do it themselves
+
+Things we still need:
+- the list of students and the class they're attending (as well as which teacher is teaching)

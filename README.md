@@ -4,6 +4,11 @@ This project is heeding the call/challenge by Andrew Speyer, director of Choate 
 
 Collaboration is welcome!
 
+## API
+`/classes/{student}`
+`/`
+
+
 ## TODO
 Backend:
 - authentication (talk to Speyer)

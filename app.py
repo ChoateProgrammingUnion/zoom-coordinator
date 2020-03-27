@@ -20,4 +20,3 @@ cache = Cache(app, config={
 @cache.cached()
 def index():
     pass
-
