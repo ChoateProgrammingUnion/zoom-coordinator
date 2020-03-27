@@ -4,6 +4,30 @@ This project is heeding the call/challenge by Andrew Speyer, director of Choate 
 
 Collaboration is welcome!
 
+## Deployment
+Docker (requires Docker):
+```bash
+bash deploy
+```
+
+Native with gunicorn (requires Python deps):
+```bash
+gunicorn app:app -w 4 --bind :8000
+```
+
+
+Native (for development, requires Python deps):
+```bash
+flask run
+```
+
+## Python Deps
+- Flask
+- Gunicorn (for production)
+- Flask-Dance
+
+## Layout
+[`app.py`](/app.py) is the main app
 
 
 ## TODO
