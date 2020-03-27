@@ -46,6 +46,7 @@ def update():
 
     email = get_email()
     if email:
+        # return Schedule(email).update_schedule(teacher_name, course, section)
         return "Hello, world!"
 
 @app.route('/')
@@ -79,9 +80,11 @@ def get_email():
             resp = google.get("/oauth2/v1/userinfo")
             if resp.ok and resp.text:
                 response = resp.json()
-                email = str(response.get("email"))
-                if check_choate_email(email):
-                    return email
+                if response.get("verified") == "true" and response.get("hd") == "choate.edu":
+                    print(response)
+                    email = str(response.get("email"))
+                    if check_choate_email(email):
+                        return email
     except:
         pass
     return False
