@@ -35,6 +35,13 @@ class Schedule:
 
     db = dataset.connect(DB_LOC)
     courses_database = db['courses']
+    schedule = {'A': None,
+                'B': None,
+                'C': None,
+                'D': None,
+                'E': None,
+                'F': None,
+                'G': None}
 
     def __init__(self, email):
         if check_choate_email(email):
@@ -43,14 +50,29 @@ class Schedule:
             raise ValueError(email + " is not a valid Choate provided email address")
 
     def fetch_schedule(self):
-        out = ""
+        # Fetch the schedule and store in dictionary
+
+        #  Deal with srp
+        c = self.courses_database.find_one(student_email=self.email, block="A and B on Mon")
+        if c is not None:
+            self.schedule['A'] = c
+            self.schedule['B'] = c
 
         for block in "ABCDEFG":
             c = self.courses_database.find_one(student_email=self.email, block=block)
+            self.schedule[block] = c
 
-            if c is None:
+
+        # Represent schedule as string
+
+        out = ""
+
+        for block in "ABCDEFG":
+            course = self.schedule[block]
+
+            if course is None:
                 out += block + " Block: FREE<br>"
             else:
-                out += block + " Block: " + c['course_name'] + " (" + c['course'] + ") with " + c['teacher_name'] + '<br>'
+                out += block + " Block: " + course['course_name'] + " (" + course['course'] + ") with " + course['teacher_name'] + '<br>'
 
         return out
