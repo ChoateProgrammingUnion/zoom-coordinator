@@ -4,20 +4,17 @@ This project is heeding the call/challenge by Andrew Speyer, director of Choate 
 
 Collaboration is welcome!
 
-## API
-`/classes/{student}`
-`/`
 
 
 ## TODO
 Backend:
-- authentication (talk to Speyer)
-- checking if authorized (student and teacher view)
-- keeping track of people/classes (db)
-- admin edits (admin view) (optional)
+- [x] authentication (talk to Speyer)
+- [x] checking if authorized (student and teacher view)
+- [ ] keeping track of people/classes (db)
+- [ ] [[admin]] edits (admin view) (optional)
 
 Frontend:
-- student view
-- teacher view
-- login page
-- admin view (optional)
+- [ ] student view
+- [ ] teacher view
+- [ ] login page
+- [ ] admin view (optional)
