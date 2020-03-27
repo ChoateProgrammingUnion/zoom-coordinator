@@ -3,13 +3,14 @@ Each meeting will be documented so people in different timezone/otherwise unable
 ## March 26th Meeting notes (with ITS)
 
 ### Pre-meeting
-Questions:
+#### Questions:
 - How do you want authentication to work? 
 - Will ITS be adding Zoom links or will teachers do it?
 - How do we get access to their schedule (if teachers do it)?
 - How are you generating the PDFs?
 - Can we reuse your ChoateSIS css verbatim? (plagiarism)
 
-Plan (frameworks)
+#### Plan (frameworks):
 Backend: flask + sqlite
+
 Frontend: html + css (vanilla, maybe some frameworks)
