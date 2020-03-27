@@ -28,6 +28,9 @@ flask run
 
 ## Layout
 [`app.py`](/app.py) is the main app
+[`preprocess.py`](/preprocess.py) imports the course list in `data/course.csv` and puts it into a SQL database
+[`deploy`](/preprocess.py) docker deployment script
+[`schedule.py`](/preprocess.py) contains schedule class that [`app.py`](/app.py) consumes
 
 
 ## TODO
