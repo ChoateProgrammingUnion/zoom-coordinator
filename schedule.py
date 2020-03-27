@@ -27,7 +27,14 @@ def check_teacher(email: str) -> bool:
     else:
         return False
 
-class Schedule:
+class SingletonMeta(type):
+    def __call__(cls, *args, **kwargs):
+        if not hasattr(cls, '_obj'):
+            cls._obj = cls.__new__(cls)
+            cls._obj.__init__(*args, **kwargs)
+        return cls._obj
+
+class Schedule(metaclass=SingletonMeta):
     """
     Schedule will fetch the student's schedule and pass it back as a dict. 
     Students are identified by their Choate email address.
@@ -76,3 +83,5 @@ class Schedule:
                 out += block + " Block: " + course['course_name'] + " (" + course['course'] + ") with " + course['teacher_name'] + '<br>'
 
         return out
+
+    def update_schedule(self):
