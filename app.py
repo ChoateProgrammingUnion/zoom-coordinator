@@ -62,9 +62,9 @@ def index():
     email, name = get_profile()
     if email and name:
         # render_template here
-        print(Schedule(email).search_teacher("Guelakis Patrick"))
+        print(ScheduleStudent(email).search_teacher("Guelakis Patrick"))
 
-        Schedule(email).fetch_schedule()
+        ScheduleStudent(email).fetch_schedule()
 
         cards = ""
         for block in "ABCDEFG":
