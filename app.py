@@ -40,7 +40,7 @@ def restricted():
 @app.route('/update', methods=['POST'])
 def update():
     """
-    Gets schedule updates from teachers.
+    Gets the Zoom meeting ids
     """
     course = request.args.get('course')
     section = request.args.get('section')
