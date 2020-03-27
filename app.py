@@ -80,11 +80,12 @@ def get_email():
             resp = google.get("/oauth2/v1/userinfo")
             if resp.ok and resp.text:
                 response = resp.json()
-                if response.get("verified") == "true" and response.get("hd") == "choate.edu":
-                    print(response)
+                if response.get("verified_email") == True and response.get("hd") == "choate.edu":
                     email = str(response.get("email"))
                     if check_choate_email(email):
                         return email
+                else:
+                    print(response) # log next
     except:
         pass
     return False
