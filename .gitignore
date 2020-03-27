@@ -1,4 +1,5 @@
 config.py
+index.db
 .idea/
 data/
 data/**
