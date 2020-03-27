@@ -1,13 +1,22 @@
 import csv
 import sys
+import dataset
+
+DB_LOC = "sqlite:///index.db"
 
 def import_data(filename: str):
+
+    # Connecting to the DB
+    db =  dataset.connect(DB_LOC)
+    courses = db['courses']
+
     with open(filename) as f:
         reader = csv.DictReader(f)
-        for each_row in reader:
-            print(each_row)
+        for count, each_row in enumerate(reader):
+            print(each_row["Student Name"])
+            courses.upsert(dict(each_row), ["id"]) #upserting info
 
-def upsert_db(db, email=email):
+def upsert_db(db, email):
     pass
 
 if __name__ == "__main__":
