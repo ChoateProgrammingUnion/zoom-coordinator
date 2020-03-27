@@ -6,7 +6,7 @@ from flask_dance.contrib.google import make_google_blueprint, google
 from config import GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET
 import time
 import secrets
-from schedule import Schedule, check_choate_email
+from schedule import ScheduleStudent, ScheduleTeacher, check_choate_email, check_teacher
 
 # Temp (INSECURE, REMOVE IN PROD)
 os.environ['OAUTHLIB_INSECURE_TRANSPORT'] = '1'
@@ -46,9 +46,12 @@ def update():
     section = request.args.get('section')
     meeting_id = request.args.get('section')
 
+    if not meeting_id.isdigit():
+        return False
+
     email, teacher_name = get_profile()
     if email and teacher_name:
-        return Schedule(email).update_schedule(teacher_name, course, section, meeting_id)
+        return ScheduleStudent(email).update_schedule(teacher_name, course, section, meeting_id)
 
 @app.route('/')
 def index():
@@ -65,7 +68,10 @@ def index():
 
         cards = ""
         for block in "ABCDEFG":
-            schedule = Schedule(email).schedule[block]
+            if check_teacher(email): # if teacher
+                schedule = ScheduleTeacher(name).schedule[block]
+            else: # if student
+                schedule = ScheduleStudent(email).schedule[block]
 
             if schedule is None:
                 continue
