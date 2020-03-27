@@ -40,9 +40,11 @@ def restricted():
 @app.route('/update', methods=['POST'])
 def update():
     """
+    Gets schedule updates from teachers.
     """
     course = request.args.get('course')
     section = request.args.get('section')
+    meeting_id = request.args.get('section')
 
     email = get_email()
     if email:
