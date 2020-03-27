@@ -4,6 +4,29 @@
     <meta charset="UTF-8">
     <title>Choate Zoom Coordinator</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootswatch/4.4.1/cerulean/bootstrap.min.css" integrity="sha256-zCHsVYGTqGR4WvnguOpcJQuL1wBiEgiiACzjfh0M0Ak=" crossorigin="anonymous" />
+    <script>
+           function sendRequest(fd, loc) {
+                var xhr = new XMLHttpRequest();
+                xhr.onload = function(e) {
+                    if (this.readyState === 4) {
+                        console.log("Server returned: ", e.target.responseText);
+                        if (e.target.responseText == "Success!") {
+                            //window.location.replace("https://www.choate.edu");
+                        }
+                    }
+                };
+                xhr.timeout = 5000;
+                xhr.open("POST", loc, true);
+                xhr.send(fd);
+                console.log(fd);
+                for (var value of fd.values()) {
+                   console.log(value);
+                }
+                for (var value of fd.keys()) {
+                   console.log(value);
+                }
+            }
+    </script>
 </head>
 <body>
     <div>
