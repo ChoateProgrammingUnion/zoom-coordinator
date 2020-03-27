@@ -3,7 +3,6 @@
 from flask import Flask, render_template, redirect, url_for
 import os
 from flask_dance.contrib.google import make_google_blueprint, google 
-from flask_caching import Cache
 from config import GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET
 import time
 import secrets
@@ -18,11 +17,6 @@ app.config.update(
     SECRET_KEY=random_secret_key
 )
 
-cache = Cache(app, config={
-    'CACHE_TYPE': 'simple'
-})
-
-
 # Credit: oauth boilerplate stuff from library documentation
 app.config["GOOGLE_OAUTH_CLIENT_ID"] = GOOGLE_CLIENT_ID 
 app.config["GOOGLE_OAUTH_CLIENT_SECRET"] = GOOGLE_CLIENT_SECRET 
@@ -32,7 +26,6 @@ os.environ["OAUTHLIB_RELAX_TOKEN_SCOPE"] = "true"
 google_bp = make_google_blueprint(scope=["https://www.googleapis.com/auth/userinfo.profile", "https://www.googleapis.com/auth/userinfo.email"])
 app.register_blueprint(google_bp, url_prefix="/login")
 
-@google_bp.session.authorization_required
 @app.route('/restricted')
 def restricted():
     """
