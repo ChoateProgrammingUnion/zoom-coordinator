@@ -34,7 +34,7 @@ class SingletonMeta(type):
             cls._obj.__init__(*args, **kwargs)
         return cls._obj
 
-class Schedule(metaclass=SingletonMeta):
+class ScheduleStudent(metaclass=SingletonMeta):
     """
     Schedule will fetch the student's schedule and pass it back as a dict. 
     Students are identified by their Choate email address.
