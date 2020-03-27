@@ -1,8 +1,11 @@
-<div class="card text-white bg-primary mb-3" style="max-width: 20rem;">
+<div class="card border-primary mb-3" style="max-width: 20rem;">
     <div class="card-header">{{ block }} Block ( {{ course_name }})</div>
     <div class="card-body">
         <!--<h4 class="card-title">Primary card title</h4>-->
         <!--<p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>-->
-        <a href="https://zoom.us/j/{{ meeting_id }}" class="card-link">{{ meeting_id }}</a>
+        <!--<ol class="breadcrumb">-->
+            <!--<a href="https://zoom.us/j/{{ meeting_id }}" class="card-link">{{ meeting_id }}</a>-->
+        <!--</ol>-->
+        <button type="button" class="btn btn-outline-info" href="https://zoom.us/j/{{ meeting_id }}">{{ meeting_id }}</button>
     </div>
 </div>
