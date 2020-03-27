@@ -4,6 +4,8 @@ import dataset
 
 DB_LOC = "sqlite:///index.db"
 
+
+
 def import_data(filename: str):
 
     # Connecting to the DB

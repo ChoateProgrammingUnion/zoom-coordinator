@@ -7,11 +7,13 @@ from flask_caching import Cache
 from config import GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET
 import time
 import secrets
+from schedule import Schedule, check_choate_email
 
 # Temp (INSECURE, REMOVE IN PROD)
 os.environ['OAUTHLIB_INSECURE_TRANSPORT'] = '1'
 
 app = Flask(__name__)
+
 random_secret_key = secrets.token_urlsafe(32)
 app.config.update(
     DEBUG=False,
@@ -51,7 +53,7 @@ def index():
     email = get_email()
     if email:
         # render_template here
-        return email
+        return Schedule(email).fetch_schedule()
     else:
         return redirect("/login")
 
@@ -79,17 +81,3 @@ def get_email():
     except:
         pass
     return False
-
-
-def check_choate_email(email: str) -> bool:
-    """
-    Checks to make sure that it is a valid email from Choate
-    TODO: improve email validation
-
-    The email validation should not be necessary since this is coming from 
-    Google, but it also comes from client side, so we gotta check and sanitize.
-    """
-    if email.endswith("@choate.edu") and email.count("@") == 1 and email.count(".") == 1:
-        return True
-    else:
-        return False
