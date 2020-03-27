@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-from flask import Flask, render_template, redirect, url_for, request
+from flask import Flask, render_template, redirect, url_for, request, Markup
 import os
 from flask_dance.contrib.google import make_google_blueprint, google 
 from config import GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET
@@ -60,7 +60,18 @@ def index():
     if email and name:
         # render_template here
         Schedule(email).update_schedule("", "SP250S-HO", 11, 100)
-        return Schedule(email).fetch_schedule()
+        Schedule(email).fetch_schedule()
+
+        cards = ""
+        for block in "ABCDEFG":
+            schedule = Schedule(email).schedule[block]
+
+            if schedule is None:
+                continue
+
+            cards += render_template("card.html", **schedule)
+
+        return render_template("index.html", cards=Markup(cards))
     else:
         return redirect("/login")
 
