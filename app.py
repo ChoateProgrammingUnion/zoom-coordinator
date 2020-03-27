@@ -67,9 +67,9 @@ def index():
 
         cards = ""
         for block in "ABCDEFG":
-            if check_teacher(email): # if teacher
+            if check_teacher(email):  # if teacher
                 schedule = ScheduleTeacher(name).schedule[block]
-            else: # if student
+            else:  # if student
                 schedule = ScheduleStudent(email).schedule[block]
 
             if schedule is None:
