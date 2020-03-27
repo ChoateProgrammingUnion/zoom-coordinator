@@ -72,7 +72,7 @@ def index():
             if schedule is None:
                 continue
 
-            cards += render_template("card.html", **schedule)
+            cards += render_template("cardStudent.html", **schedule)
 
         return render_template("index.html", cards=Markup(cards))
     else:
