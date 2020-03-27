@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-from flask import Flask, render_template, redirect, url_for
+from flask import Flask, render_template, redirect, url_for, request
 import os
 from flask_dance.contrib.google import make_google_blueprint, google 
 from config import GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET
@@ -33,6 +33,17 @@ def restricted():
     """
     Example of a restricted endpoint
     """
+    email = get_email()
+    if email:
+        return "Hello, world!"
+
+@app.route('/update', methods=['POST'])
+def update():
+    """
+    """
+    course = request.args.get('course')
+    section = request.args.get('section')
+
     email = get_email()
     if email:
         return "Hello, world!"

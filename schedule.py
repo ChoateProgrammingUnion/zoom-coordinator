@@ -1,16 +1,28 @@
 import dataset
+import validators
 
 from preprocess import DB_LOC
 
 def check_choate_email(email: str) -> bool:
     """
-    Checks to make sure that it is a valid email from Choate
+    Checks to make sure that it is a valid email from Choate.
+    Rely on this for email validation
     TODO: improve email validation
 
     The email validation should not be necessary since this is coming from
     Google, but it also comes from client side, so we gotta check and sanitize.
     """
-    if email.endswith("@choate.edu") and email.count("@") == 1 and email.count(".") == 1:
+    if validators.email(email) and email.endswith("@choate.edu") and email.count("@") == 1 and email.count(".") == 1:
+        return True
+    else:
+        return False
+
+def check_teacher(email: str) -> bool:
+    """
+    Checks if the person is a teacher (do not rely upon this, no security guarantees).
+    Superset of check_choate_email.
+    """
+    if check_choate_email(email) and not any(char.isdigit() for char in email):
         return True
     else:
         return False

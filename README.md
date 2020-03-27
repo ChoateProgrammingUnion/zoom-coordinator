@@ -25,6 +25,7 @@ flask run
 - Flask
 - Gunicorn (for production)
 - Flask-Dance
+- validators
 
 ## Layout
 [`app.py`](/app.py) is the main app
