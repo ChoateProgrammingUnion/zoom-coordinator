@@ -113,7 +113,7 @@ def index():
         
         for block, time in block_iter():
             if block == "Break":
-                cards += "<br><br><hr><br><br>"
+                cards += "<br><br><hr><br><h4>Not Today:</h4><br>"
                 continue
 
             uuid = secrets.token_hex(8)
