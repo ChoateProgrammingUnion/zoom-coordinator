@@ -44,7 +44,7 @@ def update():
     """
     course = request.args.get('course')
     section = request.args.get('section')
-    meeting_id = request.args.get('section')
+    meeting_id = request.args.get('meeting_id')
 
     if not meeting_id.isdigit():
         return False
@@ -71,8 +71,10 @@ def index():
 
         Schedule().fetch_schedule()
 
+        card_script = ""
         cards = ""
         for block in "ABCDEFG":
+            uuid = secrets.token_hex(8)
             if check_teacher(email): # if teacher
                 schedule = Schedule().schedule[block]
             else: # if student
@@ -81,9 +83,12 @@ def index():
             if schedule is None:
                 continue
 
-            cards += render_template("card.html", **schedule)
+            schedule["uuid"] = uuid
 
-        return render_template("index.html", cards=Markup(cards))
+            cards += render_template("card.html", **schedule)
+            card_script += render_template("card.js", **schedule)
+
+        return render_template("index.html", cards=Markup(cards), card_js=Markup(card_script))
     else:
         return redirect("/login")
 
