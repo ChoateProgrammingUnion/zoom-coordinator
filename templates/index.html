@@ -10,27 +10,6 @@
         <!--top: 50%;-->
         <!--transform: translateY(-50%);-->
     <script>
-           function sendRequest(fd, loc) {
-                var xhr = new XMLHttpRequest();
-                xhr.onload = function(e) {
-                    if (this.readyState === 4) {
-                        console.log("Server returned: ", e.target.responseText);
-                        if (e.target.responseText == "Success!") {
-                            window.location.reload()
-                        }
-                    }
-                };
-                xhr.timeout = 5000;
-                xhr.open("POST", loc, true);
-                xhr.send(fd);
-                console.log(fd);
-                for (var value of fd.values()) {
-                   console.log(value);
-                }
-                for (var value of fd.keys()) {
-                   console.log(value);
-                }
-            }
 {{ card_js }}
     </script>
 

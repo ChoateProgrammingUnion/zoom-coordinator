@@ -7,7 +7,9 @@
             <!--<ol class="breadcrumb">-->
                 <!--<a href="https://zoom.us/j/{{ meeting_id }}" class="card-link">{{ meeting_id }}</a>-->
             <!--</ol>-->
-            <button type="button" class="btn btn-outline-info" onclick="window.open('https://zoom.us/j/{{ meeting_id }}');">Join Zoom Meeting (id: {{ meeting_id }})</button>
+            <span id="span{{ uuid }}">
+                <button type="button" class="btn btn-outline-info" onclick="window.open('https://zoom.us/j/{{ meeting_id }}');">Join Zoom Meeting (id: {{ meeting_id }})</button>
+            </span>
             <hr>
             <input type="text" class="form-control meeting_id{{ uuid }}" placeholder="Change meeting ID" value="{{ display_meeting_id }}"id="meeting_id{{ uuid }}">
             <p id="course{{ uuid }}" hidden>{{ course }}</p>
