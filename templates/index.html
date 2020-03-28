@@ -5,6 +5,8 @@
         <title>Choate Zoom Coordinator</title>
         <!--Import Google Icon Font-->
         <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+        <!--Import Montserrat Google Font-->
+        <link href="https://fonts.googleapis.com/css?family=Montserrat:bold" rel="stylesheet">
         <!--Import materialize.css-->
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css" integrity="sha256-OweaP/Ic6rsV+lysfyS4h+LM6sRwuO3euTYfr6M124g=" crossorigin="anonymous" />
         <!--Import JQuery-->
@@ -61,15 +63,9 @@
     <body>
         <!-- HEADER -->
         <div class="navbar-fixed">
-            <nav class="blue">
-                <div class = "nav-wrapper" style = "width: 70%; margin-left: auto; margin-right: auto" >
-                    <div class="hide-on-med-and-down">
-                        <a href="/" class="brand-logo">Choate Zoom Coordinator</a>
-                    </div>
-                    <div class="hide-on-large-only">
-                        <a href="/" class="brand-logo">CZC</a>
-                    </div>
-
+            <nav class="blue darken-4">
+                <div class = "nav-wrapper" style = "padding-left: 25%; padding-right: 25%;" >
+                    <a href="http://127.0.0.1:5000/" class="brand-logo" style="font-family: Montserrat; font-weight: 900 !important; font-size: 42px;">Choate Zoom Coordinator</a>
                     
                     <ul class = "right hide-on-med-and-down">
                         <li>    
@@ -102,7 +98,7 @@
         <div class="row container">
             <div class="col s12 m8 offset-m1 xl7">
                 <br>
-                <h4>
+                <h4 style="font-family: Montserrat; font-weight: 700; font-size: 36px;">
                     Today's Classes:
                 </h4>
                 {{ cards }}
