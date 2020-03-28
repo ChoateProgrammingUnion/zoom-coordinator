@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+
+docker build -t zoom-coordinator .
+docker run --rm -p 80:80 -v ~/zoom-coordinator/index.db:/usr/src/app/index.db zoom-coordinator 

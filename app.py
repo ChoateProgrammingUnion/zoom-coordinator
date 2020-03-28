@@ -24,7 +24,8 @@ app.config.update(
 app.config["GOOGLE_OAUTH_CLIENT_ID"] = GOOGLE_CLIENT_ID 
 app.config["GOOGLE_OAUTH_CLIENT_SECRET"] = GOOGLE_CLIENT_SECRET 
 app.config["OAUTHLIB_RELAX_TOKEN_SCOPE"] = "true"
-app.config['SERVER_NAME'] = "demo.homelabs.space:80"
+# app.config['SERVER_NAME'] = "demo.homelabs.space"
+app.config['PREFERRED_URL_SCHEME'] = "https"
 os.environ["OAUTHLIB_RELAX_TOKEN_SCOPE"] = "true" 
 
 google_bp = make_google_blueprint(scope=["https://www.googleapis.com/auth/userinfo.profile", "https://www.googleapis.com/auth/userinfo.email"])
