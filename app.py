@@ -114,4 +114,5 @@ def get_profile():
                     print(response) # log next
     except:
         pass
+
     return False, False
