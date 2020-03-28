@@ -12,7 +12,9 @@ CLASS_SCHEDULE = {
     "Tuesday": "FGAB",
     "Wednesday": "CDE",
     "Thursday": "FAGB",
-    "Friday": "CDEFG"
+    "Friday": "CDEFG",
+    "Saturday": "ABCDE",
+    "Sunday": "ABCDE"
 }
 
 OFFSETS = {
@@ -20,7 +22,9 @@ OFFSETS = {
     "Tuesday": [timedelta(hours=10), timedelta(hours=11), timedelta(hours=13), timedelta(hours=14)],
     "Wednesday": [timedelta(hours=10), timedelta(hours=11), timedelta(hours=13)],
     "Thursday": [timedelta(hours=10), timedelta(hours=11), timedelta(hours=13), timedelta(hours=14)],
-    "Friday": [timedelta(hours=10), timedelta(hours=11), timedelta(hours=13), timedelta(hours=14), timedelta(hours=15)]
+    "Friday": [timedelta(hours=10), timedelta(hours=11), timedelta(hours=13), timedelta(hours=14), timedelta(hours=15)],
+    "Saturday": [timedelta(hours=58), timedelta(hours=59), timedelta(hours=61), timedelta(hours=62), timedelta(hours=63)],
+    "Sunday": [timedelta(hours=34), timedelta(hours=35), timedelta(hours=37), timedelta(hours=38), timedelta(hours=39)]
 }
 
 def block_iter():
