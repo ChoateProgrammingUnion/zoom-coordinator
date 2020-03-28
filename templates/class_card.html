@@ -16,7 +16,7 @@
             <button type="button" class="btn btn-outline-info" onclick="window.open('https://zoom.us/j/{{ meeting_id }}');">Join Zoom Meeting (id: {{ meeting_id }})</button>
         </span>
         <hr>
-        <input type="text" class="form-control meeting_id{{ uuid }}" placeholder="Change meeting ID" value="{{ display_meeting_id }}"id="meeting_id{{ uuid }}">
+        <input type="text" class="form-control meeting_id{{ uuid }}" placeholder="Change meeting ID" value="" id="meeting_id{{ uuid }}">
         <p id="course{{ uuid }}" hidden>{{ course }}</p>
         <p class="section{{ uuid }}" hidden>{{ sec }}</p>
     </div>
