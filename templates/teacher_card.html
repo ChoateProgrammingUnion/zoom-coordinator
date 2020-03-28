@@ -2,7 +2,9 @@
     <div class="card small" style="height: auto">
         <div class="card-content">
             <!-- CARD TITLE -->
-            <div class="card-title">{{ name }}</div>
+            <div class="card-title">
+                {{ name }}
+            </div>
 
             <!-- CARD BODY -->
             <!--<h4 class="card-title">Primary card title</h4>-->
@@ -11,7 +13,7 @@
             <!--<a href="https://zoom.us/j/{{ meeting_id }}" class="card-link">{{ meeting_id }}</a>-->
             <!--</ol>-->
 
-            <button type="button" class="btn btn-outline-info" onclick="window.open('https://zoom.us/j/{{ office_id }}');">Join Zoom Meeting (id: {{ office_id }})</button>
+            <button type="button" class="btn btn-outline-info" onclick="window.open('https://zoom.us/j/{{ office_id }}');" target='_blank'>Join Zoom Meeting (id: {{ office_id }})</button>
         </div>
     </div>
 </div>
