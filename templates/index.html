@@ -47,6 +47,13 @@
                 float: none;
                 margin: 0 auto 10px;
             }
+
+            a.anchor {
+                display: block;
+                position: relative;
+                top: -10rem;
+                visibility: hidden;
+            }
         </style>
     </head>
   
@@ -67,7 +74,7 @@
                                             <!--<i class="white-text material-icons prefix">search</i>-->
                                             <form action="/search">
                                                 <div class="input-field">
-                                                    <input id="search" type="search" name="search" required>
+                                                    <input id="search" type="search" style="height: auto" name="search" required>
                                                     <label class="label-icon" for="search"><i class="material-icons">search</i></label>
                                                     <i class="material-icons">close</i>
                                                     <input type="submit" style="display: none" />
@@ -85,33 +92,44 @@
             </nav> 
         </div>
         <!-- CARDS -->
+
         <div class="row container">
             <div class="col s12 m8 offset-m1 xl7">
+                <br>
+                <h4>
+                    Today's Classes:
+                </h4>
                 {{ cards }}
             </div>
 
 
             <div class="col hide-on-small-only m3 l2 container">
                 <ul class="section table-of-contents">
-                    {{ toc }}
+                    <div style="position: fixed; line-height: 1.3rem; ">
+                        {{ toc }}
+                    </div>
                 </ul>
             </div>
+        </div>
+        <div class="fixed-action-btn">
+            <a class="btn-floating btn-large red" href="#top">
+                <i class="large material-icons">arrow_upward</i>
+            </a>
         </div>
 
         <!-- FOOTER -->
         <div class="container">
-            <br />
             <hr>
+            <br>
+            <!--<hr>-->
             <footer id="footer">
                 <div class="row">
                     <div class="col-lg-12">
                     <ul class="list-unstyled">
-                        <li class="float-lg-right"><a href="#top">Back to top</a></li>
                         <li><a href="https://github.com/ChoateProgrammingUnion/zoom-coordinator">GitHub</a></li>
                     </ul>
-                    <p>Website created by the Choate Programming Union.<br />
-                        Particularly: Max Fan, Ethan Chapman, Spencer Bowles, Aiyu Kamate, and Nate Krauss.</p>
-                    <p>Created for use only by members of the Choate Rosemary Hall community</p>
+                    <p>Website created by the Choate Programming Union.<br /> </p>
+                    <p>Particularly: Max Fan (Lead, Frontend, Backend), Ethan Chapman (Backend), Spencer Bowles (Frontend), and Nate Krauss (Frontend).</p>
                     <p>Based on <a href="https://getbootstrap.com" rel="nofollow">Bootstrap</a>. Icons from <a href="https://fontawesome.com/" rel="nofollow">Font Awesome</a>. Web fonts from <a href="https://fonts.google.com/" rel="nofollow">Google</a>.</p>
                         <!-- <p>Number of git commits: {{ number_of_commits }} Last commit: {{ last_commit }}</p> -->
                     </div>

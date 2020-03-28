@@ -24,6 +24,8 @@ app.config.update(
 app.config["GOOGLE_OAUTH_CLIENT_ID"] = GOOGLE_CLIENT_ID 
 app.config["GOOGLE_OAUTH_CLIENT_SECRET"] = GOOGLE_CLIENT_SECRET 
 app.config["OAUTHLIB_RELAX_TOKEN_SCOPE"] = "true"
+# app.config['SERVER_NAME'] = "demo.homelabs.space"
+app.config['PREFERRED_URL_SCHEME'] = "https"
 os.environ["OAUTHLIB_RELAX_TOKEN_SCOPE"] = "true" 
 
 google_bp = make_google_blueprint(scope=["https://www.googleapis.com/auth/userinfo.profile", "https://www.googleapis.com/auth/userinfo.email"])
@@ -113,7 +115,7 @@ def index():
         
         for block, time in block_iter():
             if block == "Break":
-                cards += "<br><br><hr><br><br>"
+                cards += "<br><br><hr><br><h4>Not Today:</h4><br>"
                 continue
 
             uuid = secrets.token_hex(8)
@@ -127,7 +129,8 @@ def index():
                 continue
 
             if len(block) == 1:
-                toc[block] = '<li><a href="#' + block + '-block">' + block + ' Block</a></li>'
+                # toc[block] = '<br><li><a href="#' + block + '-block">' + block + ' Block</a></li>'
+                toc[block] = render_template("toc.html", block=block)
 
             schedule["uuid"] = uuid
             schedule["time"] = time
@@ -144,8 +147,12 @@ def login():
     """
     Redirects to the proper login page (right now /google/login), but may change
     """
+    # resp.delete_cookie('username')
+    # resp.delete_cookie('session')
     if not google.authorized:
         return redirect(url_for("google.login"))
+    else:
+        return "Invalid credentials! Make sure you're logging in with your Choate account. <a href=" + url_for("google.login") + ">Try again.</a>"
 
 def get_profile():
     """
