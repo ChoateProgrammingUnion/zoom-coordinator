@@ -27,7 +27,7 @@ OFFSETS = {
     "Sunday": []
 }
 
-def block_iter():
+def block_iter(email):
     current_time = time.time() - (4.0 * 3600.0)
     weekday = datetime.fromtimestamp(current_time).strftime("%A")
     current_datetime = (datetime.now(pytz.timezone('EST')) + timedelta(hours=1)).replace(second=0, microsecond=0)
@@ -40,7 +40,9 @@ def block_iter():
     upcoming = []
     tomorrow = []
 
-    if Schedule().isTeacher:
+    schedule = ScheduleManager().getSchedule(email)
+
+    if schedule.isTeacher:
         office_hours = [("Office Hours", "N/A")]
     else:
         office_hours = []
@@ -106,15 +108,27 @@ class SingletonMeta(type):
             cls._obj.__init__(*args, **kwargs)
         return cls._obj
 
-class Schedule(metaclass=SingletonMeta):
+class ScheduleManager(metaclass=SingletonMeta):
+    def __init__(self):
+        self.schedules = {}
+
+        self.db = dataset.connect(DB_LOC)
+        self.courses_database = self.db['courses']
+        self.teachers_database = self.db['teachers']
+
+    def createSchedule(self, email, name, isTeacher):
+        if not self.schedules.get(email):
+            self.schedules.update({email: Schedule(self.db, self.courses_database, self.teachers_database, email, name, isTeacher)})
+
+    def getSchedule(self, email):
+        return self.schedules[email]
+
+
+class Schedule():
     """
     Schedule will fetch the student's schedule and pass it back as a dict. 
     Students are identified by their Choate email address.
     """
-
-    db = dataset.connect(DB_LOC)
-    courses_database = db['courses']
-    teachers_database = db['teachers']
 
     schedule = {'A': None,
                 'B': None,
@@ -124,16 +138,14 @@ class Schedule(metaclass=SingletonMeta):
                 'F': None,
                 'G': None}
 
-    def __init__(self, email=None, name=None):
-        if email is not None:
-            self.isTeacher = False
-            if check_choate_email(email):
-                self.email = email
-            else:
-                raise ValueError(email + " is not a valid Choate provided email address")
-        else:
-            self.isTeacher = True
-            self.name = name
+    def __init__(self, db, courses, teachers, email, name, isTeacher=False):
+        self.db = db
+        self.courses_database = courses
+        self.teachers_database = teachers
+
+        self.email = email
+        self.name = name
+        self.isTeacher = isTeacher
 
     def fetch_schedule(self):
         if self.isTeacher: return self.fetch_schedule_teacher()

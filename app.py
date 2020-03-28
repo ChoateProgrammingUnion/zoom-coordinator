@@ -7,7 +7,7 @@ import os
 from flask_dance.contrib.google import make_google_blueprint, google 
 from config import GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET
 import secrets
-from schedule import Schedule, check_choate_email, check_teacher, block_iter
+from schedule import Schedule, ScheduleManager, check_choate_email, check_teacher, block_iter
 
 # Temp (INSECURE, REMOVE IN PROD)
 os.environ['OAUTHLIB_INSECURE_TRANSPORT'] = '1'
@@ -39,7 +39,10 @@ def search():
 
     query = request.args.get('search')
 
-    search_results = Schedule().search_teacher(query)
+    email, name = get_profile()
+    user_schedule = ScheduleManager().getSchedule(email)
+
+    search_results = user_schedule.search_teacher(query)
 
     cards = ""
 
@@ -75,11 +78,12 @@ def update():
             return "Error"
 
     email, teacher_name = get_profile()
+    user_schedule = ScheduleManager().getSchedule(email)
 
     if course == "Office Hours":
-        Schedule().update_teacher_database(teacher_name, id_num)
+        user_schedule.update_teacher_database(teacher_name, id_num)
     elif email:
-        Schedule().update_schedule(course, section, id_num)
+        user_schedule.update_schedule(course, section, id_num)
 
     return str(id_num)
 
@@ -91,15 +95,13 @@ def index():
     # if email := get_email():
     email, name = get_profile()
     if email and name:
-        if (check_teacher(email)):
-            Schedule(name=name)
-        else:
-            Schedule(email=email)
+        ScheduleManager().createSchedule(email, name, check_teacher(email))
+        user_schedule = ScheduleManager().getSchedule(email)
 
         # render_template here
         # print(Schedule().search_teacher("Guelakis Patrick"))
 
-        Schedule().fetch_schedule()
+        user_schedule.fetch_schedule()
 
         card_script = ""
         cards = ""
@@ -113,7 +115,7 @@ def index():
             # card_script += render_template("card.js")
 
         
-        for block, time in block_iter():
+        for block, time in block_iter(email):
             if block == "Break":
                 cards += "<br><br><hr><br><h4>Not Today:</h4><br>"
                 continue
@@ -121,9 +123,9 @@ def index():
             uuid = secrets.token_hex(8)
 
             if block == "Office Hours":
-                schedule = {"block": "Office", "course": "Office Hours", "course_name": "Office Hours", "teacher_name": Schedule().name, "meeting_id": Schedule().search_teacher(Schedule().name)[0]['office_id']}
+                schedule = {"block": "Office", "course": "Office Hours", "course_name": "Office Hours", "teacher_name": user_schedule.name, "meeting_id": user_schedule.search_teacher(user_schedule.name)[0]['office_id']}
             else:
-                schedule = Schedule().schedule[block]
+                schedule = user_schedule.schedule[block]
 
             if schedule is None:
                 continue
