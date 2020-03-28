@@ -43,11 +43,9 @@ def update():
     """
     Gets the Zoom meeting ids
     """
-    print(request.form)
     course = request.form.get('course')
     section = request.form.get('section')
     meeting_id = str(request.form.get('meeting_id'))
-    print(meeting_id)
     id_num = -1
 
     lines = meeting_id.split("\n")
@@ -65,10 +63,11 @@ def update():
         if "Invalid meeting ID." in str(html):
             return "Error"
 
-
     email, teacher_name = get_profile()
 
-    if email and check_teacher(teacher_name):
+    if course == "Office Hours":
+        Schedule().update_teacher_database(teacher_name, id_num)
+    elif email and check_teacher(teacher_name):
         Schedule().update_schedule(course, section, id_num)
 
     return str(id_num)
@@ -100,13 +99,17 @@ def index():
             # card_script += render_template("card.js")
 
         
-        for block, time in block_iter(teacher=check_teacher(email)):
+        for block, time in block_iter():
             if block == "Break":
                 cards += "<hr>"
                 continue
 
             uuid = secrets.token_hex(8)
-            schedule = Schedule().schedule[block] # if teacher, block = "Office Hours"
+
+            if block == "Office Hours":
+                schedule = {"block": "Office", "course": "Office Hours", "course_name": "Office Hours", "teacher_name": Schedule().name, "meeting_id": Schedule().search_teacher(Schedule().name)[0]['office_id']}
+            else:
+                schedule = Schedule().schedule[block]
 
             if schedule is None:
                 continue
@@ -118,9 +121,6 @@ def index():
                 schedule["display_meeting_id"] = schedule["meeting_id"]
             else:
                 schedule["display_meeting_id"] = ""
-
-
-            print("Schedule", schedule) # debug
 
             cards += render_template("card.html", **schedule)
             card_script += render_template("card.js", **schedule)

@@ -27,7 +27,7 @@ OFFSETS = {
     "Sunday": []
 }
 
-def block_iter(teacher=False):
+def block_iter():
     current_time = time.time() - (4.0 * 3600.0)
     # weekday = datetime.fromtimestamp(current_time).strftime("%A")
     weekday = "Monday"
@@ -41,14 +41,14 @@ def block_iter(teacher=False):
     upcoming = []
     tomorrow = []
 
+    if Schedule().isTeacher:
+        office_hours = [("Office Hours", "N/A")]
+    else:
+        office_hours = []
+
     class_num = 0
 
-    if teacher:
-        schedule = ["Office Hours"] + list("ABCDEFG")
-    else:
-        schedule = list("ABCDEFG")
-
-    for b in schedule:
+    for b in "ABCDEFG":
         if b in blocks_today:
             class_time = midnight + OFFSETS[weekday][class_num]
             time_str = class_time.strftime("%I:%M %p EST")
@@ -66,8 +66,6 @@ def block_iter(teacher=False):
 
             else:
                 tomorrow += [(b, "Not Today")]
-        elif b == "Office Hours":
-            tomorrow += [(b, "N/A")]
         else:
             tomorrow += [(b, "Not Today")]
 
@@ -76,7 +74,7 @@ def block_iter(teacher=False):
     else:
         line_break = []
 
-    return tuple(in_progress + upcoming + completed + line_break + tomorrow)
+    return tuple(office_hours + in_progress + upcoming + completed + line_break + tomorrow)
 
 def check_choate_email(email: str) -> bool:
     """
@@ -119,8 +117,7 @@ class Schedule(metaclass=SingletonMeta):
     courses_database = db['courses']
     teachers_database = db['teachers']
 
-    schedule = {'Office Hours': None,
-                'A': None,
+    schedule = {'A': None,
                 'B': None,
                 'C': None,
                 'D': None,
@@ -182,8 +179,6 @@ class Schedule(metaclass=SingletonMeta):
 
         classes = self.courses_database.find(teacher_name=self.name)
 
-        print(self.name)
-
         for c in classes:
             c = dict(c)
             block = c['block']
@@ -203,8 +198,6 @@ class Schedule(metaclass=SingletonMeta):
             elif self.schedule[block] is None:
                 self.schedule[block] = c
 
-        print(self.schedule)
-
     def update_schedule(self, course, section, meeting_id):
         if (self.isTeacher):
             classes_to_update = list(self.courses_database.find(course=course, sec=section))
@@ -218,6 +211,12 @@ class Schedule(metaclass=SingletonMeta):
 
             c['meeting_id'] = meeting_id
             self.courses_database.upsert(c, ['id'])
+
+    def update_teacher_database(self, name, office_id):
+        t = self.teachers_database.find_one(name=name)
+        t['office_id'] = office_id
+
+        self.teachers_database.upsert(t, ['id'])
 
     def search_teacher(self, teacher_name):
         matched_teachers = []

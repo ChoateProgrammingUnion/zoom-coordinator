@@ -27,7 +27,7 @@ def import_data(filename: str):
 
             if teacher is None:
                 if (len(block) > 1):
-                    teacher = {"name":each_row['teacher_name'], "A":each_row['course']}
+                    teacher = {"name":each_row['teacher_name'], 'office_id':0, "A":each_row['course']}
 
                     block = block.replace("Fri", "fri")
 
@@ -38,7 +38,7 @@ def import_data(filename: str):
                             print(" " + b)
                             teacher[b] = each_row['course'] + " " + each_row['sec']
                 else:
-                    teacher = {"name":each_row['teacher_name'], str(block):each_row['course'] + " " + each_row['sec']}
+                    teacher = {"name":each_row['teacher_name'], 'office_id':0, str(block):each_row['course'] + " " + each_row['sec']}
 
                 teachers.insert(teacher)
             else:
