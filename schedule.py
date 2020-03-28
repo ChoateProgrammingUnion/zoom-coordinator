@@ -13,8 +13,8 @@ CLASS_SCHEDULE = {
     "Wednesday": "CDE",
     "Thursday": "FAGB",
     "Friday": "CDEFG",
-    "Saturday": "ABCDE",
-    "Sunday": "ABCDE"
+    "Saturday": "",
+    "Sunday": ""
 }
 
 OFFSETS = {
@@ -23,8 +23,8 @@ OFFSETS = {
     "Wednesday": [timedelta(hours=10), timedelta(hours=11), timedelta(hours=13)],
     "Thursday": [timedelta(hours=10), timedelta(hours=11), timedelta(hours=13), timedelta(hours=14)],
     "Friday": [timedelta(hours=10), timedelta(hours=11), timedelta(hours=13), timedelta(hours=14), timedelta(hours=15)],
-    "Saturday": [timedelta(hours=58), timedelta(hours=59), timedelta(hours=61), timedelta(hours=62), timedelta(hours=63)],
-    "Sunday": [timedelta(hours=34), timedelta(hours=35), timedelta(hours=37), timedelta(hours=38), timedelta(hours=39)]
+    "Saturday": [],
+    "Sunday": []
 }
 
 def block_iter():
@@ -35,7 +35,11 @@ def block_iter():
 
     blocks = CLASS_SCHEDULE[weekday]
 
-    ret = []
+    in_progress = []
+    completed = []
+    upcoming = []
+    tomorrow = []
+
     class_num = 0
 
     for b in blocks:
@@ -45,15 +49,24 @@ def block_iter():
         class_num += 1
 
         if time_from_now < timedelta(minutes=50):
-            ret += [(b, time_str + " (completed)")]
+            completed += [(b, time_str + " (completed)")]
 
         elif time_from_now < timedelta(hours=0):
-            ret += [(b, time_str + " (in progress)")]
+            in_progress += [(b, time_str + " (in progress)")]
+
+        elif time_from_now < timedelta(hours=15):
+            upcoming += [(b, time_str + " (" + str(time_from_now)[:-3] + " from now)")]
 
         else:
-            ret += [(b, time_str + " (" + str(time_from_now)[:-3] + " from now)")]
+            upcoming += [(b, "Not Today")]
 
-    return tuple(ret)
+    for b in "ABCDEFG":
+        if b in blocks:
+            continue
+
+        tomorrow += [(b, "Not Today")]
+
+    return tuple(in_progress + upcoming + completed + tomorrow)
 
 def check_choate_email(email: str) -> bool:
     """
