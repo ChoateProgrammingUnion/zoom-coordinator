@@ -43,10 +43,10 @@ def update():
     """
     Gets the Zoom meeting ids
     """
-    # print(request.form)
     course = request.form.get('course')
     section = request.form.get('section')
-    meeting_id = request.form.get('meeting_id')
+    meeting_id = str(request.form.get('meeting_id'))
+    print(meeting_id)
     id_num = -1
 
     lines = meeting_id.split("\n")
@@ -88,7 +88,6 @@ def index():
         print(block_iter())
         for block, time in block_iter():
             uuid = secrets.token_hex(8)
-
             if check_teacher(email): # if teacher
                 schedule = Schedule().schedule[block]
             else: # if student
