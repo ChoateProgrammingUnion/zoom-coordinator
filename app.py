@@ -88,6 +88,10 @@ def index():
         cards = ""
         # print(block_iter())
         for block, time in block_iter():
+            if block == "Break":
+                cards += "<hr>"
+                continue
+
             uuid = secrets.token_hex(8)
             if check_teacher(email): # if teacher
                 schedule = Schedule().schedule[block]

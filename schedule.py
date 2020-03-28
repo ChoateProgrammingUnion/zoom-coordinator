@@ -63,7 +63,12 @@ def block_iter():
         else:
             tomorrow += [(b, "Not Today")]
 
-    return tuple(in_progress + upcoming + completed + tomorrow)
+    if len(in_progress) + len(upcoming) + len(completed) > 0:
+        line_break = [("Break", "")]
+    else:
+        line_break = []
+
+    return tuple(in_progress + upcoming + completed + line_break + tomorrow)
 
 def check_choate_email(email: str) -> bool:
     """
