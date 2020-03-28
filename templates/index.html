@@ -40,10 +40,7 @@
             $(document).ready(function(){
                 $('.scrollspy').scrollSpy();
             });
-
-            function(id) {
-                return 'a[href="#' + id + '"]';
-            }
+            
         </script>
         <style>
             .card { /* Credit: https://stackoverflow.com/questions/39031224/how-to-center-cards-in-bootstrap-4 */
@@ -88,13 +85,13 @@
             </nav> 
         </div>
         <!-- CARDS -->
-        <div class="row">
+        <div class="row container">
             <div class="col s12 m8 offset-m1 xl7">
                 {{ cards }}
             </div>
 
 
-            <div class="col hide-on-small-only m3 l2">
+            <div class="col hide-on-small-only m3 l2 container">
                 <ul class="section table-of-contents">
                     <li><a href="#A-block">A Block</a></li>
                     <li><a href="#B-block">B Block</a></li>
