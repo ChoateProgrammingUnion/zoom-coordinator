@@ -9,11 +9,6 @@
         <!--top: 50%;-->
         <!--transform: translateY(-50%);-->
     <script>
-    .center {
-          margin-left: auto ;
-          margin-right: auto ;
-    }
-    <script>
            function sendRequest(fd, loc) {
                 var xhr = new XMLHttpRequest();
                 xhr.onload = function(e) {
@@ -35,6 +30,7 @@
                    console.log(value);
                 }
             }
+{{ card_js }}
     </script>
 
     <style>
@@ -55,30 +51,20 @@
             </button>
 
 
+                <div class="collapse navbar-collapse" id="navbarColor01">
+                  <form class="form-inline my-2 my-lg-0">
+                    <input class="form-control mr-sm-2" type="text" placeholder="Search">
+                    <button class="btn btn-secondary my-2 my-sm-0" type="submit">Search</button>
+                  </form>
+                </div>
+              </nav>
             <div class="collapse navbar-collapse" id="navbarColor01">
-              <!--
-                <ul class="navbar-nav mr-auto">
-                  <li class="nav-item active">
-                  <a class="nav-link" href="#">Home <span class="sr-only">(current)</span></a>
-                </li>
-                <li class="nav-item">
-                  <a class="nav-link" href="#">Features</a>
-                </li>
-                <li class="nav-item">
-                  <a class="nav-link" href="#">Pricing</a>
-                </li>
-                <li class="nav-item">
-                  <a class="nav-link" href="#">About</a>
-                </li>
-              </ul>
-              --!>
               <form class="form-inline my-2 my-lg-0">
                 <input class="form-control mr-sm-2" type="text" placeholder="Search">
                 <button class="btn btn-secondary my-2 my-sm-0" type="submit">Search</button>
               </form>
             </div>
           </nav>
-        <!-- <button class="source-button btn btn-primary btn-xs" role="button" tabindex="0">&lt; &gt;</button></div> --!>
     </div>
     <div class="container">
         <br />

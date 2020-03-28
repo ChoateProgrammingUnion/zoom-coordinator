@@ -82,6 +82,7 @@ def index():
 
         Schedule().fetch_schedule()
 
+        card_script = ""
         cards = ""
         print(block_iter())
         for block, time in block_iter():
@@ -93,9 +94,12 @@ def index():
             if schedule is None:
                 continue
 
-            cards += render_template("card.html", **schedule)
+            schedule["uuid"] = uuid
 
-        return render_template("index.html", cards=Markup(cards))
+            cards += render_template("card.html", **schedule)
+            card_script += render_template("card.js", **schedule)
+
+        return render_template("index.html", cards=Markup(cards), card_js=Markup(card_script))
     else:
         return redirect("/login")
 
