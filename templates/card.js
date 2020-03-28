@@ -4,10 +4,10 @@
                 xhr.onload = function(e) {
                     if (this.readyState === 4) {
                         console.log("Server returned: ", e.target.responseText);
-                        if (e.target.responseText == "Success!") {
-                            meetingId = document.getElementsByClassName("meeting_id{{ uuid }}")[0].value
+                        if (e.target.responseText != "Error") {
+                            meetingId = e.target.responseText
                             $( "#span{{ uuid }}" ).html("<button type=\"button\" class=\"btn btn-outline-info\" onclick=\"window.open('https://zoom.us/j/" + meetingId + "');\">Join Zoom Meeting (id: " + meetingId + ")</button>");
-                        }
+                        } 
                     }
                 };
                 xhr.timeout = 5000;
