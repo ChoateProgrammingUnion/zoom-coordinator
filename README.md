@@ -27,6 +27,9 @@ flask run
 - Flask-Dance
 - validators
 - fuzzysearch
+- dataset
+- pytz
+
 
 ## Layout
 [`app.py`](/app.py) is the main app

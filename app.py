@@ -86,7 +86,7 @@ def index():
 
         card_script = ""
         cards = ""
-        print(block_iter())
+        # print(block_iter())
         for block, time in block_iter():
             uuid = secrets.token_hex(8)
             if check_teacher(email): # if teacher
@@ -98,12 +98,15 @@ def index():
                 continue
 
             schedule["uuid"] = uuid
+            schedule["time"] = time
 
             if schedule["meeting_id"] and schedule["meeting_id"] != "0":
                 schedule["display_meeting_id"] = schedule["meeting_id"]
             else:
                 schedule["display_meeting_id"] = "Change meeting ID"
 
+
+            print("Schedule", schedule) # debug
 
             cards += render_template("card.html", **schedule)
             card_script += render_template("card.js", **schedule)
