@@ -99,6 +99,12 @@ def index():
 
             schedule["uuid"] = uuid
 
+            if schedule["meeting_id"] and schedule["meeting_id"] != "0":
+                schedule["display_meeting_id"] = schedule["meeting_id"]
+            else:
+                schedule["display_meeting_id"] = "Change meeting ID"
+
+
             cards += render_template("card.html", **schedule)
             card_script += render_template("card.js", **schedule)
 
