@@ -1,74 +1,109 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Choate Zoom Coordinator</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootswatch/4.4.1/cerulean/bootstrap.min.css" integrity="sha256-zCHsVYGTqGR4WvnguOpcJQuL1wBiEgiiACzjfh0M0Ak=" crossorigin="anonymous" />
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
-        <!--text-align: center;-->
-        <!--position: relative;-->
-        <!--top: 50%;-->
-        <!--transform: translateY(-50%);-->
-    <script>
-{{ card_js }}
-    </script>
+<html lang = "en">
+    <head>
+        <meta charset="UTF-8">
+        <title>Choate Zoom Coordinator</title>
+        <!--Import Google Icon Font-->
+        <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+        <!--Import materialize.css-->
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css" integrity="sha256-OweaP/Ic6rsV+lysfyS4h+LM6sRwuO3euTYfr6M124g=" crossorigin="anonymous" />
+        <!--Import JQuery-->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
+  
+        <!--Let browser know website is optimized for mobile-->
+        <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+        
+        <script>
+            function sendRequest(fd, loc) {
+                 var xhr = new XMLHttpRequest();
+                 xhr.onload = function(e) {
+                     if (this.readyState === 4) {
+                         console.log("Server returned: ", e.target.responseText);
+                         if (e.target.responseText == "Success!") {
+                             window.location.reload()
+                         }
+                     }
+                 };
+                 xhr.timeout = 5000;
+                 xhr.open("POST", loc, true);
+                 xhr.send(fd);
+                 console.log(fd);
+                 for (var value of fd.values()) {
+                    console.log(value);
+                 }
+                 for (var value of fd.keys()) {
+                    console.log(value);
+                 }
+             }
+            {{ card_js }}
+        </script>
+        <style>
+            .card { /* Credit: https://stackoverflow.com/questions/39031224/how-to-center-cards-in-bootstrap-4 */
+                float: none;
+                margin: 0 auto 10px;
+            }
+        </style>
+    </head>
+  
+    <!-- MAIN BODY -->
+    <body>
+        <!-- HEADER -->
+        <nav class="blue">
+            <div class = "nav-fixed">
+                <a href="#" class="brand-logo">Choate Zoom Coordinator</a>
+                <ul class = "right hide-on-med-and-down">
+                    <li>    
+                        <div class="center row">
+                           <div class="col s12 " >
+                                <div class="row" id="topbarsearch">
+                                    <div class="input-field col s6 s12 red-text">
+                                        <i class="white-text material-icons prefix">search</i>
+                                        <input type="text" placeholder="search" id="autocomplete-input" class="autocomplete white-text" >
+                                    </div>
+                                </div>
+                            </div>
+                        </div>          
+                    </li>  
 
-    <style>
-        .card { /* Credit: https://stackoverflow.com/questions/39031224/how-to-center-cards-in-bootstrap-4 */
-            float: none;
-            margin: 0 auto 10px;
-        }
-
-    </style>
-</head>
-<body>
-    <div class="bs-component">
-          <nav class="navbar navbar-expand-lg navbar-light">
-            <a class="navbar-brand " href="#">CZC</a>
-            </button>
-
-                <form class="form-inline my-2 my-lg-0">
-                    <input class="form-control mr-sm-2" type="text" placeholder="Search">
-                    <button class="btn btn-secondary my-2 my-sm-0" type="submit">Search</button>
-                </form>
-
-              </nav>
-            <div class="collapse navbar-collapse" id="navbarColor01">
-              <form class="form-inline my-2 my-lg-0">
-                <input class="form-control mr-sm-2" type="text" placeholder="Search">
-                <button class="btn btn-secondary my-2 my-sm-0" type="submit">Search</button>
-              </form>
-            </div>
-          </nav>
-    </div>
-    <div class="container">
-        <br />
-            <h3>Placeholder Text:</h3>
-        <br />
-    </div>
-
-    <div class="container">
-        {{ cards }}
-    </div>
-
-    <div class="container">
-        <br />
-        <hr>
-        <footer id="footer">
-            <div class="row">
-                <div class="col-lg-12">
-                <ul class="list-unstyled">
-                    <li class="float-lg-right"><a href="#top">Back to top</a></li>
-                    <li><a href="https://github.com/ChoateProgrammingUnion/zoom-coordinator">GitHub</a></li>
                 </ul>
-                <p>Website created by the Choate Programming Union.<br />
-                    Particularly: Max Fan, Ethan Chapman, Spencer Bowles, and Aiyu Kamate.</p>
-                <p>Created for use only by members of the Choate Rosemary Hall community</p>
-                <p>Based on <a href="https://getbootstrap.com" rel="nofollow">Bootstrap</a>. Icons from <a href="https://fontawesome.com/" rel="nofollow">Font Awesome</a>. Web fonts from <a href="https://fonts.google.com/" rel="nofollow">Google</a>.</p>
-                    <!-- <p>Number of git commits: {{ number_of_commits }} Last commit: {{ last_commit }}</p> --!>
-                </div>
             </div>
-        </footer>
-    </div>
-</body>
+        </nav>
+
+        <!-- CARDS -->
+
+        <div class="container">
+            <br />
+                <h3>Placeholder Text:</h3>
+            <br />
+        </div>
+    
+        <div class="container">
+            {{ cards }}
+        </div>
+
+        <!-- FOOTER -->
+        <div class="container">
+            <br />
+            <hr>
+            <footer id="footer">
+                <div class="row">
+                    <div class="col-lg-12">
+                    <ul class="list-unstyled">
+                        <li class="float-lg-right"><a href="#top">Back to top</a></li>
+                        <li><a href="https://github.com/ChoateProgrammingUnion/zoom-coordinator">GitHub</a></li>
+                    </ul>
+                    <p>Website created by the Choate Programming Union.<br />
+                        Particularly: Max Fan, Ethan Chapman, Spencer Bowles, Aiyu Kamate, and Nate Krauss.</p>
+                    <p>Created for use only by members of the Choate Rosemary Hall community</p>
+                    <p>Based on <a href="https://getbootstrap.com" rel="nofollow">Bootstrap</a>. Icons from <a href="https://fontawesome.com/" rel="nofollow">Font Awesome</a>. Web fonts from <a href="https://fonts.google.com/" rel="nofollow">Google</a>.</p>
+                        <!-- <p>Number of git commits: {{ number_of_commits }} Last commit: {{ last_commit }}</p> -->
+                    </div>
+                </div>
+            </footer>
+        </div>
+
+
+        <!--JavaScript at end of body for optimized loading-->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js" integrity="sha256-U/cHDMTIHCeMcvehBv1xQ052bPSbJtbuiw4QA9cTKz0=" crossorigin="anonymous"></script>
+    </body>
 </html>

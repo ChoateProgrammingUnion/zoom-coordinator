@@ -1,6 +1,10 @@
-    <div class="card border-primary mb-3" style="width: 65vw;">
-        <div class="card-header">{{ block }} Block ({{ course_name }} - {{ teacher_name.replace(' ', ', ') }})</div>
-        <div class="card-body">
+<div class="card small">
+    <div class="col s6S m3">
+        <div class="card-content">
+            <!-- CARD TITLE -->
+            <div class="card-title">{{ block }} Block ({{ course_name }} - {{ teacher_name.replace(' ', ', ') }})</div>
+            
+            <!-- CARD BODY -->
             <h4 class="card-title">{{ time }}</h4>
             <!--<h4 class="card-title">Primary card title</h4>-->
             <!--<p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>-->
@@ -16,4 +20,5 @@
             <p class="section{{ uuid }}" hidden>{{ sec }}</p>
         </div>
     </div>
+</div>
 

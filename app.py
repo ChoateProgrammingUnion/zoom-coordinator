@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 import re
+import urllib.request
 
 from flask import Flask, render_template, redirect, url_for, request, Markup
 import os
@@ -59,12 +60,18 @@ def update():
     if (id_num == -1):
         return "Error"
 
+    with urllib.request.urlopen('https://zoom.us/j/' + str(id_num)) as response:
+        html = response.read()
+        if "Invalid meeting ID." in str(html):
+            return "Error"
+
+
     email, teacher_name = get_profile()
 
     if email and check_teacher(teacher_name):
         Schedule().update_schedule(course, section, id_num)
 
-    return "Success!"
+    return str(id_num)
 
 @app.route('/')
 def index():
@@ -94,6 +101,10 @@ def index():
 
         
         for block, time in block_iter(teacher=check_teacher(email)):
+            if block == "Break":
+                cards += "<hr>"
+                continue
+
             uuid = secrets.token_hex(8)
             schedule = Schedule().schedule[block] # if teacher, block = "Office Hours"
 
