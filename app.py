@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 import re
+import urllib.request
 
 from flask import Flask, render_template, redirect, url_for, request, Markup
 import os
@@ -60,11 +61,17 @@ def update():
     if (id_num == -1):
         return "Error"
 
+    with urllib.request.urlopen('https://zoom.us/j/' + str(id_num)) as response:
+        html = response.read()
+        if "Invalid meeting ID." in str(html):
+            return "Error"
+
+
     email, teacher_name = get_profile()
     if email and teacher_name:
         Schedule().update_schedule(course, section, id_num)
 
-    return "Success!"
+    return str(id_num)
 
 @app.route('/')
 def index():
