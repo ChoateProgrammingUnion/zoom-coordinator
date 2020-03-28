@@ -29,6 +29,10 @@ os.environ["OAUTHLIB_RELAX_TOKEN_SCOPE"] = "true"
 google_bp = make_google_blueprint(scope=["https://www.googleapis.com/auth/userinfo.profile", "https://www.googleapis.com/auth/userinfo.email"])
 app.register_blueprint(google_bp, url_prefix="/login")
 
+@app.route('/bye')
+def bye():
+    pass
+
 @app.route('/search')
 def search():
     """
@@ -144,8 +148,12 @@ def login():
     """
     Redirects to the proper login page (right now /google/login), but may change
     """
+    # resp.delete_cookie('username')
+    # resp.delete_cookie('session')
     if not google.authorized:
         return redirect(url_for("google.login"))
+    else:
+        return "Invalid credentials! Make sure you're logging in with your Choate account. <a href=" + url_for("google.login") + ">Try again.</a>"
 
 def get_profile():
     """
