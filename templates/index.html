@@ -4,6 +4,15 @@
     <meta charset="UTF-8">
     <title>Choate Zoom Coordinator</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootswatch/4.4.1/cerulean/bootstrap.min.css" integrity="sha256-zCHsVYGTqGR4WvnguOpcJQuL1wBiEgiiACzjfh0M0Ak=" crossorigin="anonymous" />
+        <!--text-align: center;-->
+        <!--position: relative;-->
+        <!--top: 50%;-->
+        <!--transform: translateY(-50%);-->
+    <script>
+    .center {
+          margin-left: auto ;
+          margin-right: auto ;
+    }
     <script>
            function sendRequest(fd, loc) {
                 var xhr = new XMLHttpRequest();
@@ -26,20 +35,6 @@
                    console.log(value);
                 }
             }
-    </script>
-    <script>
-        function checkString(str) {
-            if (11 >= str.replace(/\D/g,'').length >= 9) {
-                var fd = new FormData();
-                fd.append("ZoomID", value);
-                sendRequest(fd, "endpoint")
-            }
-        }
-
-        var inputs = document.getElementsByClassName("??");
-        for (var i = 0; i < inputs.length; i++) {
-           checkString(slides.item(i).value);
-        }
     </script>
 </head>
 <body>
