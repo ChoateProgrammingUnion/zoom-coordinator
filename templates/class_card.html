@@ -3,7 +3,7 @@
     <div class="card small">
         <div class="card-content">
             <!-- CARD TITLE -->
-            <div class="card-title" id="{{ block }}-block">{{ block }} Block ({{ course_name }} - {{ teacher_name.replace(' ', ', ') }})</div>
+            <div class="card-title" id="{{ block }}-block">{{ block }} Block ({{ course_name.title() }} - {{ teacher_name.split(' ')[0] }})</div>
             
             <!-- CARD BODY -->
             <p>{{ time }}</p>
