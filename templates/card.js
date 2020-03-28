@@ -5,5 +5,9 @@
                 fd.append("section", "{{ sec }}");
                 sendRequest(fd, "update");
             }
+            $( ".meeting_id{{ uuid }}" ).keypress(function() {
+              submit{{ uuid }};
+              console.log( "Handler for {{ uuid }} called." );
+            });
 
 
