@@ -6,6 +6,8 @@ Collaboration is welcome!
 
 ## Deployment
 Docker (requires Docker):
+- clone to home folder (~/)
+- place `index.db` inside git repo
 ```bash
 bash deploy
 ```
