@@ -35,7 +35,7 @@ class SingletonMeta(type):
             cls._obj.__init__(*args, **kwargs)
         return cls._obj
 
-class ScheduleStudent(metaclass=SingletonMeta):
+class Schedule(metaclass=SingletonMeta):
     """
     Schedule will fetch the student's schedule and pass it back as a dict. 
     Students are identified by their Choate email address.
@@ -53,41 +53,82 @@ class ScheduleStudent(metaclass=SingletonMeta):
                 'F': None,
                 'G': None}
 
-    def __init__(self, email):
-        if check_choate_email(email):
-            self.email = email
+    def __init__(self, email=None, name=None):
+        if email is not None:
+            self.isTeacher = False
+            if check_choate_email(email):
+                self.email = email
+            else:
+                raise ValueError(email + " is not a valid Choate provided email address")
         else:
-            raise ValueError(email + " is not a valid Choate provided email address")
+            self.isTeacher = True
+            self.name = name
 
     def fetch_schedule(self):
+        if self.isTeacher: return self.fetch_schedule_teacher()
+
         # Fetch the schedule and store in dictionary
 
-        #  Deal with srp
-        c = self.courses_database.find_one(student_email=self.email, block="A and B on Mon")
-        if c is not None:
-            self.schedule['A'] = c
-            self.schedule['B'] = c
+        classes = self.courses_database.find(student_email=self.email)
 
-        for block in "ABCDEFG":
-            c = self.courses_database.find_one(student_email=self.email, block=block)
-            self.schedule[block] = c
+        for c in classes:
+            c = dict(c)
+            block = c['block']
+
+            if (len(block) > 1):
+                block = block.replace("Fri", "fri")
+
+                for b in "ABCDEFG":
+                    if b in block:
+                        c['block'] = b
+                        self.schedule[b] = c.copy()
+            else:
+                self.schedule[block] = c
 
 
         # Represent schedule as string
+        #
+        # out = ""
+        #
+        # for block in "ABCDEFG":
+        #     course = self.schedule[block]
+        #
+        #     if course is None:
+        #         out += block + " Block: FREE<br>"
+        #     elif course['meeting_id'] != 0:
+        #         out += block + " Block: " + course['course_name'] + " (" + course['course'] + " " + course['sec'] + ") with " + course['teacher_name'] + ' (Meeting id ' + str(course['meeting_id']) + ')<br>'
+        #     else:
+        #         out += block + " Block: " + course['course_name'] + " (" + course['course'] + " " + course['sec'] + ") with " + course['teacher_name'] + '<br>'
+        #
+        # return out
 
-        out = ""
+    def fetch_schedule_teacher(self):
+        # Fetch the schedule and store in dictionary
 
-        for block in "ABCDEFG":
-            course = self.schedule[block]
+        classes = self.courses_database.find(teacher_name=self.name)
 
-            if course is None:
-                out += block + " Block: FREE<br>"
-            elif course['meeting_id'] != 0:
-                out += block + " Block: " + course['course_name'] + " (" + course['course'] + " " + course['sec'] + ") with " + course['teacher_name'] + ' (Meeting id ' + str(course['meeting_id']) + ')<br>'
-            else:
-                out += block + " Block: " + course['course_name'] + " (" + course['course'] + " " + course['sec'] + ") with " + course['teacher_name'] + '<br>'
+        print(self.name)
 
-        return out
+        for c in classes:
+            c = dict(c)
+            block = c['block']
+
+            if block == '':
+                continue
+
+            if (len(block) > 1):
+                block = block.replace("Fri", "fri")
+
+                for b in "ABCDEFG":
+                    if self.schedule[b] is not None:
+                        continue
+                    if b in block:
+                        c['block'] = b
+                        self.schedule[b] = c.copy()
+            elif self.schedule[block] is None:
+                self.schedule[block] = c
+
+        print(self.schedule)
 
     def update_schedule(self, teacher_name, course, section, meeting_id):
         classes_to_update = list(self.courses_database.find(course=course, sec=section))  # TODO Teacher name
