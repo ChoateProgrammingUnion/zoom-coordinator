@@ -76,7 +76,7 @@ def update():
 
     if course == "Office Hours":
         Schedule().update_teacher_database(teacher_name, id_num)
-    elif email and check_teacher(teacher_name):
+    elif email:
         Schedule().update_schedule(course, section, id_num)
 
     return str(id_num)
@@ -110,7 +110,7 @@ def index():
         
         for block, time in block_iter():
             if block == "Break":
-                cards += "<hr>"
+                cards += "<br><br><hr><br><br>"
                 continue
 
             uuid = secrets.token_hex(8)
@@ -146,7 +146,7 @@ def get_profile():
     Checks and sanitizes email. 
     Returns false if not logged in or not choate email.
     """
-    return "bsmall@choate.edu", "Small Benjamin"
+    # return "jpfeil@choate.edu", "Pfeil Jessica"
 
     try:
         if google.authorized:

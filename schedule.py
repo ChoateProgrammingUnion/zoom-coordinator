@@ -190,17 +190,23 @@ class Schedule(metaclass=SingletonMeta):
                 block = block.replace("Fri", "fri")
 
                 for b in "ABCDEFG":
-                    if self.schedule[b] is not None:
-                        continue
                     if b in block:
                         c['block'] = b
                         self.schedule[b] = c.copy()
-            elif self.schedule[block] is None:
+                        self.schedule[b]['meeting_id'] = self.teachers_database.find_one(name=self.name)[b + '_id']
+            else:
                 self.schedule[block] = c
+                self.schedule[block]['meeting_id'] = self.teachers_database.find_one(name=self.name)[block + '_id']
 
     def update_schedule(self, course, section, meeting_id):
         if (self.isTeacher):
             classes_to_update = list(self.courses_database.find(course=course, sec=section))
+
+            t = self.teachers_database.find_one(name=self.name)
+            t[classes_to_update[0]['block'] + "_id"] = meeting_id
+            self.teachers_database.upsert(t, ['id'])
+
+            self.fetch_schedule_teacher()
         else:
             classes_to_update = list(self.courses_database.find(course=course, sec=section, student_email=self.email))
 
