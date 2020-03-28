@@ -33,7 +33,7 @@ def block_iter():
     current_datetime = (datetime.now(pytz.timezone('EST')) + timedelta(hours=1)).replace(second=0, microsecond=0)
     midnight = current_datetime.replace(hour=0, minute=0, second=0, microsecond=0)
 
-    blocks = CLASS_SCHEDULE[weekday]
+    blocks_today = CLASS_SCHEDULE[weekday]
 
     in_progress = []
     completed = []
@@ -42,29 +42,26 @@ def block_iter():
 
     class_num = 0
 
-    for b in blocks:
-        classtime = midnight + OFFSETS[weekday][class_num]
-        time_str = classtime.strftime("%I:%M %p EST")
-        time_from_now = classtime - current_datetime
-        class_num += 1
-
-        if time_from_now < timedelta(minutes=50):
-            completed += [(b, time_str + " (completed)")]
-
-        elif time_from_now < timedelta(hours=0):
-            in_progress += [(b, time_str + " (in progress)")]
-
-        elif time_from_now < timedelta(hours=15):
-            upcoming += [(b, time_str + " (" + str(time_from_now)[:-3] + " from now)")]
-
-        else:
-            upcoming += [(b, "Not Today")]
-
     for b in "ABCDEFG":
-        if b in blocks:
-            continue
+        if b in blocks_today:
+            class_time = midnight + OFFSETS[weekday][class_num]
+            time_str = class_time.strftime("%I:%M %p EST")
+            time_from_now = class_time - current_datetime
+            class_num += 1
 
-        tomorrow += [(b, "Not Today")]
+            if time_from_now < timedelta(minutes=-50):
+                completed += [(b, time_str + " (completed)")]
+
+            elif time_from_now < timedelta(hours=0):
+                in_progress += [(b, time_str + " (in progress)")]
+
+            elif time_from_now < timedelta(hours=15):
+                upcoming += [(b, time_str + " (" + str(time_from_now)[:-3] + " from now)")]
+
+            else:
+                tomorrow += [(b, "Not Today")]
+        else:
+            tomorrow += [(b, "Not Today")]
 
     return tuple(in_progress + upcoming + completed + tomorrow)
 
