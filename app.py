@@ -35,7 +35,7 @@ def search():
     Searches for teacher meeting ids
     """
 
-    query = request.form.get('search_query')
+    query = request.args.get('search')
 
     search_results = Schedule().search_teacher(query)
 
