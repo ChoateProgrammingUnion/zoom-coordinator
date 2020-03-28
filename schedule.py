@@ -130,8 +130,11 @@ class Schedule(metaclass=SingletonMeta):
 
         print(self.schedule)
 
-    def update_schedule(self, teacher_name, course, section, meeting_id):
-        classes_to_update = list(self.courses_database.find(course=course, sec=section))  # TODO Teacher name
+    def update_schedule(self, course, section, meeting_id):
+        if (self.isTeacher):
+            classes_to_update = list(self.courses_database.find(course=course, sec=section))
+        else:
+            classes_to_update = list(self.courses_database.find(course=course, sec=section, student_email=self.email))
 
         print(str(len(classes_to_update)) + " entries to update")
 

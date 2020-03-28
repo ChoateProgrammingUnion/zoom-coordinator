@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+import re
 
 from flask import Flask, render_template, redirect, url_for, request, Markup
 import os
@@ -44,14 +45,24 @@ def update():
     """
     course = request.args.get('course')
     section = request.args.get('section')
-    meeting_id = request.args.get('section')
+    meeting_id = str(request.args.get('meeting_id'))
+    id_num = -1
 
-    if not meeting_id.isdigit():
-        return False
+    lines = meeting_id.split("\n")
+
+    for l in lines:
+        id = str(re.sub(r"\D", "", l))
+        if len(id) > 8 and len(id) < 12:
+            id_num = int(id)
+
+    if (id_num == -1):
+        return "Error"
 
     email, teacher_name = get_profile()
     if email and teacher_name:
-        return Schedule().update_schedule(teacher_name, course, section, meeting_id)
+        Schedule().update_schedule(course, section, id_num)
+
+    return "Success!"
 
 @app.route('/')
 def index():
