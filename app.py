@@ -101,6 +101,9 @@ def index():
 
         card_script = ""
         cards = ""
+
+        toc = {'A': '', 'B': '', 'C': '', 'D': '', 'E': '', 'F': '', 'G': ''}
+
         # print(block_iter())
         # if check_teacher(email):
             # uuid = secrets.token_hex(8)
@@ -123,13 +126,16 @@ def index():
             if schedule is None:
                 continue
 
+            if len(block) == 1:
+                toc[block] = '<li><a href="#' + block + '-block">' + block + ' Block</a></li>'
+
             schedule["uuid"] = uuid
             schedule["time"] = time
 
             cards += render_template("class_card.html", **schedule)
             card_script += render_template("card.js", **schedule)
 
-        return render_template("index.html", cards=Markup(cards), card_js=Markup(card_script))
+        return render_template("index.html", cards=Markup(cards), card_js=Markup(card_script), toc=Markup(toc['A'] + toc['B'] + toc['C'] + toc['D'] + toc['E'] + toc['F'] + toc['G']))
     else:
         return redirect("/login")
 
