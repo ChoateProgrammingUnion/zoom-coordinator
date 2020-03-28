@@ -36,6 +36,14 @@
                  }
              }
             {{ card_js }}
+
+            $(document).ready(function(){
+                $('.scrollspy').scrollSpy();
+            });
+
+            function(id) {
+                return 'a[href="#' + id + '"]';
+            }
         </script>
         <style>
             .card { /* Credit: https://stackoverflow.com/questions/39031224/how-to-center-cards-in-bootstrap-4 */
@@ -51,7 +59,7 @@
         <div class="navbar-fixed">
             <nav class="blue">
                 <div class = "nav-wrapper" style = "padding-left: 25%; padding-right: 25%;" >
-                    <a href="#" class="brand-logo">Choate Zoom Coordinator</a>
+                    <a href="http://127.0.0.1:5000/" class="brand-logo">Choate Zoom Coordinator</a>
                     
                     <ul class = "right hide-on-med-and-down">
                         <li>    
@@ -73,22 +81,30 @@
                                     </div>
                                 </div>
                             </div>          
-                        </li>  
+                        </li>    
 
                     </ul>
                 </div>
             </nav> 
         </div>
         <!-- CARDS -->
+        <div class="row">
+            <div class="col s12 m8 offset-m1 xl7">
+                {{ cards }}
+            </div>
 
-        <div class="container">
-            <br />
-                <h3>Placeholder Text:</h3>
-            <br />
-        </div>
-    
-        <div class="container">
-            {{ cards }}
+
+            <div class="col hide-on-small-only m3 l2">
+                <ul class="section table-of-contents">
+                    <li><a href="#A-block">A Block</a></li>
+                    <li><a href="#B-block">B Block</a></li>
+                    <li><a href="#C-block">C Block</a></li>
+                    <li><a href="#D-block">D Block</a></li>
+                    <li><a href="#E-block">E Block</a></li>
+                    <li><a href="#F-block">F Block</a></li>
+                    <li><a href="#G-block">G Block</a></li>
+                </ul>
+            </div>
         </div>
 
         <!-- FOOTER -->
@@ -110,7 +126,7 @@
                     </div>
                 </div>
             </footer>
-        </div>
+        </div> 
 
 
         <!--JavaScript at end of body for optimized loading-->
