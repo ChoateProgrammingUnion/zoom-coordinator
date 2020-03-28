@@ -37,8 +37,16 @@
                             <div class="col s12 " >
                                     <div class="row" id="topbarsearch">
                                         <div class="input-field col s6 s12 red-text">
-                                            <i class="white-text material-icons prefix">search</i>
-                                            <input type="text" placeholder="search" id="autocomplete-input" class="autocomplete white-text" >
+                                            <!--<i class="white-text material-icons prefix">search</i>-->
+                                            <form action="/search">
+                                                <div class="input-field">
+                                                    <input id="search" type="search" name="search" required>
+                                                    <label class="label-icon" for="search"><i class="material-icons">search</i></label>
+                                                    <i class="material-icons">close</i>
+                                                    <input type="submit" style="display: none" />
+                                                </div>
+                                            </form>
+                                            <!--<input type="text" placeholder="search" id="autocomplete-input" class="autocomplete white-text" >-->
                                         </div>
                                     </div>
                                 </div>
