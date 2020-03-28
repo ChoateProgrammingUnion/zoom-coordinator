@@ -103,7 +103,7 @@ def index():
             if schedule["meeting_id"] and schedule["meeting_id"] != "0":
                 schedule["display_meeting_id"] = schedule["meeting_id"]
             else:
-                schedule["display_meeting_id"] = "Change meeting ID"
+                schedule["display_meeting_id"] = ""
 
 
             print("Schedule", schedule) # debug
