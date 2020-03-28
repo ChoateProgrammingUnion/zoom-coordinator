@@ -5,7 +5,6 @@ from flask import Flask, render_template, redirect, url_for, request, Markup
 import os
 from flask_dance.contrib.google import make_google_blueprint, google 
 from config import GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET
-import time
 import secrets
 from schedule import Schedule, check_choate_email, check_teacher, block_iter
 
@@ -29,10 +28,10 @@ os.environ["OAUTHLIB_RELAX_TOKEN_SCOPE"] = "true"
 google_bp = make_google_blueprint(scope=["https://www.googleapis.com/auth/userinfo.profile", "https://www.googleapis.com/auth/userinfo.email"])
 app.register_blueprint(google_bp, url_prefix="/login")
 
-@app.route('/restricted')
-def restricted():
+@app.route('/search')
+def search():
     """
-    Example of a restricted endpoint
+    Searches for teacher meeting ids
     """
     email, name = get_profile()
     if email and name:
@@ -61,7 +60,8 @@ def update():
         return "Error"
 
     email, teacher_name = get_profile()
-    if email and teacher_name:
+
+    if email and check_teacher(teacher_name):
         Schedule().update_schedule(course, section, id_num)
 
     return "Success!"
@@ -87,12 +87,15 @@ def index():
         card_script = ""
         cards = ""
         # print(block_iter())
-        for block, time in block_iter():
+        # if check_teacher(email):
+            # uuid = secrets.token_hex(8)
+            # cards += render_template("card.html")
+            # card_script += render_template("card.js")
+
+        
+        for block, time in block_iter(teacher=check_teacher(email)):
             uuid = secrets.token_hex(8)
-            if check_teacher(email): # if teacher
-                schedule = Schedule().schedule[block]
-            else: # if student
-                schedule = Schedule().schedule[block]
+            schedule = Schedule().schedule[block] # if teacher, block = "Office Hours"
 
             if schedule is None:
                 continue
@@ -128,6 +131,8 @@ def get_profile():
     Checks and sanitizes email. 
     Returns false if not logged in or not choate email.
     """
+    return "bsmall@choate.edu", "Small Benjamin"
+
     try:
         if google.authorized:
             resp = google.get("/oauth2/v1/userinfo")

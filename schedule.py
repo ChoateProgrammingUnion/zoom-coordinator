@@ -27,9 +27,10 @@ OFFSETS = {
     "Sunday": []
 }
 
-def block_iter():
+def block_iter(teacher=False):
     current_time = time.time() - (4.0 * 3600.0)
-    weekday = datetime.fromtimestamp(current_time).strftime("%A")
+    # weekday = datetime.fromtimestamp(current_time).strftime("%A")
+    weekday = "Monday"
     current_datetime = (datetime.now(pytz.timezone('EST')) + timedelta(hours=1)).replace(second=0, microsecond=0)
     midnight = current_datetime.replace(hour=0, minute=0, second=0, microsecond=0)
 
@@ -42,7 +43,12 @@ def block_iter():
 
     class_num = 0
 
-    for b in "ABCDEFG":
+    if teacher:
+        schedule = ["Office Hours"] + list("ABCDEFG")
+    else:
+        schedule = list("ABCDEFG")
+
+    for b in schedule:
         if b in blocks_today:
             class_time = midnight + OFFSETS[weekday][class_num]
             time_str = class_time.strftime("%I:%M %p EST")
@@ -60,6 +66,8 @@ def block_iter():
 
             else:
                 tomorrow += [(b, "Not Today")]
+        elif b == "Office Hours":
+            tomorrow += [(b, "N/A")]
         else:
             tomorrow += [(b, "Not Today")]
 
@@ -106,7 +114,8 @@ class Schedule(metaclass=SingletonMeta):
     courses_database = db['courses']
     teachers_database = db['teachers']
 
-    schedule = {'A': None,
+    schedule = {'Office Hours': None,
+                'A': None,
                 'B': None,
                 'C': None,
                 'D': None,
