@@ -29,10 +29,6 @@ os.environ["OAUTHLIB_RELAX_TOKEN_SCOPE"] = "true"
 google_bp = make_google_blueprint(scope=["https://www.googleapis.com/auth/userinfo.profile", "https://www.googleapis.com/auth/userinfo.email"])
 app.register_blueprint(google_bp, url_prefix="/login")
 
-@app.route('/bye')
-def bye():
-    pass
-
 @app.route('/search')
 def search():
     """
@@ -131,7 +127,8 @@ def index():
                 continue
 
             if len(block) == 1:
-                toc[block] = '<li><a href="#' + block + '-block">' + block + ' Block</a></li>'
+                # toc[block] = '<br><li><a href="#' + block + '-block">' + block + ' Block</a></li>'
+                toc[block] = render_template("toc.html", block=block)
 
             schedule["uuid"] = uuid
             schedule["time"] = time
