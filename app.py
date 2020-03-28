@@ -43,6 +43,7 @@ def update():
     """
     Gets the Zoom meeting ids
     """
+    print(request.form)
     course = request.form.get('course')
     section = request.form.get('section')
     meeting_id = str(request.form.get('meeting_id'))
