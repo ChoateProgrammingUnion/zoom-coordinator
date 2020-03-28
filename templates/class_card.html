@@ -7,18 +7,20 @@
                 <div class="card-title" >{{ block }} Block ({{ course_name.title() }} - {{ teacher_name }})</div>
 
                 <!-- CARD BODY -->
-                <p>{{ time }}</p>
+                <p style="margin-bottom: 25px;">{{ time }}</p>
                 <!--<h4 class="card-title">Primary card title</h4>-->
                 <!--<p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>-->
                 <!--<ol class="breadcrumb">-->
                 <!--<a href="https://zoom.us/j/{{ meeting_id }}" class="card-link">{{ meeting_id }}</a>-->
                 <!--</ol>-->
 
+
                 <span id="span{{ uuid }}">
-                    <button type="button" class="btn btn-outline-info" onclick="window.open('https://zoom.us/j/{{ meeting_id }}'); target='_blank'">Join Zoom Meeting (id: {{ meeting_id }})</button>
+                    <button type="button" class="btn waves-effect waves-light light-blue accent-3" onclick="window.open('https://zoom.us/j/{{ meeting_id }}'); target='_blank'">Join Zoom Meeting (id: {{ meeting_id }})</button>
                 </span>
-                <hr>
-                <input type="text" class="form-control meeting_id{{ uuid }}" placeholder="Change meeting ID" value=""id="meeting_id{{ uuid }}">
+                <hr style="margin-top: 25px; border: 1px solid #000;">
+
+                <input type="text" class="form-control meeting_id{{ uuid }}" placeholder="Change meeting ID" value=""id="meeting_id{{ uuid }}" style="margin-top: 25px;">
                 <p id="course{{ uuid }}" hidden>{{ course }}</p>
                 <p class="section{{ uuid }}" hidden>{{ sec }}</p>
             </div>
