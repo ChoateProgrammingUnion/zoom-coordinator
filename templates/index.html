@@ -27,20 +27,6 @@
                 }
             }
     </script>
-    <script>
-        function checkString(str) {
-            if (11 >= str.replace(/\D/g,'').length >= 9) {
-                var fd = new FormData();
-                fd.append("ZoomID", value);
-                sendRequest(fd, "endpoint")
-            }
-        }
-
-        var inputs = document.getElementsByClassName("??");
-        for (var i = 0; i < inputs.length; i++) {
-           checkString(slides.item(i).value);
-        }
-    </script>
 </head>
 <body>
     <div>
