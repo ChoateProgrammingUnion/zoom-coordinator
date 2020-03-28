@@ -26,6 +26,7 @@ flask run
 - Gunicorn (for production)
 - Flask-Dance
 - validators
+- fuzzysearch
 
 ## Layout
 [`app.py`](/app.py) is the main app
