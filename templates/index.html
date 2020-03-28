@@ -14,6 +14,27 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
         
         <script>
+            function sendRequest(fd, loc) {
+                 var xhr = new XMLHttpRequest();
+                 xhr.onload = function(e) {
+                     if (this.readyState === 4) {
+                         console.log("Server returned: ", e.target.responseText);
+                         if (e.target.responseText == "Success!") {
+                             window.location.reload()
+                         }
+                     }
+                 };
+                 xhr.timeout = 5000;
+                 xhr.open("POST", loc, true);
+                 xhr.send(fd);
+                 console.log(fd);
+                 for (var value of fd.values()) {
+                    console.log(value);
+                 }
+                 for (var value of fd.keys()) {
+                    console.log(value);
+                 }
+             }
             {{ card_js }}
         </script>
         <style>
@@ -29,12 +50,13 @@
         <!-- HEADER -->
         <div class="navbar-fixed">
             <nav class="blue">
-                <div class = "nav-wrapper">
-                    <a href="#" class="brand-logo center">Choate Zoom Coordinator</a>
+                <div class = "nav-wrapper" style = "padding-left: 25%; padding-right: 25%;" >
+                    <a href="#" class="brand-logo">Choate Zoom Coordinator</a>
+                    
                     <ul class = "right hide-on-med-and-down">
                         <li>    
                             <div class="center row">
-                            <div class="col s12 " >
+                                <div class="col s12 " >
                                     <div class="row" id="topbarsearch">
                                         <div class="input-field col s6 s12 red-text">
                                             <!--<i class="white-text material-icons prefix">search</i>-->

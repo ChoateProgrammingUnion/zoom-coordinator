@@ -34,9 +34,18 @@ def search():
     """
     Searches for teacher meeting ids
     """
-    email, name = get_profile()
-    if email and name:
-        return "Hello, world!"
+
+    query = request.form.get('search_query')
+
+    search_results = Schedule().search_teacher(query)
+
+    cards = ""
+
+    for result in search_results:
+        cards += render_template("teacher_card.html", **result)
+
+    return render_template("index.html", cards=Markup(cards), card_js="")
+
 
 @app.route('/update', methods=['POST'])
 def update():
@@ -95,7 +104,7 @@ def index():
         # print(block_iter())
         # if check_teacher(email):
             # uuid = secrets.token_hex(8)
-            # cards += render_template("card.html")
+            # cards += render_template("class_card.html")
             # card_script += render_template("card.js")
 
         
@@ -117,12 +126,7 @@ def index():
             schedule["uuid"] = uuid
             schedule["time"] = time
 
-            if schedule["meeting_id"] and schedule["meeting_id"] != "0":
-                schedule["display_meeting_id"] = schedule["meeting_id"]
-            else:
-                schedule["display_meeting_id"] = ""
-
-            cards += render_template("card.html", **schedule)
+            cards += render_template("class_card.html", **schedule)
             card_script += render_template("card.js", **schedule)
 
         return render_template("index.html", cards=Markup(cards), card_js=Markup(card_script))

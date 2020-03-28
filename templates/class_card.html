@@ -1,0 +1,24 @@
+<div class = "z-depth-3">
+    <div class="card small">
+        <div class="card-content">
+            <!-- CARD TITLE -->
+            <div class="card-title">{{ block }} Block ({{ course_name }} - {{ teacher_name.replace(' ', ', ') }})</div>
+            
+            <!-- CARD BODY -->
+            <h4 class="card-title">{{ time }}</h4>
+            <!--<h4 class="card-title">Primary card title</h4>-->
+            <!--<p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>-->
+            <!--<ol class="breadcrumb">-->
+            <!--<a href="https://zoom.us/j/{{ meeting_id }}" class="card-link">{{ meeting_id }}</a>-->
+            <!--</ol>-->
+            
+            <span id="span{{ uuid }}">
+                <button type="button" class="btn btn-outline-info" onclick="window.open('https://zoom.us/j/{{ meeting_id }}');">Join Zoom Meeting (id: {{ meeting_id }})</button>
+            </span>
+            <hr>
+            <input type="text" class="form-control meeting_id{{ uuid }}" placeholder="Change meeting ID" value=""id="meeting_id{{ uuid }}">
+            <p id="course{{ uuid }}" hidden>{{ course }}</p>
+            <p class="section{{ uuid }}" hidden>{{ sec }}</p>
+        </div>
+    </div>
+</div>
