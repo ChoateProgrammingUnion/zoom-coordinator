@@ -7,7 +7,7 @@ from flask_dance.contrib.google import make_google_blueprint, google
 from config import GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET
 import time
 import secrets
-from schedule import Schedule, check_choate_email, check_teacher
+from schedule import Schedule, check_choate_email, check_teacher, block_iter
 
 # Temp (INSECURE, REMOVE IN PROD)
 os.environ['OAUTHLIB_INSECURE_TRANSPORT'] = '1'
@@ -78,12 +78,13 @@ def index():
             Schedule(email=email)
 
         # render_template here
-        print(Schedule().search_teacher("Guelakis Patrick"))
+        # print(Schedule().search_teacher("Guelakis Patrick"))
 
         Schedule().fetch_schedule()
 
         cards = ""
-        for block in "ABCDEFG":
+        print(block_iter())
+        for block, time in block_iter():
             if check_teacher(email): # if teacher
                 schedule = Schedule().schedule[block]
             else: # if student

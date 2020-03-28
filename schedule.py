@@ -1,8 +1,55 @@
 import dataset
+import pytz
 import validators
+import time
+from datetime import datetime, timedelta
 
 from preprocess import DB_LOC
 from fuzzysearch import find_near_matches
+
+CLASS_SCHEDULE = {
+    "Monday": "ABCDE",
+    "Tuesday": "FGAB",
+    "Wednesday": "CDE",
+    "Thursday": "FAGB",
+    "Friday": "CDEFG"
+}
+
+OFFSETS = {
+    "Monday": [timedelta(hours=10), timedelta(hours=11), timedelta(hours=13), timedelta(hours=14), timedelta(hours=15)],
+    "Tuesday": [timedelta(hours=10), timedelta(hours=11), timedelta(hours=13), timedelta(hours=14)],
+    "Wednesday": [timedelta(hours=10), timedelta(hours=11), timedelta(hours=13)],
+    "Thursday": [timedelta(hours=10), timedelta(hours=11), timedelta(hours=13), timedelta(hours=14)],
+    "Friday": [timedelta(hours=10), timedelta(hours=11), timedelta(hours=13), timedelta(hours=14), timedelta(hours=15)]
+}
+
+def block_iter():
+    current_time = time.time() - (4.0 * 3600.0)
+    weekday = datetime.fromtimestamp(current_time).strftime("%A")
+    current_datetime = (datetime.now(pytz.timezone('EST')) + timedelta(hours=1)).replace(second=0, microsecond=0)
+    midnight = current_datetime.replace(hour=0, minute=0, second=0, microsecond=0)
+
+    blocks = CLASS_SCHEDULE[weekday]
+
+    ret = []
+    class_num = 0
+
+    for b in blocks:
+        classtime = midnight + OFFSETS[weekday][class_num]
+        time_str = classtime.strftime("%I:%M %p EST")
+        time_from_now = classtime - current_datetime
+        class_num += 1
+
+        if time_from_now < timedelta(minutes=50):
+            ret += [(b, time_str + " (completed)")]
+
+        elif time_from_now < timedelta(hours=0):
+            ret += [(b, time_str + " (in progress)")]
+
+        else:
+            ret += [(b, time_str + " (" + str(time_from_now)[:-3] + " from now)")]
+
+    return tuple(ret)
 
 def check_choate_email(email: str) -> bool:
     """
