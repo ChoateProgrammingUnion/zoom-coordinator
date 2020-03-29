@@ -96,7 +96,10 @@ def block_iter(email):
             else:
                 tomorrow += [(b, "Not Today")]
         else:
-            tomorrow += [(b, "Not Today")]
+            if classes_not_today:
+                tomorrow += [(b, "Not On " + weekday)]
+            else:
+                tomorrow += [(b, "Not Today")]
 
     if len(in_progress) + len(upcoming) + len(completed) > 0 and len(tomorrow) != 0:
         line_break = [("Break", "")]
