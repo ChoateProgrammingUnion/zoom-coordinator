@@ -188,6 +188,7 @@ def get_profile():
     Returns false if not logged in or not choate email.
     """
     return "mfan21@choate.edu", "Fan Max"
+    # return "pfeil@choate.edu", "Pfeil Jessica"
 
     try:
         if google.authorized:
