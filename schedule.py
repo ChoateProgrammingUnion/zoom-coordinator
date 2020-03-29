@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import dataset
 import copy
+import fcntl
 import pytz
 import validators
 import time
@@ -176,13 +177,17 @@ class Schedule():
         self.schedule = {'A': None, 'B': None, 'C': None, 'D': None, 'E': None, 'F': None, 'G': None}
 
     def transactional_upsert(self, table: str, data: dict, key: list) -> bool:
+        fcntl.flock('index.db', 'LOCK_EX')
         self.db.begin()
         try:
             self.db[str(table)].upsert(dict(copy.deepcopy(data)), list(key))
             self.db.commit()
+            fcntl.flock('index.db', 'LOCK_UN')
             return True
         except:
             self.db.rollback()
+
+        fcntl.flock('index.db', 'LOCK_UN')
         return False
 
     def teacher_database_upsert(self, data):
