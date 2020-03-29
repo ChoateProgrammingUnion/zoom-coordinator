@@ -6,7 +6,7 @@
                         console.log("Server returned: ", e.target.responseText);
                         if (e.target.responseText != "Error") {
                             meetingId = e.target.responseText
-                            $( "#span{{ uuid }}" ).html("<button type=\"button\" class=\"btn waves-effect waves-light light-blue accent-3\" onclick=\"window.open('https://zoom.us/j/" + meetingId + "');\">Join Class<span id=\"full-text\"> (id: " + meetingId + ")</span></button>");
+                            $( "#span{{ uuid }}" ).html("<button style=\"background-color: rgb(0,147,213); font-family: Montserrat; margin: 5px;\" type=\"button\" class=\"btn waves-effect waves-light\" onclick=\"window.open('https://zoom.us/j/" + meetingId + "');\">Join Class<span id=\"full-text\"> (id: " + meetingId + ")</span></button>");
                             M.toast({html: 'Meeting ID successfully changed to ' + e.target.responseText + "."})
                         } 
                     }
