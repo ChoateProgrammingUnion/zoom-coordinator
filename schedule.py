@@ -34,6 +34,27 @@ def block_iter(email):
     current_datetime = (datetime.now(pytz.timezone('EST')) + timedelta(hours=1)).replace(second=0, microsecond=0)
     midnight = current_datetime.replace(hour=0, minute=0, second=0, microsecond=0)
 
+    classes_not_today = False
+
+    if weekday == "Saturday":
+        weekday = "Monday"
+        midnight += timedelta(hours=48)
+        classes_not_today = True
+
+    elif weekday == "Sunday":
+        weekday = "Monday"
+        midnight += timedelta(hours=48)
+        classes_not_today = True
+
+    elif current_datetime > midnight + OFFSETS[weekday][-1] + timedelta(minutes=50):
+        midnight += timedelta(hours=24)
+        weekday = (current_datetime + timedelta(hours=24)).strftime("%A")
+        classes_not_today = True
+
+        if weekday == "Saturday":
+            weekday = "Monday"
+            midnight += timedelta(hours=48)
+
     blocks_today = CLASS_SCHEDULE[weekday]
 
     in_progress = []
@@ -50,14 +71,20 @@ def block_iter(email):
 
     class_num = 0
 
+    if classes_not_today:
+        upcoming += [("Not Today", weekday)]
+
     for b in "ABCDEFG":
         if b in blocks_today:
             class_time = midnight + OFFSETS[weekday][class_num]
-            time_str = class_time.strftime("%I:%M %p EST")
+            time_str = class_time.strftime("%I:%M %p EDT")
             time_from_now = class_time - current_datetime
             class_num += 1
 
-            if time_from_now < timedelta(minutes=-50):
+            if classes_not_today:
+                upcoming += [(b, time_str + " (on " + weekday + ")")]
+
+            elif time_from_now < timedelta(minutes=-50):
                 completed += [(b, time_str + " (completed)")]
 
             elif time_from_now < timedelta(hours=0):
@@ -69,9 +96,12 @@ def block_iter(email):
             else:
                 tomorrow += [(b, "Not Today")]
         else:
-            tomorrow += [(b, "Not Today")]
+            if classes_not_today:
+                tomorrow += [(b, "Not On " + weekday)]
+            else:
+                tomorrow += [(b, "Not Today")]
 
-    if len(in_progress) + len(upcoming) + len(completed) > 0:
+    if len(in_progress) + len(upcoming) + len(completed) > 0 and len(tomorrow) != 0:
         line_break = [("Break", "")]
     else:
         line_break = []

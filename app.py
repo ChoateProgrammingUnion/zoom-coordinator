@@ -114,10 +114,17 @@ def index():
             # cards += render_template("class_card.html")
             # card_script += render_template("card.js")
 
-        
+        top_label = "Today's Classes:"
+        bottom_label = "Not Today"
+
         for block, time in block_iter(email):
+            if block == "Not Today":
+                top_label = time + "'s Classes"
+                bottom_label = "Not On " + time
+                continue
+
             if block == "Break":
-                cards += "<br><br><hr><br><h4>Not Today:</h4><br>"
+                cards += "<br><br><hr><br><h4>" + bottom_label + "</h4><br>"
                 continue
 
             uuid = secrets.token_hex(8)
@@ -145,7 +152,11 @@ def index():
             cards += render_template("class_card.html", **schedule)
             card_script += render_template("card.js", **schedule)
 
-        return render_template("index.html", cards=Markup(cards), card_js=Markup(card_script), toc=Markup(toc['A'] + toc['B'] + toc['C'] + toc['D'] + toc['E'] + toc['F'] + toc['G']))
+        return render_template("index.html",
+                               cards=Markup(cards),
+                               card_js=Markup(card_script),
+                               toc=Markup(toc['A'] + toc['B'] + toc['C'] + toc['D'] + toc['E'] + toc['F'] + toc['G']),
+                               top_label=top_label)
     else:
         return redirect("/login")
 
