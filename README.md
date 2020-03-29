@@ -44,14 +44,4 @@ flask run
 
 
 ## TODO
-Backend:
-- [x] authentication (talk to Speyer)
-- [x] checking if authorized (student and teacher view)
-- [ ] keeping track of people/classes (db)
-- [ ] admin edits (admin view) (optional)
-
-Frontend:
-- [ ] student view
-- [ ] teacher view
-- [ ] login page
-- [ ] admin view (optional)
+None, features are now frozen for production (mostly).
