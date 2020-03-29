@@ -288,3 +288,15 @@ class Schedule():
                 matched_teachers += [teacher]
 
         return matched_teachers
+
+    def search_teacher_exact(self, teacher_name):
+        teacher_name = teacher_name.replace(".", "").replace(",", "")
+        matched_teachers = []
+        all_teachers = self.teachers_database.find()
+
+        for teacher in all_teachers:
+            # if (len(find_near_matches(teacher_name, teacher['name'], max_l_dist=1)) > 0):
+            if teacher_name == teacher['name']:
+                return teacher
+
+        return None
