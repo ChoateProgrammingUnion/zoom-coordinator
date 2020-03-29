@@ -263,6 +263,7 @@ class Schedule():
         self.teachers_database.upsert(t, ['id'])
 
     def search_teacher(self, teacher_name):
+        teacher_name = teacher_name.replace(".", "").replace(",", "")
         matched_teachers = []
         all_teachers = self.teachers_database.find()
 
