@@ -1,4 +1,5 @@
 config.py
+*.lock
 index.db
 .idea/
 data/
