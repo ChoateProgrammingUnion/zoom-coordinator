@@ -15,6 +15,10 @@
         <!--Let browser know website is optimized for mobile-->
         <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
         
+        <style>
+            input-field input[type=text]:focus {border-bottom: 1px solid #00b0ff ; box-shadow: 0 1px 0 0 #000;}
+        </style>
+
         <script>
             function sendRequest(fd, loc) {
                  var xhr = new XMLHttpRequest();
@@ -114,7 +118,7 @@
             </div>
         </div>
         <div class="fixed-action-btn">
-            <a class="btn-floating btn-large red" href="#top">
+            <a class="btn-floating btn-large yellow darken-3" href="#top">
                 <i class="large material-icons">arrow_upward</i>
             </a>
         </div>
