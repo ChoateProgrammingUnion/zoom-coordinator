@@ -165,8 +165,14 @@ def index():
                                toc=Markup(toc['A'] + toc['B'] + toc['C'] + toc['D'] + toc['E'] + toc['F'] + toc['G']),
                                top_label=top_label)
     else:
-        return render_template("landing.html")
+        button = render_template("login.html")
+        return render_template("landing.html", button=Markup(button))
         # return redirect("/login")
+
+@app.route('/help')
+def help():
+    button = render_template("back.html")
+    return render_template("landing.html", button=Markup(button))
 
 @app.route('/login')
 def login():
