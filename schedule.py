@@ -268,6 +268,7 @@ class Schedule():
         block = ""
         for b in "ABDEFG":
             if t[b] == course:
+                print("Updating " + b + " Block")
                 block = b
                 t[block + "_id"] = str(id)
 
