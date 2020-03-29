@@ -81,7 +81,7 @@ def update():
     user_schedule = ScheduleManager().getSchedule(email)
 
     if course == "Office Hours":
-        user_schedule.update_teacher_database(teacher_name, id_num)
+        user_schedule.update_teacher_database_office_id(teacher_name, id_num)
     elif email:
         user_schedule.update_schedule(course, section, id_num)
 
@@ -186,7 +186,7 @@ def get_profile():
     Checks and sanitizes email. 
     Returns false if not logged in or not choate email.
     """
-    # return "pguelakis@choate.edu", "Guelakis Patrick"
+    # return "jcook@choate.edu", "Cook Jan"
 
     try:
         if google.authorized:

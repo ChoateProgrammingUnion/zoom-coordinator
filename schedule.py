@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import dataset
 import pytz
 import validators
@@ -151,7 +153,7 @@ class ScheduleManager(metaclass=SingletonMeta):
         if not self.schedules.get(email):
             self.schedules.update({email: Schedule(self.db, self.courses_database, self.teachers_database, email, name, isTeacher)})
 
-    def getSchedule(self, email):
+    def getSchedule(self, email) -> Schedule:
         return self.schedules[email]
 
 
@@ -240,9 +242,7 @@ class Schedule():
         if (self.isTeacher):
             classes_to_update = list(self.courses_database.find(course=course, sec=section))
 
-            t = self.teachers_database.find_one(name=self.name)
-            t[classes_to_update[0]['block'] + "_id"] = meeting_id
-            self.teachers_database.upsert(t, ['id'])
+            self.update_teacher_database_block_id(self.name, course + " " + str(section), meeting_id)
 
             self.fetch_schedule_teacher()
         else:
@@ -256,9 +256,24 @@ class Schedule():
             c['meeting_id'] = meeting_id
             self.courses_database.upsert(c, ['id'])
 
-    def update_teacher_database(self, name, office_id):
+    def update_teacher_database_office_id(self, name, office_id):
         t = self.teachers_database.find_one(name=name)
         t['office_id'] = office_id
+
+        self.teachers_database.upsert(t, ['id'])
+
+    def update_teacher_database_block_id(self, name, course, id):
+        t = self.teachers_database.find_one(name=name)
+
+        block = ""
+        for b in "ABDEFG":
+            if t[b] == course:
+                block = b
+                t[block + "_id"] = str(id)
+
+        if block == "":
+            print("Class Not Found")
+            return
 
         self.teachers_database.upsert(t, ['id'])
 
