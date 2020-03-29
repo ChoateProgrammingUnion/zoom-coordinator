@@ -41,7 +41,7 @@ def import_data(filename: str):
                 else:
                     teacher = {"name":each_row['teacher_name'], 'office_id':0, str(block):each_row['course'] + " " + each_row['sec'], str(block) + "_id":0}
 
-                teachers.insert(teacher)
+                teachers.upsert(teacher, ["id"])
             else:
                 if (len(block) > 1):
                     block = block.replace("Fri", "fri")
