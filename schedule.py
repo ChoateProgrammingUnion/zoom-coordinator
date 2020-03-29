@@ -27,23 +27,14 @@ OFFSETS = {
     "Sunday": []
 }
 
-def block_iter(email, offset = 0):
+def block_iter(email):
     current_time = time.time() - (4.0 * 3600.0)
-
     weekday = datetime.fromtimestamp(current_time).strftime("%A")
-    weekday_fetch = (datetime.fromtimestamp(current_time) + timedelta(days=offset)).strftime("%A")
-    current_datetime = (datetime.now(pytz.timezone('EST')) + timedelta(hours=1)).replace(second=0, microsecond=0) # for EDT
-
     # weekday = "Monday"
-    # if not day:
-    # else:
-        # current_datetime = (datetime.now(pytz.timezone('EST')) + timedelta(hours=1)).replace(second=0, microsecond=0)
-        # weekday = (datetime.fromtimestamp(current_time) + timedelta(hours=24)).strftime("%A")
-        # current_datetime = (datetime.now(pytz.timezone('EST')) + timedelta(hours=1)).replace(hour=0, second=1, microsecond=1)
-
+    current_datetime = (datetime.now(pytz.timezone('EST')) + timedelta(hours=1)).replace(second=0, microsecond=0)
     midnight = current_datetime.replace(hour=0, minute=0, second=0, microsecond=0)
 
-    blocks_today = CLASS_SCHEDULE[weekday_fetch]
+    blocks_today = CLASS_SCHEDULE[weekday]
 
     in_progress = []
     completed = []
@@ -61,9 +52,7 @@ def block_iter(email, offset = 0):
 
     for b in "ABCDEFG":
         if b in blocks_today:
-            # print("midnight", midnight, "weekday", weekday, "weekday_fetch", weekday_fetch, "offsets", OFFSETS, "offsets act", OFFSETS[weekday])
-            print(OFFSETS[weekday_fetch])
-            class_time = midnight + OFFSETS[weekday_fetch][class_num]
+            class_time = midnight + OFFSETS[weekday][class_num]
             time_str = class_time.strftime("%I:%M %p EST")
             time_from_now = class_time - current_datetime
             class_num += 1
@@ -81,12 +70,6 @@ def block_iter(email, offset = 0):
                 tomorrow += [(b, "Not Today")]
         else:
             tomorrow += [(b, "Not Today")]
-
-    if not any([bool(x != "Not Today") for _, x in tomorrow]):
-        return block_iter(email, offset=(offset+1)) 
-    else:
-        print(tomorrow)
-
 
     if len(in_progress) + len(upcoming) + len(completed) > 0:
         line_break = [("Break", "")]
