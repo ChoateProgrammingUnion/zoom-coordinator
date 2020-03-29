@@ -175,22 +175,22 @@ class Schedule():
 
         self.schedule = {'A': None, 'B': None, 'C': None, 'D': None, 'E': None, 'F': None, 'G': None}
 
-    def transactional_upsert(self, db, table: str, data: dict, key: list) -> bool:
+    def transactional_upsert(self, table: str, data: dict, key: list) -> bool:
         self.db.begin()
         try:
             self.db[str(table)].upsert(dict(copy.deepcopy(data)), list(key))
-            db.commit()
+            self.db.commit()
             return True
         except:
-            db.rollback()
+            self.db.rollback()
         return False
 
     def teacher_database_upsert(self, data):
-        while not self.transactional_upsert(self.db, 'teachers', data, ['id']):
+        while not self.transactional_upsert('teachers', data, ['id']):
             pass
 
     def course_database_upsert(self, data):
-        while not self.transactional_upsert(self.db, 'courses', data, ['id']):
+        while not self.transactional_upsert('courses', data, ['id']):
             pass
 
     def fetch_schedule(self):
