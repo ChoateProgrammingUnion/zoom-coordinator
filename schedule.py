@@ -77,7 +77,7 @@ def block_iter(email):
     for b in "ABCDEFG":
         if b in blocks_today:
             class_time = midnight + OFFSETS[weekday][class_num]
-            time_str = class_time.strftime("%I:%M %p EST")
+            time_str = class_time.strftime("%I:%M %p EDT")
             time_from_now = class_time - current_datetime
             class_num += 1
 
