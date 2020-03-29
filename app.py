@@ -29,7 +29,7 @@ app.config['PREFERRED_URL_SCHEME'] = "https"
 os.environ["OAUTHLIB_RELAX_TOKEN_SCOPE"] = "true" 
 
 google_bp = make_google_blueprint(scope=["https://www.googleapis.com/auth/userinfo.profile", "https://www.googleapis.com/auth/userinfo.email"])
-app.register_blueprint(google_bp, url_prefix="/login")
+app.register_blueprint(google_bp, url_prefix="/login", reprompt_select_account=True)
 
 @app.route('/search')
 def search():
