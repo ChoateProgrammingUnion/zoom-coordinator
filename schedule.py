@@ -188,7 +188,6 @@ class Schedule():
             except:
                 self.db.rollback()
 
-        fcntl.flock('index.db', 'LOCK_UN')
         return False
 
     def teacher_database_upsert(self, data):
