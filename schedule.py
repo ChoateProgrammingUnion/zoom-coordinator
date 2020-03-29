@@ -266,7 +266,7 @@ class Schedule():
         t = self.teachers_database.find_one(name=name)
 
         block = ""
-        for b in "ABDEFG":
+        for b in "ABCDEFG":
             if t[b] == course:
                 print("Updating " + b + " Block")
                 block = b
