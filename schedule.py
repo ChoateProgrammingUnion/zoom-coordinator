@@ -10,7 +10,7 @@ from fuzzysearch import find_near_matches
 CLASS_SCHEDULE = {
     "Monday": "ABCDE",
     "Tuesday": "FGAB",
-    "Wednesday": "CDE",
+    "Wednesday": "ECD",
     "Thursday": "FAGB",
     "Friday": "CDEFG",
     "Saturday": "",
