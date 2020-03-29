@@ -60,6 +60,14 @@
                 top: -10rem;
                 visibility: hidden;
             }
+
+            #short-text { display: none; }
+
+            /*When resolution <= 1200px, hide full text and show short text*/
+            @media (max-width: 1200px) {
+                #short-text { display: inline-block; }
+                #full-text { display: none; }
+            } /* Credit: https://stackoverflow.com/questions/39894291/how-to-change-text-not-font-size-according-to-screen-size-in-css*/
         </style>
     </head>
   
@@ -69,7 +77,8 @@
         <div class="navbar-fixed">
             <nav class="blue darken-4">
                 <div class = "nav-wrapper" style = "padding-left: 10%; padding-right: auto;" >
-                    <a href="/" class="brand-logo" style="font-family: Montserrat; font-weight: 900 !important; font-size: 42px;">Choate Zoom Coordinator</a>
+                    <a href="/" id="full-text" class="brand-logo" style="font-family: Montserrat; font-weight: 900 !important; font-size: 3rem;">Choate Zoom Coordinator</a>
+                    <a href="/" id="short-text" class="brand-logo short-text" style="font-family: Montserrat; font-weight: 900 !important; font-size: 3rem;">CZC</a>
                     
                     <ul class = "right hide-on-med-and-down">
                         <li>    
