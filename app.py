@@ -187,7 +187,7 @@ def get_profile():
     Checks and sanitizes email. 
     Returns false if not logged in or not choate email.
     """
-    # return "kditieri@choate.edu", "Di Tieri Kyle"
+    return "mfan21@choate.edu", "Fan Max"
 
     try:
         if google.authorized:

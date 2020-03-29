@@ -185,6 +185,14 @@ class Schedule():
             db.rollback()
         return False
 
+    def teacher_database_upsert(self, data):
+        while not self.transactional_upsert(self.db, 'teachers', data, ['id']):
+            pass
+
+    def course_database_upsert(self, data):
+        while not self.transactional_upsert(self.db, 'courses', data, ['id']):
+            pass
+
     def fetch_schedule(self):
         self.schedule = {'A': None, 'B': None, 'C': None, 'D': None, 'E': None, 'F': None, 'G': None}
 
@@ -265,13 +273,13 @@ class Schedule():
             print("Updated " + c['student_name'])
 
             c['meeting_id'] = meeting_id
-            self.courses_database.upsert(c, ['id'])
+            self.course_database_upsert(c)
 
     def update_teacher_database_office_id(self, name, office_id):
         t = self.teachers_database.find_one(name=name)
         t['office_id'] = office_id
 
-        self.teachers_database.upsert(t, ['id'])
+        self.teacher_database_upsert(t)
 
     def update_teacher_database_block_id(self, name, course, id):
         t = self.teachers_database.find_one(name=name)
@@ -287,7 +295,7 @@ class Schedule():
             print("Class Not Found")
             return
 
-        self.teachers_database.upsert(t, ['id'])
+        self.teacher_database_upsert(t)
 
     def search_teacher(self, teacher_name):
         teacher_name = teacher_name.replace(".", "").replace(",", "")
