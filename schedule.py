@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import dataset
+import copy
 import pytz
 import validators
 import time
@@ -173,6 +174,16 @@ class Schedule():
         self.isTeacher = isTeacher
 
         self.schedule = {'A': None, 'B': None, 'C': None, 'D': None, 'E': None, 'F': None, 'G': None}
+
+    def transactional_upsert(self, db, table: str, data: dict, key: list) -> bool:
+        self.db.begin()
+        try:
+            self.db[str(table)].upsert(dict(copy.deepcopy(data)), list(key))
+            db.commit()
+            return True
+        except:
+            db.rollback()
+        return False
 
     def fetch_schedule(self):
         self.schedule = {'A': None, 'B': None, 'C': None, 'D': None, 'E': None, 'F': None, 'G': None}
