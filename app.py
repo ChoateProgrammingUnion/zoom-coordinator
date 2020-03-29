@@ -139,7 +139,8 @@ def index():
             else:
                 schedule = user_schedule.schedule[block]
 
-            schedule["office_meeting_id"] = user_schedule.search_teacher(schedule["teacher_name"])[0]['office_id']
+            if not check_teacher(email):
+                schedule["office_meeting_id"] = user_schedule.search_teacher(schedule["teacher_name"])[0]['office_id']
 
             if schedule is None:
                 continue
@@ -182,7 +183,7 @@ def get_profile():
     Checks and sanitizes email. 
     Returns false if not logged in or not choate email.
     """
-    # return "test@choate.edu", "test tester"
+    # return "pguelakis@choate.edu", "Guelakis Patrick"
 
     try:
         if google.authorized:

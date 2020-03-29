@@ -18,7 +18,9 @@
                 <span id="span{{ uuid }}">
                     <button style="background-color: rgb(0,147,213)"type="button" class="btn waves-effect waves-light" onclick="window.open('https://zoom.us/j/{{ meeting_id }}'); target='_blank'">Join Class (id: {{ meeting_id }})</button>
                 </span>
-                <button style="background-color: rgb(0,147,213)"type="button" class="btn waves-effect waves-light" onclick="window.open('https://zoom.us/j/{{ office_meeting_id }}'); target='_blank'">Office Hours (id: {{ office_meeting_id }})</button>
+                {% if office_meeting_id %}
+                    <button style="background-color: rgb(0,147,213)"type="button" class="btn waves-effect waves-light" onclick="window.open('https://zoom.us/j/{{ office_meeting_id }}'); target='_blank'">Office Hours (id: {{ office_meeting_id }})</button>
+                {% endif %}
                 <hr style="margin-top: 25px; border: 1px solid rgb(187, 187, 187);">
 
                 <input type="text" class="form-control meeting_id{{ uuid }}" placeholder="Change Class ID" value=""id="meeting_id{{ uuid }}" style="margin-top: 25px; border-bottom: 1px solid #333 ; box-shadow: 0 1px 0 0 #000;">
