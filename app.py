@@ -139,11 +139,11 @@ def index():
             else:
                 schedule = user_schedule.schedule[block]
 
-            if not check_teacher(email):
-                schedule["office_meeting_id"] = user_schedule.search_teacher(schedule["teacher_name"])[0]['office_id']
-
             if schedule is None:
                 continue
+
+            if not check_teacher(email):
+                schedule["office_meeting_id"] = user_schedule.search_teacher(schedule["teacher_name"])[0]['office_id']
 
             if len(block) == 1:
                 # toc[block] = '<br><li><a href="#' + block + '-block">' + block + ' Block</a></li>'
