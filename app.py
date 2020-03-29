@@ -143,7 +143,7 @@ def index():
                 continue
             elif not check_teacher(email):
                 teacher = user_schedule.search_teacher_exact(schedule["teacher_name"])
-                schedule["office_meeting_id"] = teacher['office_id']
+                schedule["office_meeting_id"] = teacher.get('office_id')
                 print(teacher)
                 schedule["user_can_change"] = not bool(teacher[schedule['block'] + "_id"])
             else:
