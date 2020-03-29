@@ -123,7 +123,12 @@ def index():
             uuid = secrets.token_hex(8)
 
             if block == "Office Hours":
-                schedule = {"block": "Office", "course": "Office Hours", "course_name": "Office Hours", "teacher_name": user_schedule.name, "meeting_id": user_schedule.search_teacher(user_schedule.name)[0]['office_id']}
+                try:
+                    schedule = {"block": "Office", "course": "Office Hours", "course_name": "Office Hours", "teacher_name": user_schedule.name, "meeting_id": user_schedule.search_teacher(user_schedule.name)[0]['office_id']}
+                except IndexError as e:
+                    print("Account created", e, user_schedule.name, email, name)
+                    user_schedule.db["teachers"].insert(dict(name=user_schedule.name, office_id="0")) # prevent IndexError quickfix
+                    schedule = {"block": "Office", "course": "Office Hours", "course_name": "Office Hours", "teacher_name": user_schedule.name, "meeting_id": user_schedule.search_teacher(user_schedule.name)[0]['office_id']}
             else:
                 schedule = user_schedule.schedule[block]
 
@@ -164,7 +169,7 @@ def get_profile():
     Checks and sanitizes email. 
     Returns false if not logged in or not choate email.
     """
-    # return "jpfeil@choate.edu", "Pfeil Jessica"
+    # return "test@choate.edu", "test tester"
 
     try:
         if google.authorized:
