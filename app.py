@@ -2,7 +2,7 @@
 import re
 import urllib.request
 
-from flask import Flask, render_template, redirect, url_for, request, Markup
+from flask import Flask, render_template, redirect, url_for, request, Markup, make_response
 import os
 from flask_dance.contrib.google import make_google_blueprint, google 
 from config import GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET
@@ -149,12 +149,15 @@ def login():
     """
     Redirects to the proper login page (right now /google/login), but may change
     """
-    # resp.delete_cookie('username')
-    # resp.delete_cookie('session')
+
     if not google.authorized:
         return redirect(url_for("google.login"))
     else:
-        return "Invalid credentials! Make sure you're logging in with your Choate account. <a href=" + url_for("google.login") + ">Try again.</a>"
+        resp = make_response("Invalid credentials! Make sure you're logging in with your Choate account. <a href=" + url_for("google.login") + ">Try again.</a>")
+        resp.delete_cookie('username')
+        resp.delete_cookie('session')
+        return resp
+
 
 def get_profile():
     """
