@@ -131,14 +131,6 @@ class Schedule():
     Students are identified by their Choate email address.
     """
 
-    schedule = {'A': None,
-                'B': None,
-                'C': None,
-                'D': None,
-                'E': None,
-                'F': None,
-                'G': None}
-
     def __init__(self, db, courses, teachers, email, name, isTeacher=False):
         self.db = db
         self.courses_database = courses
@@ -148,7 +140,11 @@ class Schedule():
         self.name = name
         self.isTeacher = isTeacher
 
+        self.schedule = {'A': None, 'B': None, 'C': None, 'D': None, 'E': None, 'F': None, 'G': None}
+
     def fetch_schedule(self):
+        self.schedule = {'A': None, 'B': None, 'C': None, 'D': None, 'E': None, 'F': None, 'G': None}
+
         if self.isTeacher: return self.fetch_schedule_teacher()
 
         # Fetch the schedule and store in dictionary
