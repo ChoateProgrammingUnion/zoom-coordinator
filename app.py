@@ -165,7 +165,8 @@ def index():
                                toc=Markup(toc['A'] + toc['B'] + toc['C'] + toc['D'] + toc['E'] + toc['F'] + toc['G']),
                                top_label=top_label)
     else:
-        return redirect("/login")
+        return render_template("landing.html")
+        # return redirect("/login")
 
 @app.route('/login')
 def login():
@@ -187,7 +188,7 @@ def get_profile():
     Checks and sanitizes email. 
     Returns false if not logged in or not choate email.
     """
-    return "mfan21@choate.edu", "Fan Max"
+    # return "mfan21@choate.edu", "Fan Max"
     # return "pfeil@choate.edu", "Pfeil Jessica"
 
     try:
