@@ -24,3 +24,11 @@ Frontend: html + css (vanilla, maybe some frameworks)
 
 Things we still need:
 - the list of students and the class they're attending (as well as which teacher is teaching)
+
+
+## March 29th Meeting notes (with ITS)
+- Email sglassman@choate.edu for server access
+- create landing page to login
+- Email communications about shield file
+- zoom.choate.edu will be the subdomain, confirm with hulley
+- New name?
