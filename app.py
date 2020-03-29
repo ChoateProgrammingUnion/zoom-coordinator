@@ -2,7 +2,7 @@
 import re
 import urllib.request
 
-from flask import Flask, render_template, redirect, url_for, request, Markup, make_response
+from flask import Flask, render_template, redirect, url_for, request, Markup, make_response, session
 import os
 from flask_dance.contrib.google import make_google_blueprint, google 
 from config import GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET
@@ -149,7 +149,7 @@ def login():
     """
     Redirects to the proper login page (right now /google/login), but may change
     """
-
+    session.clear()
     if not google.authorized:
         return redirect(url_for("google.login"))
     else:
