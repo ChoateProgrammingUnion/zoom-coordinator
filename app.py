@@ -142,8 +142,11 @@ def index():
             if schedule is None:
                 continue
             elif not check_teacher(email):
-                # print(schedule["teacher_name"],user_schedule.search_teacher(schedule["teacher_name"]),user_schedule.search_teacher(schedule["teacher_name"])[0]['office_id'])
-                schedule["office_meeting_id"] = user_schedule.search_teacher(schedule["teacher_name"])[0].get('office_id')
+                teacher = user_schedule.search_teacher(schedule["teacher_name"])[0]
+                schedule["office_meeting_id"] = teacher['office_id']
+                schedule["user_can_change"] = teacher[schedule['block'] + "_id"] == 0
+            else:
+                schedule["user_can_change"] = True
 
             if len(block) == 1:
                 # toc[block] = '<br><li><a href="#' + block + '-block">' + block + ' Block</a></li>'

@@ -23,7 +23,10 @@
                 {% endif %}
                 <hr style="margin-top: 25px; border: 1px solid rgb(187, 187, 187);">
 
-                <input type="text" class="form-control meeting_id{{ uuid }}" placeholder="Change Class ID" value=""id="meeting_id{{ uuid }}" style="margin-top: 25px; border-bottom: 1px solid #333 ; box-shadow: 0 1px 0 0 #000;">
+                {% if user_can_change %}
+                    <input type="text" class="form-control meeting_id{{ uuid }}" placeholder="Change Class ID" value=""id="meeting_id{{ uuid }}" style="margin-top: 25px; border-bottom: 1px solid #333 ; box-shadow: 0 1px 0 0 #000;">
+                {% endif %}
+
                 <p id="course{{ uuid }}" hidden>{{ course }}</p>
                 <p class="section{{ uuid }}" hidden>{{ sec }}</p>
             </div>
