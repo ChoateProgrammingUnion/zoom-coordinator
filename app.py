@@ -139,6 +139,8 @@ def index():
             else:
                 schedule = user_schedule.schedule[block]
 
+            schedule["office_meeting_id"] = user_schedule.search_teacher(schedule["teacher_name"])[0]['office_id']
+
             if schedule is None:
                 continue
 
