@@ -290,7 +290,6 @@ class Schedule():
         return matched_teachers
 
     def search_teacher_exact(self, teacher_name):
-        teacher_name = teacher_name.replace(".", "").replace(",", "")
         matched_teachers = []
         all_teachers = self.teachers_database.find()
 
