@@ -283,7 +283,8 @@ class Schedule():
         all_teachers = self.teachers_database.find()
 
         for teacher in all_teachers:
-            if (len(find_near_matches(teacher_name, teacher['name'], max_l_dist=1)) > 0):
+            # if (len(find_near_matches(teacher_name, teacher['name'], max_l_dist=1)) > 0):
+            if all([(len(find_near_matches(each_sub, teacher['name'], max_l_dist=1)) > 0) for each_sub in teacher_name.split(" ")]):
                 matched_teachers += [teacher]
 
         return matched_teachers
