@@ -20,7 +20,11 @@
         <style>
             input-field input[type=text]:focus {border-bottom: 1px solid #00b0ff ; box-shadow: 0 1px 0 0 #000;}
         </style>
-
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js">
+            $(document).ready(function () {
+                $('.collapsible').collapsible();
+            })
+        </script>
         <script>
             function sendRequest(fd, loc) {
                  var xhr = new XMLHttpRequest();
@@ -166,42 +170,38 @@
 
             <!-- TABLE OF CONTENTS -->
             <div class="col hide-on-small-only m3 l2 container">
-                <ul class="section table-of-contents">
-                    <div style="position: fixed; margin-left:.75rem;">
-                        {{ toc }}
-                        <h6 style="padding-left: 1rem;"><b>FAQs</b></h6>
-                        <ul class="collapsible" data-collapsible="accordion">
-                            <li>
-                                <div class="collapsible-header active">
-                                    Jump to a Class
-                                </div>
-                                <div class="collapsible-body"><p>{{ toc }}</p></div>
-                            </li>
+                <div style="position: fixed; margin-left:.75rem; margin-right: .75rem; margin-top: 1.5rem;" >
+                    <ul class="collapsible" data-collapsible="accordion">
+                        <li>
+                            <div class="collapsible-header active">
+                                Jump to a Class
+                            </div>
+                            <div class="collapsible-body">
+                                <ul class="section table-of-contents">
+                                    {{ toc }}
+                                </ul>
+                            </div>
+                        </li>
 
-                            <li>
-                                <div class="collapsible-header">
-                                    How do I update a Zoom ID?
-                                </div>
-                                <div class="collapsible-body"><p>Under the join class button, enter the new meeting ID into the text field. The ID will automatically update when the link is confirmed ot be valid.</p></div>
-                            </li>
+                        <li>
+                            <div class="collapsible-header">
+                                How do I update a Zoom ID?
+                            </div>
+                            <div class="collapsible-body"><p>Under the join class button, enter the new meeting ID into
+                                the text field. The ID will automatically update when the link is confirmed ot be
+                                valid.</p></div>
+                        </li>
 
-                            <li>
-                                <div class="collapsible-header">
-                                    Why can't I see my teacher's office hours Zoom ID?
-                                </div>
-                                <div class="collapsible-body"><p>Office Hours ID buttons only show up when a teacher has set their office hours Zoom ID. Please contact your teacher asking them to update their ID.</p></div>
-                            </li>
-                        </ul>
-                            <!--
-                        <h6 style="padding-left: 1rem"><b>How do I update a Zoom ID?</b></h6>
-                        <p style="padding-left: 1rem; font-size: 1rem; padding-right: 25%;">Under the join class button, enter the new meeting ID into the text field. The ID will automatically update when the link is confirmed ot be valid.</p>
-                        <h6 style="padding-left: 1rem"><b>Why can't I see my teacher's office hours Zoom ID?</b></h6>
-                        <p style="padding-left: 1rem; font-size: 1rem; padding-right: 25%;">Office Hours ID buttons only show up when a teacher has set their office hours Zoom ID. Please contact your teacher asking them to update their ID.</p>
-                        <h6 style="padding-left: 1rem"><b>Why isn't my Zoom ID updating when I enter a new one?</b></h6>
-                        <p style="padding-left: 1rem; font-size: 1rem; padding-right: 25%">When teachers update their classes's Zoom ID, students are blocked from updating the ID to prevent overwrite issues. If the link is invalid, please contact your teacher.</p>
-                        --!>
-                    </div>
-                </ul>
+                        <li>
+                            <div class="collapsible-header">
+                                Why can't I see my teacher's office hours Zoom ID?
+                            </div>
+                            <div class="collapsible-body"><p>Office Hours ID buttons only show up when a teacher has set
+                                their office hours Zoom ID. Please contact your teacher asking them to update their
+                                ID.</p></div>
+                        </li>
+                    </ul>
+                </div>
             </div>
         </div>
         
@@ -233,7 +233,6 @@
 
         <!--JavaScript at end of body for optimized loading-->
         <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js" integrity="sha256-U/cHDMTIHCeMcvehBv1xQ052bPSbJtbuiw4QA9cTKz0=" crossorigin="anonymous"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 
     </body>
 </html>
