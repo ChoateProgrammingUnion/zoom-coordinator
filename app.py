@@ -149,11 +149,11 @@ def index():
 
             if block == "Office Hours":
                 try:
-                    schedule = {"block": "Office", "course": "Office Hours", "course_name": "Office Hours", "teacher_name": user_schedule.name, "meeting_id": user_schedule.search_teacher_exact(user_schedule.name)['office_id']}
+                    schedule = {"block": "Office", "course": "Office Hours", "course_name": "Office Hours", "teacher_name": user_schedule.name, "meeting_id": user_schedule.search_teacher_exact(user_schedule.name).get('office_id')}
                 except IndexError as e:
                     print("Account created", e, user_schedule.name, email, name)
                     user_schedule.db["teachers"].insert(dict(name=user_schedule.name, office_id="0")) # prevent IndexError quickfix
-                    schedule = {"block": "Office", "course": "Office Hours", "course_name": "Office Hours", "teacher_name": user_schedule.name, "meeting_id": user_schedule.search_teacher_exact(user_schedule.name)['office_id']}
+                    schedule = {"block": "Office", "course": "Office Hours", "course_name": "Office Hours", "teacher_name": user_schedule.name, "meeting_id": user_schedule.search_teacher_exact(user_schedule.name).get('office_id')}
             else:
                 schedule = user_schedule.schedule[block]
 
@@ -163,7 +163,7 @@ def index():
                 teacher = user_schedule.search_teacher_exact(schedule["teacher_name"])
                 schedule["office_meeting_id"] = teacher.get('office_id')
                 print(teacher)
-                schedule["user_can_change"] = not bool(teacher[schedule['block'] + "_id"])
+                schedule["user_can_change"] = not bool(teacher.get(schedule.get('block') + "_id"))
             else:
                 schedule["user_can_change"] = True
 
