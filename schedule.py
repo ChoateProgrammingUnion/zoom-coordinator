@@ -11,7 +11,6 @@ import time
 from datetime import datetime, timedelta
 
 from preprocess import DB_LOC
-from fuzzysearch import find_near_matches
 from rapidfuzz import fuzz
 
 CLASS_SCHEDULE = {
