@@ -119,7 +119,10 @@ def block_iter(email, datetime_needed=False, weekday=False):
     else:
         line_break = []
 
-    return tuple(office_hours + in_progress + upcoming + completed + line_break + tomorrow)
+    if not datetime_needed:
+        return tuple(office_hours + in_progress + upcoming + completed + line_break + tomorrow)
+    else:
+        return tuple(tomorrow)
 
 def check_choate_email(email: str) -> bool:
     """
