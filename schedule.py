@@ -33,11 +33,13 @@ OFFSETS = {
     "Sunday": []
 }
 
-def block_iter(email):
+def block_iter(email, datetime_needed=False, weekday=False):
     current_time = time.time() - (4.0 * 3600.0)
-    weekday = datetime.fromtimestamp(current_time).strftime("%A")
+    if not weekday:
+        weekday = datetime.fromtimestamp(current_time).strftime("%A")
     # weekday = "Monday"
-    current_datetime = (datetime.now(pytz.timezone('EST')) + timedelta(hours=1)).replace(second=0, microsecond=0)
+    # current_datetime = (datetime.now(pytz.timezone('US/Eastern')) + timedelta(hours=1)).replace(second=0, microsecond=0)
+    current_datetime = datetime.now(pytz.timezone('US/Eastern')).replace(second=0, microsecond=0)
     midnight = current_datetime.replace(hour=0, minute=0, second=0, microsecond=0)
 
     classes_not_today = False
@@ -87,25 +89,29 @@ def block_iter(email):
             time_from_now = class_time - current_datetime
             class_num += 1
 
-            if classes_not_today:
-                upcoming += [(b, time_str + " (on " + weekday + ")")]
+            if not datetime_needed:
+                if classes_not_today:
+                    upcoming += [(b, time_str + " (on " + weekday + ")")]
 
-            elif time_from_now < timedelta(minutes=-50):
-                completed += [(b, time_str + " (completed)")]
+                elif time_from_now < timedelta(minutes=-50):
+                    completed += [(b, time_str + " (completed)")]
 
-            elif time_from_now < timedelta(hours=0):
-                in_progress += [(b, time_str + " (in progress)")]
+                elif time_from_now < timedelta(hours=0):
+                    in_progress += [(b, time_str + " (in progress)")]
 
-            elif time_from_now < timedelta(hours=15):
-                upcoming += [(b, time_str + " (" + str(time_from_now)[:-3] + " from now)")]
+                elif time_from_now < timedelta(hours=15):
+                    upcoming += [(b, time_str + " (" + str(time_from_now)[:-3] + " from now)")]
 
+                else:
+                    tomorrow += [(b, "Not Today")]
             else:
-                tomorrow += [(b, "Not Today")]
+                tomorrow += [(b, class_time)]
         else:
-            if classes_not_today:
-                tomorrow += [(b, "Not On " + weekday)]
-            else:
-                tomorrow += [(b, "Not Today")]
+            if not datetime_needed:
+                if classes_not_today:
+                    tomorrow += [(b, "Not On " + weekday)]
+                else:
+                    tomorrow += [(b, "Not Today")]
 
     if len(in_progress) + len(upcoming) + len(completed) > 0 and len(tomorrow) != 0:
         line_break = [("Break", "")]
