@@ -83,7 +83,7 @@
                 <div class = "nav-wrapper z-depth-3" style = "padding-left: 10%; padding-right: 10%;" >
                     <a href="/" id="full-text" class="brand-logo" style="font-family: Montserrat; font-weight: 900 !important; font-size: 3rem;">Choate Zoom Coordinator</a>
                     <a href="/" id="short-text" class="brand-logo short-text" style="font-family: Montserrat; font-weight: 900 !important; font-size: 3rem;">CZC</a>
-                    v 
+                
                     <ul class = "right hide-on-med-and-down">
                         <li>
                             <a href="/help"><i class="material-icons">help_outline</i></a>
@@ -127,8 +127,16 @@
             <!-- TABLE OF CONTENTS -->
             <div class="col hide-on-small-only m3 l2 container">
                 <ul class="section table-of-contents">
-                    <div style="position: fixed;">
+                    <div style="position: fixed; margin-left:.75rem;">
+                        <h6 style="padding-left: 1rem; padding-top: 1.5rem; text-decoration: underline;"><b>Jump to a Class:</b></h6>
                         {{ toc }}
+                        <h5 style="padding-left: 1rem;"><b>FAQs</b></h6>
+                        <h6 style="padding-left: 1rem"><b>How do I update a Zoom ID?</b></h6>
+                        <p style="padding-left: 1rem; font-size: 1rem; padding-right: 25%;">Under the join class button, enter the new meeting ID into the text field. The ID will automatically update when the link is confirmed ot be valid.</p>
+                        <h6 style="padding-left: 1rem"><b>Why can't I see my teacher's office hours Zoom ID?</b></h6>
+                        <p style="padding-left: 1rem; font-size: 1rem; padding-right: 25%;">Office Hours ID buttons only show up when a teacher has set their office hours Zoom ID. Please contact your teacher asking them to update their ID.</p>
+                        <h6 style="padding-left: 1rem"><b>Why isn't my Zoom ID updating when I enter a new one?</b></h6>
+                        <p style="padding-left: 1rem; font-size: 1rem; padding-right: 25%">When teachers update their classes's Zoom ID, students are blocked from updating the ID to prevent overwrite issues. If the link is invalid, please contact your teacher.</p>
                     </div>
                 </ul>
             </div>
@@ -142,12 +150,12 @@
 
         <!-- FOOTER -->
         <div class="container">
-            <hr>
-            <br>
             <!--<hr>-->
             <footer id="footer">
                 <div class="row">
-                    <div class="col-lg-12">
+                    <div class="col s6 m12">                
+                    <hr>
+                    <br>
                     <ul class="list-unstyled">
                         <li>Open source on <a href="https://github.com/ChoateProgrammingUnion/zoom-coordinator">GitHub</a> with the <a href="https://choosealicense.com/licenses/gpl-3.0/">GPLv3 license</a>.</li>
                         <a rel="noopener" href="https://github.com/ChoateProgrammingUnion/zoom-coordinator/blob/master/LICENSE"><img style="padding-top: 5px" src="https://img.shields.io/badge/license-GPLv3-brightgreen.svg"></a>

@@ -24,37 +24,25 @@
 
         <div class="row container section">
             <h1 style="font-family: Montserrat; font-size: 3.25rem"><span style="font-size: 2.25rem">Welcome to the</span><br><b>Choate Zoom Coordinator</b></h1>
-            <p>This website allows students and teachers to easily save and access Zoom meeting IDs. Meeting IDs are displayed on buttons and link directly to the meeting.<br><br><b>Developers' note:</b> Teacher names are not in the correct order due to inconsistencies in the way ITS gave the name of each teacher. Some of the names were given in reverse-order, others were given in an incorrect reverse order, and others were given in a different, unspecified ordering scheme. Please be patient while we work to fix this.</p>
+            <p>This website allows students and teachers to easily save and access Zoom meeting IDs. Meeting IDs are displayed on buttons and link directly to the meeting.<br><br><b>Developers' note:</b> Teacher names are not in the correct order due to inconsistencies in the way ITS gives the name of each teacher. Some of the names were given in reverse-order, others were given in an incorrect reverse order, and others were given in a different, unspecified ordering scheme. Please be patient while we wait for a database update.</p>
             <div class="divider"></div>
         </div>
         
         <div class="row container">
             <div class="col s12 m5 card white-text z-depth-3" style="background-color: #005596; padding: 1rem; font-family: Montserrat;">
                 <h4>Information for <b>Teachers:</b></h4>
-                <p style="font-family: Montserrat; font-size: 1.25rem">Teachers can set their <b>office hours</b> and <b>classes'</b> Zoom meeting IDs. Any changes made by a teacher will overwrite a student's individual data.<br><br><i>We strongly recommend that teachers maintain a single Zoom ID per class throughout the term.</i></p>
+                <p style="font-family: Montserrat; font-size: 1.25rem">Teachers can set their <b>office hours</b> and <b>classes'</b> Zoom meeting IDs. Any changes made by a teacher will overwrite a student's individually set meeting ID.<br><br><i>We strongly recommend that teachers maintain a single Zoom ID per class throughout the term.</i></p>
             </div>
 
             <div class="col s0 m2"></div>
 
             <div class="col s12 m5 card white-text z-depth-3" style="background-color: #005596; padding: 1rem; font-family: Montserrat;">
                 <h4>Information for <b>Students:</b></h4>
-                <p style="font-family: Montserrat; font-size: 1.25rem;">Students can set their <b>classes'</b> Zoom meeting IDs, but these changes do not effect other students' data. In addition, students can view and search for a teacher's office hours ID when it is set.<br><br>Classes are ordered chronologically and display their starting times.</p>
+                <p style="font-family: Montserrat; font-size: 1.25rem;">Students can set their <b>classes'</b> Zoom meeting IDs when it has not been set by the teacher, but these changes do not affect other students' meeting IDs. In addition, students can view and search for a teacher's office hours ID when it is set.<br><br>Classes are ordered chronologically and display their starting times.</p>
             </div>
         </div>
 
-        <div class="row container">
-            <br>
-            <div class="divider"></div>
-            <div class="center-align" style="padding: 2.5rem">
-                <!-- Credit: https://stackoverflow.com/questions/46654248/how-to-display-google-sign-in-button-using-html -->
-                <a class="oauth-container btn darken-4 white black-text" href="/login" style="text-transform:none">
-                    <div class="left">
-                        <img width="20px" style="margin-top:7px; margin-right:8px" alt="Google sign-in" src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/53/Google_%22G%22_Logo.svg/512px-Google_%22G%22_Logo.svg.png" />
-                    </div>
-                    Login with Google
-                </a>
-            </div>
-        </div>
+        {{ button }}
 
         <!-- FOOTER -->
         <div class="container">
