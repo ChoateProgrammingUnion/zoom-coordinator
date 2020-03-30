@@ -134,10 +134,10 @@ def index():
         top_label = "Today's Classes:"
         bottom_label = "Not Today"
 
-        for block, time in block_iter(email):
+        for block, start_time in block_iter(email):
             if block == "Not Today":
-                top_label = time + "'s Classes"
-                bottom_label = "Not On " + time
+                top_label = start_time + "'s Classes"
+                bottom_label = "Not On " + start_time
                 continue
 
             if block == "Break":
@@ -171,7 +171,7 @@ def index():
                 toc[block] = render_template("toc.html", block=block)
 
             schedule["uuid"] = uuid
-            schedule["time"] = time
+            schedule["time"] = start_time
 
             cards += render_template("class_card.html", **schedule)
             card_script += render_template("card.js", **schedule)
