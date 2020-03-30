@@ -46,6 +46,10 @@
             $(document).ready(function(){
                 $('.scrollspy').scrollSpy();
             });
+
+            $(document).ready(function(){
+                $('.sidenav').sidenav();
+            });
             
         </script>
         <style>
@@ -82,8 +86,11 @@
             <nav style="background-color: #005596;">
                 <div class = "nav-wrapper z-depth-3" style = "padding-left: 10%; padding-right: 10%;" >
                     <a href="/" id="full-text" class="brand-logo" style="font-family: Montserrat; font-weight: 900 !important; font-size: 3rem;">Choate Zoom Coordinator</a>
+                    <a href="#" data-target="slide-out" class="sidenav-trigger"><i class="material-icons">menu</i></a>
                     <a href="/" id="short-text" class="brand-logo short-text" style="font-family: Montserrat; font-weight: 900 !important; font-size: 3rem;">CZC</a>
-                
+                    <ul class="right"> 
+                        <li><a href="/login" id="short-text"><i class="material-icons right">exit_to_app</i></a></li>    
+                    </ul>
                     <ul class = "right hide-on-med-and-down">
                         <li>
                             <a href="/help"><i class="material-icons">help_outline</i></a>
@@ -98,7 +105,6 @@
                                                 <div class="input-field" style="background-color: rgba(255, 255, 255, 0.25);">
                                                     <input id="search" type="search" style="height: auto" name="search" required>
                                                     <label class="label-icon" for="search"><i class="material-icons">search</i></label>
-                                                    <i class="material-icons">close</i>
                                                     <input type="submit" style="display: none" />
                                                 </div>
                                             </form>
@@ -111,8 +117,38 @@
                         <li><a href="/login"><i class="material-icons">exit_to_app</i></a></li>
                     </ul>
                 </div>
-            </nav> 
+            </nav>
         </div>
+
+        <ul id="slide-out" class="sidenav">
+            <li>
+                <div class="row" id="topbarsearch">
+                    <div class="input-field col s6 s12 red-text">
+                        <!--<i class="white-text material-icons prefix">search</i>-->
+                        <form action="/search">
+                            <div class="input-field" style="background-color: rgba(255, 255, 255, 0.25); padding: 2.5%; padding-right: 25%">
+                                <label class="label-icon" for="search"><i class="material-icons">search</i></label>
+                                <input style="padding-left: 15%; padding-bottom: 5px" id="search" type="search" style="height: auto" name="search" required>
+                                <input type="submit" style="display: none" />
+                            </div>
+                        </form>
+                        <!--<input type="text" placeholder="search" id="autocomplete-input" class="autocomplete white-text" >-->
+                    </div>
+                </div>
+            </li>
+
+            <li>
+                <div style="position: fixed; margin-left:.75rem;">
+                    <h5 style="padding-left: 1rem;"><b>FAQs</b></h6>
+                    <h6 style="padding-left: 1rem"><b>How do I update a Zoom ID?</b></h6>
+                    <p style="padding-left: 1rem; font-size: 1rem; padding-right: 25%; line-height: normal;">Under the join class button, enter the new meeting ID into the text field. The ID will automatically update when the link is confirmed ot be valid.</p>
+                    <h6 style="padding-left: 1rem"><b>Why can't I see my teacher's office hours Zoom ID?</b></h6>
+                    <p style="padding-left: 1rem; font-size: 1rem; padding-right: 25%; line-height: normal;">Office Hours ID buttons only show up when a teacher has set their office hours Zoom ID. Please contact your teacher asking them to update their ID.</p>
+                    <h6 style="padding-left: 1rem"><b>Why isn't my Zoom ID updating when I enter a new one?</b></h6>
+                    <p style="padding-left: 1rem; font-size: 1rem; padding-right: 25%; line-height: normal;">When teachers update their classes's Zoom ID, students are blocked from updating the ID to prevent overwrite issues. If the link is invalid, please contact your teacher.</p>
+                </div>
+            </li>
+          </ul>
         <!-- CARDS -->
 
         <div class="row container">
