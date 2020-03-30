@@ -235,9 +235,10 @@ def get_profile():
                     email = str(response.get("email"))
                     name = str(response.get("name"))
                     if check_choate_email(email):
+                        print("Logged in", email, name)
                         return email, name
                 else:
-                    print(response) # log next
+                    print("get_profile fail", response) # log next
     except:
         pass
 
