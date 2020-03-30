@@ -12,6 +12,7 @@ from datetime import datetime, timedelta
 
 from preprocess import DB_LOC
 from fuzzysearch import find_near_matches
+from rapidfuzz import fuzz
 
 CLASS_SCHEDULE = {
     "Monday": "ABCDE",
@@ -309,7 +310,7 @@ class Schedule():
 
         self.teacher_database_upsert(t)
 
-    @functools.lru_cache(maxsize=1000)
+    # @functools.lru_cache(maxsize=1000)
     def search_teacher(self, teacher_name: str) -> list:
         teacher_name = teacher_name.replace(".", "").replace(",", "").lower().rstrip()
         matched_teachers = []
@@ -326,16 +327,17 @@ class Schedule():
             if teacher_name in teacher_lower:
                 matched_teachers.insert(0, teacher)
 
-            if (not teacher in matched_teachers) and all([(len(find_near_matches(each_sub, teacher_lower, max_l_dist=1)) > 0) for each_sub in [x for x in teacher_name.split(" ") if x.isspace()]]):
+            # if (not teacher in matched_teachers) and all([(len(find_near_matches(each_sub, teacher_lower, max_l_dist=1)) > 0) for each_sub in [x for x in teacher_name.split(" ") if x]]):
+            if (not teacher in matched_teachers) and all([(fuzz.partial_ratio(word, teacher_lower) > 70.0) for word in [x for x in teacher_name.split(" ") if x]]):
                 matched_teachers += [teacher]
 
         return matched_teachers
 
-    @functools.lru_cache(maxsize=1000)
+    # @functools.lru_cache(maxsize=1000)
     def search_teacher_exact(self, teacher_name):
         all_teachers = self.teachers_database.find()
 
-        sanitize = lambda name: str(name).replace(' ', '').replace(',', '').replace('.', '').replace('-', '').lower()
+        sanitize = lambda name: str(name).replace(' ', '').replace(',', '').replace('.', '').replace('-', '').lower().rstrip()
 
         for teacher in all_teachers:
             if sanitize(teacher_name) == sanitize(teacher['name']):
