@@ -309,7 +309,7 @@ class Schedule():
 
         self.teacher_database_upsert(t)
 
-    @functools.lru_cache(maxsize=1000)
+    # @functools.lru_cache(maxsize=1000)
     def search_teacher(self, teacher_name: str) -> list:
         teacher_name = teacher_name.replace(".", "").replace(",", "").lower().rstrip()
         matched_teachers = []
@@ -331,7 +331,7 @@ class Schedule():
 
         return matched_teachers
 
-    @functools.lru_cache(maxsize=1000)
+    # @functools.lru_cache(maxsize=1000)
     def search_teacher_exact(self, teacher_name):
         all_teachers = self.teachers_database.find()
 
