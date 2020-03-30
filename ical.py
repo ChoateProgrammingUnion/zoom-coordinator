@@ -4,7 +4,7 @@ from schedule import block_iter, ScheduleManager
 import pytz
 import datetime
 
-CLASSDAYS = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday']*12
+CLASSDAYS = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday']
 
 def make_calendar(email, name):
     ScheduleManager().createSchedule(email, name, check_teacher(email))
@@ -13,6 +13,7 @@ def make_calendar(email, name):
     
     today_offset = datetime.date.today().weekday()
     this_monday = datetime.date.today() - datetime.timedelta(days=-today_offset)
+    print(this_monday)
 
     print(this_monday.day)
     # Taken from documentation
