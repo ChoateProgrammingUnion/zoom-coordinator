@@ -5,6 +5,7 @@ import copy
 from filelock import Timeout, FileLock
 
 import pytz
+import functools
 import validators
 import time
 from datetime import datetime, timedelta
@@ -302,18 +303,29 @@ class Schedule():
 
         self.teacher_database_upsert(t)
 
+    @functools.lru_cache(maxsize=10000)
     def search_teacher(self, teacher_name):
-        teacher_name = teacher_name.replace(".", "").replace(",", "")
+        teacher_name = teacher_name.replace(".", "").replace(",", "").lower()
         matched_teachers = []
         all_teachers = self.teachers_database.find()
 
+        if self.search_teacher_exact(teacher_name):
+            exact_teacher = self.search_teacher_exact(teacher_name)
+            matched_teachers += [exact_teacher]
+            all_teachers.remove(exact_teacher)
+
         for teacher in all_teachers:
+            teacher_lower = teacher['name'].lower()
             # if (len(find_near_matches(teacher_name, teacher['name'], max_l_dist=1)) > 0):
-            if all([(len(find_near_matches(each_sub, teacher['name'], max_l_dist=1)) > 0) for each_sub in teacher_name.split(" ")]):
+            if teacher_name in teacher_lower:
+                matched_teachers.insert(0, teacher)
+
+            if all([(len(find_near_matches(each_sub, teacher_lower, max_l_dist=1)) > 0) for each_sub in teacher_name.split(" ")]):
                 matched_teachers += [teacher]
 
         return matched_teachers
 
+    @functools.lru_cache(maxsize=1000)
     def search_teacher_exact(self, teacher_name):
         matched_teachers = []
         all_teachers = self.teachers_database.find()
