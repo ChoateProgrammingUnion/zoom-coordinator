@@ -54,6 +54,7 @@ def search():
     if email and name:
         query = request.args.get('search')
 
+        ScheduleManager().createSchedule(email, name, check_teacher(email))
         user_schedule = ScheduleManager().getSchedule(email)
 
         search_results = user_schedule.search_teacher(query)
@@ -223,7 +224,7 @@ def get_profile():
     Returns false if not logged in or not choate email.
     """
     # return "mfan21@choate.edu", "Fan Max"
-    # return "pfeil@choate.edu", "Pfeil Jessica"
+    # return "jpfeil@choate.edu", "Pfeil Jessica"
 
     try:
         if google.authorized:
