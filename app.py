@@ -4,6 +4,8 @@ import urllib.request
 
 from flask import Flask, render_template, redirect, url_for, request, Markup, make_response, session
 import os
+import git
+import functools
 from flask_dance.contrib.google import make_google_blueprint, google 
 from config import GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET
 import secrets
@@ -49,7 +51,8 @@ def search():
     for result in search_results:
         cards += render_template("teacher_card.html", **result)
 
-    return render_template("index.html", cards=Markup(cards), card_js="")
+    commit = get_commit()
+    return render_template("index.html", cards=Markup(cards), card_js="", commit=commit)
 
 
 @app.route('/update', methods=['POST'])
@@ -159,20 +162,24 @@ def index():
             cards += render_template("class_card.html", **schedule)
             card_script += render_template("card.js", **schedule)
 
+        commit = get_commit()
         return render_template("index.html",
                                cards=Markup(cards),
                                card_js=Markup(card_script),
                                toc=Markup(toc['A'] + toc['B'] + toc['C'] + toc['D'] + toc['E'] + toc['F'] + toc['G']),
-                               top_label=top_label)
+                               top_label=top_label,
+                               commit=commit)
     else:
         button = render_template("login.html")
-        return render_template("landing.html", button=Markup(button))
+        commit = get_commit()
+        return render_template("landing.html", button=Markup(button), commit=commit)
         # return redirect("/login")
 
 @app.route('/help')
 def help():
+    commit = get_commit()
     button = render_template("back.html")
-    return render_template("landing.html", button=Markup(button))
+    return render_template("landing.html", button=Markup(button), commit=commit)
 
 @app.route('/login')
 def login():
@@ -188,6 +195,13 @@ def login():
         resp.delete_cookie('session')
         return resp
 
+@functools.lru_cache()
+def get_commit():
+    """
+    Returns latest commit hash
+    """
+    repo = git.Repo(search_parent_directories=True)
+    return repo.head.object.hexsha
 
 def get_profile():
     """

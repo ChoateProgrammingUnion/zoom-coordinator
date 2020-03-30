@@ -4,7 +4,7 @@ MAINTAINER InnovativeInventor
 
 WORKDIR /usr/src/app
 
-RUN pip3 install waitress gunicorn flask Flask-Dance fuzzysearch validators dataset pytz filelock
+RUN pip3 install waitress gunicorn flask Flask-Dance fuzzysearch validators dataset pytz filelock gitpython
 COPY . /usr/src/app
 #RUN rm index.db && python3 preprocess.py
 #RUN pip3 install gunicorn flask Flask-Caching Flask-Dance
