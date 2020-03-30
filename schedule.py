@@ -303,7 +303,7 @@ class Schedule():
 
         self.teacher_database_upsert(t)
 
-    @functools.lru_cache(maxsize=10000)
+    @functools.lru_cache(maxsize=1000)
     def search_teacher(self, teacher_name):
         teacher_name = teacher_name.replace(".", "").replace(",", "").lower()
         matched_teachers = []
