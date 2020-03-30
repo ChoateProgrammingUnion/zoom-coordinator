@@ -6,10 +6,12 @@ from flask import Flask, render_template, redirect, url_for, request, Markup, ma
 import os
 import git
 import functools
+from icalendar import Calendar, Event
 from flask_dance.contrib.google import make_google_blueprint, google 
 from config import GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET
 import secrets
 from schedule import Schedule, ScheduleManager, check_choate_email, check_teacher, block_iter
+from ical import make_calendar
 
 # Temp (INSECURE, REMOVE IN PROD)
 os.environ['OAUTHLIB_INSECURE_TRANSPORT'] = '1'
@@ -32,6 +34,16 @@ os.environ["OAUTHLIB_RELAX_TOKEN_SCOPE"] = "true"
 
 google_bp = make_google_blueprint(scope=["https://www.googleapis.com/auth/userinfo.profile", "https://www.googleapis.com/auth/userinfo.email"])
 app.register_blueprint(google_bp, url_prefix="/login", reprompt_select_account=True, reprompt_consent=True)
+
+@app.route('/calendar.ics')
+def cal():
+    email, name = get_profile()
+    if email and name:
+        print("here")
+        cal = make_response(make_calendar(email, name).to_ical())
+        cal.mimetype = 'text/calendar'
+        return cal
+    return redirect('/')
 
 @app.route('/search')
 def search():
