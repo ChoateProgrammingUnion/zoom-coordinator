@@ -64,6 +64,7 @@ def block_iter(email, datetime_needed=False, weekday=False):
             midnight += timedelta(hours=48)
 
     blocks_today = CLASS_SCHEDULE[weekday]
+    all_blocks = blocks_today + "".join([i for i in "ABCDEFG" if i not in blocks_today])
 
     in_progress = []
     completed = []
@@ -82,7 +83,7 @@ def block_iter(email, datetime_needed=False, weekday=False):
     if classes_not_today:
         upcoming += [("Not Today", weekday)]
 
-    for b in "ABCDEFG":
+    for b in all_blocks:
         if b in blocks_today:
             class_time = midnight + OFFSETS[weekday][class_num]
             time_str = class_time.strftime("%I:%M %p EDT")
