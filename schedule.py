@@ -320,7 +320,7 @@ class Schedule():
             if teacher_name in teacher_lower:
                 matched_teachers.insert(0, teacher)
 
-            if (not teacher in matched_teachers) or all([(len(find_near_matches(each_sub, teacher_lower, max_l_dist=1)) > 0) for each_sub in teacher_name.split(" ")]):
+            if (not teacher in matched_teachers) and all([(len(find_near_matches(each_sub, teacher_lower, max_l_dist=1)) > 0) for each_sub in teacher_name.split(" ")]):
                 matched_teachers += [teacher]
 
         return matched_teachers
