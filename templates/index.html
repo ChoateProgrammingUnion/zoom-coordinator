@@ -145,7 +145,7 @@
                                             <form action="/search">
                                                 <div class="input-field" style="background-color: rgba(255, 255, 255, 0.25);">
                                                     <input id="search" type="search" style="height: auto" name="search" required>
-                                                    <label class="label-icon" for="search"><i class="material-icons">search</i></label>
+                                                    <label class="label-icon" for="search" style="background-color: rgba(0, 0, 0, 0);"><i class="material-icons">search</i></label>
                                                     <input type="submit" style="display: none" />
                                                 </div>
                                             </form>
@@ -155,7 +155,7 @@
                                 </div>
                             </div>          
                         </li>    
-                        <li><a href="/login"><i class="material-icons">exit_to_app</i></a></li>
+                        <li><a href="/login" id="full-text"><i class="material-icons">exit_to_app</i></a></li>
                     </ul>
                 </div>
             </nav>
@@ -167,9 +167,9 @@
                     <div class="input-field col s6 s12 red-text">
                         <!--<i class="white-text material-icons prefix">search</i>-->
                         <form action="/search">
-                            <div class="input-field" style="background-color: rgba(255, 255, 255, 0.25); padding: 2.5%; padding-right: 25%">
-                                <label class="label-icon" for="search"><i class="material-icons">search</i></label>
-                                <input style="padding-left: 15%; padding-bottom: 5px" id="search" type="search" style="height: auto" name="search" required>
+                            <div class="input-field" style="background-color: rgba(255, 255, 255, 0.25); padding-right: 25%; padding-left: 5%">
+                                <input id="search" type="search" style="height: auto; padding-left: 20%;" name="search" required>
+                                <label class="label-icon" for="search" style="background-color: rgba(0, 0, 0, 0);"><i class="material-icons">search</i></label>
                                 <input type="submit" style="display: none" />
                             </div>
                         </form>
