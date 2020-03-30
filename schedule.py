@@ -34,13 +34,11 @@ OFFSETS = {
 }
 
 def block_iter(email, datetime_needed=False, weekday=False):
-    current_time = time.time() - (4.0 * 3600.0)
-    if not weekday:
-        weekday = datetime.fromtimestamp(current_time).strftime("%A")
-    # weekday = "Monday"
-    # current_datetime = (datetime.now(pytz.timezone('US/Eastern')) + timedelta(hours=1)).replace(second=0, microsecond=0)
     current_datetime = datetime.now(pytz.timezone('US/Eastern')).replace(second=0, microsecond=0)
     midnight = current_datetime.replace(hour=0, minute=0, second=0, microsecond=0)
+
+    if not weekday:
+        weekday = current_datetime.strftime("%A")
 
     classes_not_today = False
 
