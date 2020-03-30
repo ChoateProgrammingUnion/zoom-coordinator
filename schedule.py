@@ -304,8 +304,8 @@ class Schedule():
         self.teacher_database_upsert(t)
 
     @functools.lru_cache(maxsize=1000)
-    def search_teacher(self, teacher_name):
-        teacher_name = teacher_name.replace(".", "").replace(",", "").lower()
+    def search_teacher(self, teacher_name: str) -> list:
+        teacher_name = teacher_name.replace(".", "").replace(",", "").lower().rstrip()
         matched_teachers = []
         all_teachers = self.teachers_database.find()
 
@@ -320,7 +320,7 @@ class Schedule():
             if teacher_name in teacher_lower:
                 matched_teachers.insert(0, teacher)
 
-            if (not teacher in matched_teachers) and all([(len(find_near_matches(each_sub, teacher_lower, max_l_dist=1)) > 0) for each_sub in teacher_name.split(" ")]):
+            if (not teacher in matched_teachers) and all([(len(find_near_matches(each_sub, teacher_lower, max_l_dist=1)) > 0) for each_sub in [x for x in teacher_name.split(" ") if x.isspace()]]):
                 matched_teachers += [teacher]
 
         return matched_teachers
