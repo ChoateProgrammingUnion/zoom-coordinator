@@ -72,6 +72,45 @@
                 #short-text { display: inline-block; }
                 #full-text { display: none; }
             } /* Credit: https://stackoverflow.com/questions/39894291/how-to-change-text-not-font-size-according-to-screen-size-in-css*/
+
+            /* Style the button that is used to open and close the collapsible content. Code Attributed to https://www.w3schools.com/howto/howto_js_collapsible.asp*/
+            .collapsible {
+              background-color: #eee;
+              color: #444;
+              cursor: pointer;
+              padding: 18px;
+              width: 100%;
+              border: none;
+              text-align: left;
+              outline: none;
+              font-size: 15px;
+            }
+
+            /* Add a background color to the button if it is clicked on (add the .active class with JS), and when you move the mouse over it (hover) */
+            .active, .collapsible:hover {
+              background-color: #ccc;
+            }
+
+            /* Style the collapsible content. Note: hidden by default */
+            .content {
+              padding: 0 18px;
+              background-color: white;
+              max-height: 0;
+              overflow: hidden;
+              transition: max-height 0.2s ease-out;
+            }
+
+            .collapsible:after {
+              content: '\02795'; /* Unicode character for "plus" sign (+) */
+              font-size: 13px;
+              color: white;
+              float: right;
+              margin-left: 5px;
+            }
+
+            .active:after {
+              content: "\2796"; /* Unicode character for "minus" sign (-) */
+            }
         </style>
     </head>
   
@@ -130,13 +169,19 @@
                     <div style="position: fixed; margin-left:.75rem;">
                         <h6 style="padding-left: 1rem; padding-top: 1.5rem; text-decoration: underline;"><b>Jump to a Class:</b></h6>
                         {{ toc }}
-                        <h5 style="padding-left: 1rem;"><b>FAQs</b></h6>
+                        <h6 style="padding-left: 1rem;"><b>FAQs</b></h6>
+                            <button type="button" class="collapsible" style="margin-right: 0">How do I update a Zoom ID?</button>
+                            <div class="content">
+                              <p>Under the join class button, enter the new meeting ID into the text field. The ID will automatically update when the link is confirmed ot be valid.</p>
+                            </div>
+                            <!--
                         <h6 style="padding-left: 1rem"><b>How do I update a Zoom ID?</b></h6>
                         <p style="padding-left: 1rem; font-size: 1rem; padding-right: 25%;">Under the join class button, enter the new meeting ID into the text field. The ID will automatically update when the link is confirmed ot be valid.</p>
                         <h6 style="padding-left: 1rem"><b>Why can't I see my teacher's office hours Zoom ID?</b></h6>
                         <p style="padding-left: 1rem; font-size: 1rem; padding-right: 25%;">Office Hours ID buttons only show up when a teacher has set their office hours Zoom ID. Please contact your teacher asking them to update their ID.</p>
                         <h6 style="padding-left: 1rem"><b>Why isn't my Zoom ID updating when I enter a new one?</b></h6>
                         <p style="padding-left: 1rem; font-size: 1rem; padding-right: 25%">When teachers update their classes's Zoom ID, students are blocked from updating the ID to prevent overwrite issues. If the link is invalid, please contact your teacher.</p>
+                        --!>
                     </div>
                 </ul>
             </div>
@@ -171,5 +216,21 @@
 
         <!--JavaScript at end of body for optimized loading-->
         <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js" integrity="sha256-U/cHDMTIHCeMcvehBv1xQ052bPSbJtbuiw4QA9cTKz0=" crossorigin="anonymous"></script>
+        <script>
+            var coll = document.getElementsByClassName("collapsible");
+            var i;
+
+            for (i = 0; i < coll.length; i++) {
+              coll[i].addEventListener("click", function() {
+                this.classList.toggle("active");
+                var content = this.nextElementSibling;
+                if (content.style.maxHeight){
+                  content.style.maxHeight = null;
+                } else {
+                  content.style.maxHeight = content.scrollHeight + "px";
+                }
+              });
+            }
+        </script>
     </body>
 </html>
