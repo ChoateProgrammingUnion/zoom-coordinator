@@ -38,21 +38,23 @@ def search():
     """
     Searches for teacher meeting ids
     """
-
-    query = request.args.get('search')
-
     email, name = get_profile()
-    user_schedule = ScheduleManager().getSchedule(email)
+    if email and name:
+        query = request.args.get('search')
 
-    search_results = user_schedule.search_teacher(query)
+        user_schedule = ScheduleManager().getSchedule(email)
 
-    cards = ""
+        search_results = user_schedule.search_teacher(query)
 
-    for result in search_results:
-        cards += render_template("teacher_card.html", **result)
+        cards = ""
 
-    commit = get_commit()
-    return render_template("index.html", cards=Markup(cards), card_js="", commit=commit)
+        for result in search_results:
+            cards += render_template("teacher_card.html", **result)
+
+        commit = get_commit()
+        return render_template("index.html", cards=Markup(cards), card_js="", commit=commit)
+    else:
+        return redirect("/")
 
 
 @app.route('/update', methods=['POST'])
