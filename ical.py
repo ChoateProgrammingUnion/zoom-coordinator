@@ -23,15 +23,16 @@ def make_calendar(email, name):
             time = time.replace(day=this_monday.day) + datetime.timedelta(days=count)
             
             block_data = user_schedule.schedule[block]
-            print(block_data)
+            if block_data:
+                print(block_data)
 
-            event = Event()
-            # event['summary'] = block + ' block class'
-            event['LOCATION'] = "https://zoom.us/j/" + str(block_data['meeting_id'])
-            event['summary'] = block_data['course_name'].title()
-            event['DESCRIPTION'] = "Zoom link: https://zoom.us/j/" + str(block_data['meeting_id']) + "\nMeeting ID: " + str(block_data['meeting_id'])
-            event.add('dtstart', time)
-            event.add('dtend', time + datetime.timedelta(minutes=50))
-            cal.add_component(event)
+                event = Event()
+                # event['summary'] = block + ' block class'
+                event['LOCATION'] = "https://zoom.us/j/" + str(block_data.get('meeting_id'))
+                event['summary'] = block_data.get('course_name').title()
+                event['DESCRIPTION'] = "Zoom link: https://zoom.us/j/" + str(block_data.get('meeting_id')) + "\nMeeting ID: " + str(block_data.get('meeting_id'))
+                event.add('dtstart', time)
+                event.add('dtend', time + datetime.timedelta(minutes=50))
+                cal.add_component(event)
     return cal
 
