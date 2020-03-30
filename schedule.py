@@ -39,6 +39,8 @@ def block_iter(email, datetime_needed=False, weekday=False):
 
     if not weekday:
         weekday = current_datetime.strftime("%A")
+    # else:
+        # current_datetime = current_datetime.replace(month=day=
 
     classes_not_today = False
 
@@ -52,7 +54,7 @@ def block_iter(email, datetime_needed=False, weekday=False):
         midnight += timedelta(hours=48)
         classes_not_today = True
 
-    elif current_datetime > midnight + OFFSETS[weekday][-1] + timedelta(minutes=50):
+    elif current_datetime > midnight + OFFSETS[weekday][-1] + timedelta(minutes=50) and not weekday:
         midnight += timedelta(hours=24)
         weekday = (current_datetime + timedelta(hours=24)).strftime("%A")
         classes_not_today = True
