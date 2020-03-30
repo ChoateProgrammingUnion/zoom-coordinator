@@ -163,7 +163,6 @@ def index():
             elif not check_teacher(email):
                 teacher = user_schedule.search_teacher_exact(schedule["teacher_name"])
                 schedule["office_meeting_id"] = teacher.get('office_id')
-                print(teacher)
                 schedule["user_can_change"] = not bool(teacher.get(schedule.get('block') + "_id"))
             else:
                 schedule["user_can_change"] = True
@@ -207,6 +206,11 @@ def login():
     else:
         resp = make_response("Invalid credentials! Make sure you're logging in with your Choate account. <a href=" + url_for("google.login") + ">Try again.</a>")
         return resp
+
+@app.route('/logout')
+def logout():
+    session.clear()
+    return redirect("/")
 
 @functools.lru_cache()
 def get_commit():
