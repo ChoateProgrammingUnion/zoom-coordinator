@@ -4,7 +4,7 @@ MAINTAINER InnovativeInventor
 
 WORKDIR /usr/src/app
 
-RUN sudo apt-get update && sudo apt-get install git
+RUN apt-get update && apt-get install git
 RUN pip3 install waitress gunicorn flask Flask-Dance fuzzysearch validators dataset pytz filelock gitpython
 COPY . /usr/src/app
 #RUN rm index.db && python3 preprocess.py
