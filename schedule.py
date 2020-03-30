@@ -333,12 +333,12 @@ class Schedule():
 
     @functools.lru_cache(maxsize=1000)
     def search_teacher_exact(self, teacher_name):
-        matched_teachers = []
         all_teachers = self.teachers_database.find()
 
+        sanitize = lambda name: str(name).replace(' ', '').replace(',', '').replace('.', '').replace('-', '').lower()
+
         for teacher in all_teachers:
-            # if (len(find_near_matches(teacher_name, teacher['name'], max_l_dist=1)) > 0):
-            if teacher_name == teacher['name']:
+            if sanitize(teacher_name) == sanitize(teacher['name']):
                 return teacher
 
         return None
