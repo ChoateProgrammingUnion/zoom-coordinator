@@ -180,6 +180,8 @@ class Schedule():
     """
 
     def __init__(self, db, courses, teachers, email, firstname, lastname, isTeacher=False):
+        log.info("Called Schedule.__init__ with paramaters: " + str((db, courses, teachers, email, firstname, lastname, isTeacher)))
+
         self.db = db
         self.courses_database = courses
         self.teachers_database = teachers
@@ -195,6 +197,8 @@ class Schedule():
         self.schedule = {'A': None, 'B': None, 'C': None, 'D': None, 'E': None, 'F': None, 'G': None}
 
     def transactional_upsert(self, table: str, data: dict, key: list) -> bool:
+        log.info("Called Schedule.transactional_upsert with paramaters: " + str((table, data, key)))
+
         lock = FileLock("index.db.lock")
         with lock:
             self.db.begin()
@@ -208,14 +212,20 @@ class Schedule():
         return False
 
     def teacher_database_upsert(self, data):
+        log.info("Called Schedule.teacher_database_upsert with paramaters: " + str((data)))
+
         while not self.transactional_upsert('teachers', data, ['id']):
             pass
 
     def course_database_upsert(self, data):
+        log.info("Called Schedule.course_database_upsert with paramaters: " + str((data)))
+
         while not self.transactional_upsert('courses', data, ['id']):
             pass
 
     def fetch_schedule(self):
+        log.info("Called Schedule.fetch_schedule")
+
         self.schedule = {'A': None, 'B': None, 'C': None, 'D': None, 'E': None, 'F': None, 'G': None}
 
         if self.isTeacher: return self.fetch_schedule_teacher()
@@ -256,6 +266,8 @@ class Schedule():
         # return out
 
     def fetch_schedule_teacher(self):
+        log.info("Called Schedule.fetch_schedule_teacher")
+
         # Fetch the schedule and store in dictionary
 
         classes = self.courses_database.find(first_name=self.firstname, last_name=self.lastname)
@@ -280,6 +292,8 @@ class Schedule():
                 self.schedule[block]['meeting_id'] = self.teachers_database.find_one(first_name=self.firstname, last_name=self.lastname)[block + '_id']
 
     def update_schedule(self, course, section, meeting_id):
+        log.info("Called Schedule.update_schedule with paramaters: " + str((course, section, meeting_id)))
+
         if (self.isTeacher):
             classes_to_update = list(self.courses_database.find(course=course, sec=section))
 
@@ -298,6 +312,8 @@ class Schedule():
             self.course_database_upsert(c)
 
     def update_teacher_database_office_id(self, firstname, lastname, office_id):
+        log.info("Called Schedule.update_teacher_database_office_id with paramaters: " + str((firstname, lastname, office_id)))
+
         sanitize = lambda name: str(name).replace(' ', '').replace(',', '').replace('.', '').replace('-', '').lower().rstrip()
         firstname = sanitize(firstname)
         lastname = sanitize(lastname)
@@ -312,6 +328,8 @@ class Schedule():
         self.teacher_database_upsert(t)
 
     def update_teacher_database_block_id(self, course, id):
+        log.info("Called Schedule.update_teacher_database_block_id with paramaters: " + str((course, id)))
+
         t = self.teachers_database.find_one(first_name=self.firstname, last_name=self.lastname)
 
         block = ""
@@ -329,6 +347,8 @@ class Schedule():
 
     # @functools.lru_cache(maxsize=1000)
     def search_teacher(self, teacher_name: str) -> list:
+        log.info("Called Schedule.search_teacher with paramaters: " + str((teacher_name)))
+
         teacher_name = teacher_name.replace(".", "").replace(",", "").replace("-", "").lower().rstrip()
         matched_teachers = []
         all_teachers = self.teachers_database.find()
@@ -353,6 +373,8 @@ class Schedule():
     # @functools.lru_cache(maxsize=1000)
        # return None
     def search_teacher_exact(self, lastname, firstname, reverse=True):
+        log.info("Called Schedule.search_teacher_exact with paramaters: " + str((lastname, firstname, reverse)))
+
         all_teachers = self.teachers_database.find()
 
         sanitize = lambda name: str(name).replace(' ', '').replace(',', '').replace('.', '').replace('-', '').lower().rstrip()
