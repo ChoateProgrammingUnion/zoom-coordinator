@@ -177,7 +177,7 @@ def index():
             if schedule is None:
                 continue
             elif not check_teacher(email):
-                teacher = user_schedule.search_teacher_exact(schedule["teacher_name"])
+                teacher = user_schedule.search_teacher_exact(schedule["last_name"], schedule["first_name"])
                 schedule["office_meeting_id"] = teacher.get('office_id')
                 schedule["user_can_change"] = not bool(teacher.get(schedule.get('block') + "_id"))
             else:
@@ -244,7 +244,7 @@ def get_profile():
     Returns false if not logged in or not choate email.
     """
     # return "mfan21@choate.edu", "Fan Max"
-    return "jpfeil@choate.edu", "Jessica", "Pfeil"
+    # return "jpfeil@choate.edu", "Jessica", "Pfeil"
 
     try:
         if google.authorized:
