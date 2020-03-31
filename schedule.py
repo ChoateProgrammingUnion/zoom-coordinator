@@ -41,6 +41,9 @@ def block_iter(email, datetime_needed=False, weekday=False):
 
     if not weekday:
         weekday = current_datetime.strftime("%A")
+
+    if datetime_needed:
+        current_datetime = midnight
     # else:
         # current_datetime = current_datetime.replace(month=day=
 
