@@ -54,7 +54,7 @@ class Auth:
         """
         Tries to fetch or make a token for a user. If not successful, return False
         """
-        if self.is_token(self.keys.find_one(email=str(email)).get('token')):
+        if self.keys.find_one(email=str(email)) and self.is_token(self.keys.find_one(email=str(email)).get('token')): # change when switch to 3.8
             token = self.keys.find_one(email=str(email)).get('token')
             if self.check_token(email, token):
                 return token
