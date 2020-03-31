@@ -161,9 +161,9 @@ class ScheduleManager(metaclass=SingletonMeta):
         self.courses_database.create_index(['student_email'])
         self.teachers_database.create_index(['name'])
 
-    def createSchedule(self, email, name, isTeacher):
+    def createSchedule(self, email, firstname, lastname, isTeacher):
         if not self.schedules.get(email):
-            self.schedules.update({email: Schedule(self.db, self.courses_database, self.teachers_database, email, name, isTeacher)})
+            self.schedules.update({email: Schedule(self.db, self.courses_database, self.teachers_database, email, firstname, lastname, isTeacher)})
 
     def getSchedule(self, email) -> Schedule:
         return self.schedules[email]
@@ -175,13 +175,17 @@ class Schedule():
     Students are identified by their Choate email address.
     """
 
-    def __init__(self, db, courses, teachers, email, name, isTeacher=False):
+    def __init__(self, db, courses, teachers, email, firstname, lastname, isTeacher=False):
         self.db = db
         self.courses_database = courses
         self.teachers_database = teachers
 
+
+        sanitize = lambda name: str(name).replace(' ', '').replace(',', '').replace('.', '').replace('-', '').lower().rstrip()
+
         self.email = email
-        self.name = name
+        self.firstname = sanitize(firstname)
+        self.lastname = sanitize(lastname)
         self.isTeacher = isTeacher
 
         self.schedule = {'A': None, 'B': None, 'C': None, 'D': None, 'E': None, 'F': None, 'G': None}
@@ -250,7 +254,7 @@ class Schedule():
     def fetch_schedule_teacher(self):
         # Fetch the schedule and store in dictionary
 
-        classes = self.courses_database.find(teacher_name=self.name)
+        classes = self.courses_database.find(first_name=self.firstname, last_name=self.lastname)
 
         for c in classes:
             c = dict(c)
@@ -266,16 +270,16 @@ class Schedule():
                     if b in block:
                         c['block'] = b
                         self.schedule[b] = c.copy()
-                        self.schedule[b]['meeting_id'] = self.teachers_database.find_one(name=self.name)[b + '_id']
+                        self.schedule[b]['meeting_id'] = self.teachers_database.find_one(first_name=self.firstname, last_name=self.lastname)[b + '_id']
             else:
                 self.schedule[block] = c
-                self.schedule[block]['meeting_id'] = self.teachers_database.find_one(name=self.name)[block + '_id']
+                self.schedule[block]['meeting_id'] = self.teachers_database.find_one(first_name=self.firstname, last_name=self.lastname)[block + '_id']
 
     def update_schedule(self, course, section, meeting_id):
         if (self.isTeacher):
             classes_to_update = list(self.courses_database.find(course=course, sec=section))
 
-            self.update_teacher_database_block_id(self.name, course + " " + str(section), meeting_id)
+            self.update_teacher_database_block_id(course + " " + str(section), meeting_id)
 
             self.fetch_schedule_teacher()
         else:
@@ -289,14 +293,22 @@ class Schedule():
             c['meeting_id'] = meeting_id
             self.course_database_upsert(c)
 
-    def update_teacher_database_office_id(self, name, office_id):
-        t = self.teachers_database.find_one(name=name)
+    def update_teacher_database_office_id(self, firstname, lastname, office_id):
+        sanitize = lambda name: str(name).replace(' ', '').replace(',', '').replace('.', '').replace('-', '').lower().rstrip()
+        firstname = sanitize(firstname)
+        lastname = sanitize(lastname)
+
+        t = self.teachers_database.find_one(first_name=firstname, last_name=lastname)
+
+        if t is None:
+            log.error("Failed to query teacher database for " + str((firstname, lastname)))
+
         t['office_id'] = office_id
 
         self.teacher_database_upsert(t)
 
-    def update_teacher_database_block_id(self, name, course, id):
-        t = self.teachers_database.find_one(name=name)
+    def update_teacher_database_block_id(self, course, id):
+        t = self.teachers_database.find_one(first_name=self.firstname, last_name=self.lastname)
 
         block = ""
         for b in "ABCDEFG":
@@ -336,16 +348,13 @@ class Schedule():
 
     # @functools.lru_cache(maxsize=1000)
        # return None
-    def search_teacher_exact(self, teacher_name, reverse=True):
+    def search_teacher_exact(self, lastname, firstname, reverse=True):
         all_teachers = self.teachers_database.find()
 
         sanitize = lambda name: str(name).replace(' ', '').replace(',', '').replace('.', '').replace('-', '').lower().rstrip()
 
         for teacher in all_teachers:
-            if sanitize(teacher_name) == sanitize(teacher['name']):
+            if sanitize(lastname) == sanitize(teacher['last_name']) and sanitize(firstname) == sanitize(teacher['first_name']):
                 return teacher
 
-        log.info("teacher_search_exact queried " + teacher_name + " and got no result")
-
-        if reverse:
-            return self.search_teacher_exact(" ".join(list(reversed(teacher_name.split()))), reverse=False)
+        log.info("teacher_search_exact queried " + str([lastname, firstname]) + " and got no result")

@@ -41,22 +41,22 @@ app.register_blueprint(google_bp, url_prefix="/login")
 
 @app.route('/api/calendar.ics')
 def cal():
-    email, name = get_profile()
-    if email and name and check_choate_email(email):
+    email, firstname, lastname = get_profile()
+    if email and firstname and lastname and check_choate_email(email):
         log.info("here")
         token = request.args.get('token')
         authentication = auth.Auth()
 
         if authentication.check_token(email, token):
-            cal = make_response(make_calendar(email, name).to_ical())
+            cal = make_response(make_calendar(email, firstname, lastname).to_ical())
             cal.mimetype = 'text/calendar'
             return cal
 
     return redirect('/')
 
 def get_calendar():
-    email, name = get_profile()
-    if email and name and check_choate_email(email):
+    email, firstname, lastname = get_profile()
+    if email and firstname and lastname and check_choate_email(email):
         authentication = auth.Auth()
         return authentication.fetch_token(email)
     return False
@@ -66,11 +66,11 @@ def search():
     """
     Searches for teacher meeting ids
     """
-    email, name = get_profile()
-    if email and name:
+    email, firstname, lastname = get_profile()
+    if email and firstname and lastname:
         query = request.args.get('search')
 
-        ScheduleManager().createSchedule(email, name, check_teacher(email))
+        ScheduleManager().createSchedule(email, firstname, lastname, check_teacher(email))
         user_schedule = ScheduleManager().getSchedule(email)
 
         search_results = user_schedule.search_teacher(query)
@@ -112,11 +112,11 @@ def update():
         if "Invalid meeting ID." in str(html):
             return "Error"
 
-    email, teacher_name = get_profile()
+    email, firstname, lastname = get_profile()
     user_schedule = ScheduleManager().getSchedule(email)
 
     if course == "Office Hours":
-        user_schedule.update_teacher_database_office_id(teacher_name, id_num)
+        user_schedule.update_teacher_database_office_id(firstname, lastname, id_num)
     elif email:
         user_schedule.update_schedule(course, section, id_num)
 
@@ -128,9 +128,9 @@ def index():
     Will contain the default views for faculty, students, and teachers
     """
     # if email := get_email():
-    email, name = get_profile()
-    if email and name:
-        ScheduleManager().createSchedule(email, name, check_teacher(email))
+    email, firstname, lastname = get_profile()
+    if email and firstname and lastname:
+        ScheduleManager().createSchedule(email, firstname, lastname, check_teacher(email))
         user_schedule = ScheduleManager().getSchedule(email)
 
         # render_template here
@@ -168,7 +168,7 @@ def index():
 
             if block == "Office Hours":
                 try:
-                    schedule = {"block": "Office", "course": "Office Hours", "course_name": "Office Hours", "teacher_name": user_schedule.name, "meeting_id": user_schedule.search_teacher_exact(user_schedule.name)['office_id']}
+                    schedule = {"block": "Office", "course": "Office Hours", "course_name": "Office Hours", "teacher_name": user_schedule.firstname + " " + user_schedule.lastname, "meeting_id": user_schedule.search_teacher_exact(user_schedule.lastname, user_schedule.firstname)['office_id']}
                 except TypeError as e:
                     log.error("Unable to create teacher schedule due to failed query")
             else:
@@ -244,7 +244,7 @@ def get_profile():
     Returns false if not logged in or not choate email.
     """
     # return "mfan21@choate.edu", "Fan Max"
-    # return "jpfeil@choate.edu", "Pfeil Jessica"
+    return "jpfeil@choate.edu", "Jessica", "Pfeil"
 
     try:
         if google.authorized:
@@ -253,13 +253,15 @@ def get_profile():
                 response = resp.json()
                 if response.get("verified_email") == True and response.get("hd") == "choate.edu":
                     email = str(response.get("email"))
-                    name = str(response.get("name"))
+                    first_name = str(response.get('given_name'))
+                    last_name = str(response.get('family_name'))
+
                     if check_choate_email(email):
-                        log.info(("Logged in", email, name))
-                        return email, name
+                        log.info(" ".join(("Logged in", email, first_name, last_name)))
+                        return email, first_name, last_name
                 else:
                     log.info(("get_profile fail", response)) # log next
     except:
         pass
 
-    return False, False
+    return False, False, False

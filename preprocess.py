@@ -6,6 +6,7 @@ from utils import *
 from config import DB as DB_LOC
 
 def import_data(filename: str):
+    sanitize = lambda name: str(name).replace(' ', '').replace(',', '').replace('.', '').replace('-', '').lower().rstrip()
 
     # Connecting to the DB
     db =  dataset.connect(DB_LOC)
@@ -16,6 +17,8 @@ def import_data(filename: str):
         reader = csv.DictReader(f)
         for count, each_row in enumerate(reader):
             each_row['meeting_id'] = 0
+            each_row['first_name'] = sanitize(each_row['first_name'])
+            each_row['last_name'] = sanitize(each_row['last_name'])
             each_row['teacher_name'] = each_row['last_name'] + ' ' + each_row['first_name']
             courses.upsert(dict(each_row), ["id"]) #upserting info
 
@@ -27,7 +30,7 @@ def import_data(filename: str):
 
             if teacher is None:
                 if (len(block) > 1):
-                    teacher = {"name":each_row['teacher_name'], 'office_id':0}
+                    teacher = {"name":each_row['teacher_name'], 'first_name': each_row['first_name'], 'last_name': each_row['last_name'], 'office_id':0}
 
                     block = block.replace("Fri", "fri")
 
@@ -39,7 +42,7 @@ def import_data(filename: str):
                             teacher[b] = each_row['course'] + " " + each_row['sec']
                             teacher[b + "_id"] = 0
                 else:
-                    teacher = {"name":each_row['teacher_name'], 'office_id':0, str(block):each_row['course'] + " " + each_row['sec'], str(block) + "_id":0}
+                    teacher = {"name":each_row['teacher_name'], 'first_name': each_row['first_name'], 'last_name': each_row['last_name'], 'office_id':0, str(block):each_row['course'] + " " + each_row['sec'], str(block) + "_id":0}
 
                 teachers.upsert(teacher, ["id"])
             else:
