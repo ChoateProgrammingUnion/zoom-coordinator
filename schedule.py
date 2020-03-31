@@ -155,8 +155,11 @@ class ScheduleManager(metaclass=SingletonMeta):
         self.schedules = {}
 
         self.db = dataset.connect(DB_LOC)
-        self.courses_database = self.db['courses']
-        self.teachers_database = self.db['teachers']
+        self.courses_database: dataset.table.Table = self.db['courses']
+        self.teachers_database: dataset.table.Table = self.db['teachers']
+
+        self.courses_database.create_index(['student_email'])
+        self.teachers_database.create_index(['name'])
 
     def createSchedule(self, email, name, isTeacher):
         if not self.schedules.get(email):
