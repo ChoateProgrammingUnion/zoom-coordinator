@@ -16,6 +16,7 @@ def import_data(filename: str):
         reader = csv.DictReader(f)
         for count, each_row in enumerate(reader):
             each_row['meeting_id'] = 0
+            each_row['teacher_name'] = each_row['last_name'] + ' ' + each_row['first_name']
             courses.upsert(dict(each_row), ["id"]) #upserting info
 
             teacher = teachers.find_one(name=each_row['teacher_name'])
