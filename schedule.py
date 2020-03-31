@@ -341,5 +341,5 @@ class Schedule():
             if sanitize(teacher_name) == sanitize(teacher['name']):
                 return teacher
 
-        log.error("teacher_search_exact queried " + teacher_name + " and got no result")
+        log.info("teacher_search_exact queried " + teacher_name + " and got no result")
         return None
