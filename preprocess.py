@@ -16,6 +16,8 @@ def import_data(filename: str):
     with open(filename) as f:
         reader = csv.DictReader(f)
         for count, each_row in enumerate(reader):
+            log.info("Updating Class: " + str(each_row['course']))
+
             each_row['meeting_id'] = 0
             each_row['first_name'] = sanitize(each_row['first_name'])
             each_row['last_name'] = sanitize(each_row['last_name'])
