@@ -143,11 +143,11 @@
                     </div>
                 </div>
             </li>
+                {% if calendar_token %}
 
-            {% if calendar_token %}
+                <a class="waves-effect waves-light btn" style="background-color: #7DA7D9; font-family: Montserrat; margin-left: 2.75rem; margin-bottom: 1rem;" href="/api/calendar.ics?token={{ calendar_token }}"><i class="material-icons left">today</i>Add to Calendar</a>
+                {% endif %}
 
-                <a class="waves-effect waves-light btn" style="background-color: #7DA7D9; font-family: Montserrat; margin-bottom: 1rem;" href="/api/calendar.ics?token={{ calendar_token }}"><i class="material-icons left">today</i>Add to Calendar</a>
-            {% endif %}
 
             <li>
                 <div style="position: fixed; margin-left:.75rem;">
@@ -180,7 +180,7 @@
                     
                 {% if calendar_token %}
 
-                <a class="waves-effect waves-light btn" style="background-color: #7DA7D9; font-family: Montserrat; margin-left: 2.75rem; margin-bottom: 1rem;" href="/api/calendar.ics?token={{ calendar_token }}"><i class="material-icons left">today</i>Add to Calendar</a>
+                <a class="waves-effect waves-light btn" style="background-color: #7DA7D9; font-family: Montserrat; margin-bottom: 1rem;" href="/api/calendar.ics?token={{ calendar_token }}"><i class="material-icons left">today</i>Add to Calendar</a>
                 {% endif %}
 
                     <ul class="collapsible" data-collapsible="accordion" style="width: 20rem">
