@@ -174,7 +174,7 @@ def index():
 
             if block == "Office Hours":
                 try:
-                    schedule = {"block": "Office", "course": "Office Hours", "course_name": "Office Hours", "teacher_name": user_schedule.firstname + " " + user_schedule.lastname, "meeting_id": user_schedule.search_teacher_exact(user_schedule.lastname, user_schedule.firstname)['office_id']}
+                    schedule = {"block": "Office", "course": "Office Hours", "course_name": "Office Hours", "teacher_name": user_schedule.firstname + " " + user_schedule.lastname, "meeting_id": user_schedule.search_teacher_exact_with_creation(user_schedule.lastname, user_schedule.firstname)['office_id']}
                 except TypeError as e:
                     log.error("Unable to create teacher schedule due to failed query")
             else:

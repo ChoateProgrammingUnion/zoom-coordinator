@@ -384,3 +384,23 @@ class Schedule():
                 return teacher
 
         log.info("teacher_search_exact queried " + str([lastname, firstname]) + " and got no result")
+
+    def search_teacher_exact_with_creation(self, lastname, firstname, reverse=True):
+        log.info("Called Schedule.search_teacher_exact with paramaters: " + str((lastname, firstname, reverse)))
+
+        all_teachers = self.teachers_database.find()
+
+        sanitize = lambda name: str(name).replace(' ', '').replace(',', '').replace('.', '').replace('-', '').lower().rstrip()
+
+        for teacher in all_teachers:
+            if sanitize(lastname) == sanitize(teacher['last_name']) and sanitize(firstname) == sanitize(teacher['first_name']):
+                return teacher
+
+        log.info("teacher_search_exact queried " + str([lastname, firstname]) + " and got no result, creating profile now")
+
+        self.teachers_database.insert({"name": firstname.rstrip().title() + " " + lastname.rstrip().title(),
+                                       "first_name": firstname,
+                                       "last_name": lastname,
+                                       "office_id":0})
+
+        return self.teachers_database.find_one(first_name=firstname, last_name=lastname)
