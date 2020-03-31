@@ -150,13 +150,13 @@ def index():
 
             uuid = secrets.token_hex(8)
 
+            schedule = None
+
             if block == "Office Hours":
                 try:
-                    schedule = {"block": "Office", "course": "Office Hours", "course_name": "Office Hours", "teacher_name": user_schedule.name, "meeting_id": user_schedule.search_teacher_exact(user_schedule.name).get('office_id')}
-                except IndexError as e:
-                    log.info(("Account created", e, user_schedule.name, email, name))
-                    user_schedule.db["teachers"].insert(dict(name=user_schedule.name, office_id="0")) # prevent IndexError quickfix
-                    schedule = {"block": "Office", "course": "Office Hours", "course_name": "Office Hours", "teacher_name": user_schedule.name, "meeting_id": user_schedule.search_teacher_exact(user_schedule.name).get('office_id')}
+                    schedule = {"block": "Office", "course": "Office Hours", "course_name": "Office Hours", "teacher_name": user_schedule.name, "meeting_id": user_schedule.search_teacher_exact(user_schedule.name)['office_id']}
+                except TypeError as e:
+                    log.error("Unable to create teacher schedule due to failed query")
             else:
                 schedule = user_schedule.schedule[block]
 
