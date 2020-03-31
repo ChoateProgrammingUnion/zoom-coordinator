@@ -329,10 +329,10 @@ class Schedule():
         matched_teachers = []
         all_teachers = self.teachers_database.find()
 
-        if self.search_teacher_exact(teacher_name):
-            exact_teacher = self.search_teacher_exact(teacher_name)
-            matched_teachers += [exact_teacher]
-            all_teachers.remove(exact_teacher)
+        # if self.search_teacher_exact(teacher_name):
+        #     exact_teacher = self.search_teacher_exact(teacher_name)
+        #     matched_teachers += [exact_teacher]
+        #     all_teachers.remove(exact_teacher)
 
         for teacher in all_teachers:
             teacher_lower = teacher['name'].replace(".", "").replace(",", "").replace("-", "").lower().rstrip()
