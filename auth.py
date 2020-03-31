@@ -13,33 +13,34 @@ class Auth:
         self.db = dataset.connect(DB)
         self.keys = self.db['auth']
 
-    def create_token(self, email: str) -> str:
+    def create_token(self, email: str, firstname: str, lastname: str) -> str:
         """
         Creates token. If creation was successful, return token. If not, return False
         """
         if check_choate_email(email):
             user = {}
             user['email'] = str(email)
+            user['first_name'] = str(firstname)
+            user['last_name'] = str(lastname)
 
             token = secrets.token_hex(16)
             user['token'] = token
             self.keys.upsert(user, ['email'])
 
-            if self.check_token(email, token):
+            if self.get_profile_from_token(token):
                 return token
 
         return False
 
-    def check_token(self, email: str, token: str) -> bool:
+    def get_profile_from_token(self, token: str) -> (str, str, str):
         """
         Checks if token matches expected value
         """
-        if check_choate_email(email) and self.possible_token(token):
-            if self.keys.find_one(email=str(email)):
-                expected_token = self.keys.find_one(email=str(email)).get('token')
-                if secrets.compare_digest(str(expected_token), str(token)):
-                    return True
-        return False
+        if self.possible_token(token):
+            key = self.keys.find_one(token=str(token))
+            if key:
+                return key['email'], key['first_name'], key['last_name']
+        return ''
 
     def is_token(self, token: str) -> bool:
         """
@@ -47,20 +48,20 @@ class Auth:
         """
         if token and self.possible_token(token):
             email = self.keys.find_one(token=str(token)).get('email')
-            if check_choate_email(email) and self.check_token(email, token):
+            if check_choate_email(email) and self.get_profile_from_token(token):
                 return True
         return False
 
-    def fetch_token(self, email: str) -> Union[str, bool]:
+    def fetch_token(self, email: str, firstname: str, lastname: str) -> Union[str, bool]:
         """
         Tries to fetch or make a token for a user. If not successful, return False
         """
         if self.keys.find_one(email=str(email)) and self.is_token(self.keys.find_one(email=str(email)).get('token')): # change when switch to 3.8
             token = self.keys.find_one(email=str(email)).get('token')
-            if self.check_token(email, token):
+            if self.get_profile_from_token(token):
                 return token
         else:
-            return self.create_token(str(email))
+            return self.create_token(str(email), firstname, lastname)
         return False
 
     def possible_token(self, token: str) -> str:

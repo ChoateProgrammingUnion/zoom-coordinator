@@ -47,7 +47,10 @@ def cal():
     token = request.args.get('token')
     authentication = auth.Auth()
 
-    if authentication.check_token(email, token):
+    email, firstname, lastname = authentication.get_profile_from_token(token)
+
+    if email:
+
         cal = make_response(make_calendar(email, firstname, lastname).to_ical())
         cal.mimetype = 'text/calendar'
         return cal
@@ -58,7 +61,7 @@ def get_calendar():
     email, firstname, lastname = get_profile()
     if email and firstname and lastname and check_choate_email(email):
         authentication = auth.Auth()
-        return authentication.fetch_token(email)
+        return authentication.fetch_token(email, firstname, lastname)
     return False
 
 @app.route('/search')
