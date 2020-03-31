@@ -12,6 +12,7 @@ from config import GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET
 import secrets
 from schedule import Schedule, ScheduleManager, check_choate_email, check_teacher, block_iter
 from ical import make_calendar
+import auth
 
 # Temp (INSECURE, REMOVE IN PROD)
 os.environ['OAUTHLIB_INSECURE_TRANSPORT'] = '1'
@@ -36,15 +37,26 @@ google_bp = make_google_blueprint(scope=["https://www.googleapis.com/auth/userin
 # app.register_blueprint(google_bp, url_prefix="/login", reprompt_select_account=True, reprompt_consent=True)
 app.register_blueprint(google_bp, url_prefix="/login")
 
-@app.route('/calendar.ics')
+@app.route('/api/calendar.ics')
 def cal():
     email, name = get_profile()
-    if email and name:
-        print("here")
-        cal = make_response(make_calendar(email, name).to_ical())
-        cal.mimetype = 'text/calendar'
-        return cal
+    if email and name and check_choate_email(email):
+        token = request.args.get('token')
+        authentication = auth.Auth()
+
+        if authentication.check_token(email, token):
+            cal = make_response(make_calendar(email, name).to_ical())
+            cal.mimetype = 'text/calendar'
+            return cal
+
     return redirect('/')
+
+def get_calendar():
+    email, name = get_profile()
+    if email and name and check_choate_email(email):
+        authentication = auth.Auth()
+        return authentication.fetch_token(email)
+    return False
 
 @app.route('/search')
 def search():
@@ -66,7 +78,8 @@ def search():
             cards += render_template("teacher_card.html", **result)
 
         commit = get_commit()
-        return render_template("index.html", cards=Markup(cards), card_js="", commit=commit)
+        calendar_token = get_calendar()
+        return render_template("index.html", cards=Markup(cards), card_js="", commit=commit, calendar_token=calendar_token)
     else:
         return redirect("/")
 
@@ -178,11 +191,13 @@ def index():
             card_script += render_template("card.js", **schedule)
 
         commit = get_commit()
+        calendar_token = get_calendar()
         return render_template("index.html",
                                cards=Markup(cards),
                                card_js=Markup(card_script),
                                toc=Markup(toc['A'] + toc['B'] + toc['C'] + toc['D'] + toc['E'] + toc['F'] + toc['G']),
                                top_label=top_label,
+                               calendar_token=calendar_token,
                                commit=commit)
     else:
         button = render_template("login.html")
