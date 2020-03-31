@@ -41,16 +41,16 @@ app.register_blueprint(google_bp, url_prefix="/login")
 
 @app.route('/api/calendar.ics')
 def cal():
-    email, firstname, lastname = get_profile()
-    if email and firstname and lastname and check_choate_email(email):
-        log.info("here")
-        token = request.args.get('token')
-        authentication = auth.Auth()
+    # email, firstname, lastname = get_profile()
+    # if email and firstname and lastname and check_choate_email(email):
+        # log.info("here")
+    token = request.args.get('token')
+    authentication = auth.Auth()
 
-        if authentication.check_token(email, token):
-            cal = make_response(make_calendar(email, firstname, lastname).to_ical())
-            cal.mimetype = 'text/calendar'
-            return cal
+    if authentication.check_token(email, token):
+        cal = make_response(make_calendar(email, firstname, lastname).to_ical())
+        cal.mimetype = 'text/calendar'
+        return cal
 
     return redirect('/')
 
