@@ -41,16 +41,22 @@ app.register_blueprint(google_bp, url_prefix="/login")
 
 @app.route('/api/calendar.ics')
 def cal():
-    email, firstname, lastname = get_profile()
-    if email and firstname and lastname and check_choate_email(email):
-        log.info("here")
-        token = request.args.get('token')
-        authentication = auth.Auth()
+    # email, firstname, lastname = get_profile()
+    # if email and firstname and lastname and check_choate_email(email):
+        # log.info("here")
+    token = request.args.get('token')
+    email = request.args.get('email')
+    firstname = request.args.get('first')
+    lastname = request.args.get('last')
+    authentication = auth.Auth()
 
-        if authentication.check_token(email, token):
-            cal = make_response(make_calendar(email, firstname, lastname).to_ical())
-            cal.mimetype = 'text/calendar'
-            return cal
+    email, firstname, lastname = authentication.get_profile_from_token(token)
+
+    if email:
+
+        cal = make_response(make_calendar(email, firstname, lastname).to_ical())
+        cal.mimetype = 'text/calendar'
+        return cal
 
     return redirect('/')
 
@@ -58,7 +64,7 @@ def get_calendar():
     email, firstname, lastname = get_profile()
     if email and firstname and lastname and check_choate_email(email):
         authentication = auth.Auth()
-        return authentication.fetch_token(email)
+        return authentication.fetch_token(email, firstname, lastname)
     return False
 
 @app.route('/search')
@@ -82,7 +88,7 @@ def search():
 
         commit = get_commit()
         calendar_token = get_calendar()
-        return render_template("index.html", cards=Markup(cards), card_js="", commit=commit, calendar_token=calendar_token)
+        return render_template("index.html", cards=Markup(cards), card_js="", commit=commit, calendar_token=calendar_token, email=email, firstname=firstname, lastname=lastname)
     else:
         return redirect("/")
 
@@ -201,6 +207,9 @@ def index():
                                toc=Markup(toc['A'] + toc['B'] + toc['C'] + toc['D'] + toc['E'] + toc['F'] + toc['G']),
                                top_label=top_label,
                                calendar_token=calendar_token,
+                               email=email,
+                               firstname=firstname,
+                               lastname=lastname,
                                commit=commit)
     else:
         button = render_template("login.html")

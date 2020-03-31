@@ -16,12 +16,20 @@ def import_data(filename: str):
     with open(filename) as f:
         reader = csv.DictReader(f)
         for count, each_row in enumerate(reader):
-            log.info("Updating Class: " + str(each_row['course']))
+            c = courses.find_one(course=each_row['course'], sec=each_row['sec'], student_email=each_row['student_email'])
 
-            each_row['meeting_id'] = 0
+            if c and c['meeting_id'] != 0:
+                log.info("Preserved Meeting id " + str(c['meeting_id']))
+                each_row['meeting_id'] = c['meeting_id']
+            else:
+                each_row['meeting_id'] = 0
+
+            # log.info(each_row)
+
+            each_row['teacher_name'] = each_row['first_name'].rstrip().title() + ' ' + each_row['last_name'].rstrip().title()
             each_row['first_name'] = sanitize(each_row['first_name'])
             each_row['last_name'] = sanitize(each_row['last_name'])
-            each_row['teacher_name'] = each_row['last_name'] + ' ' + each_row['first_name']
+
             courses.upsert(dict(each_row), ["id"]) #upserting info
 
             teacher = teachers.find_one(name=each_row['teacher_name'])
@@ -36,11 +44,8 @@ def import_data(filename: str):
 
                     block = block.replace("Fri", "fri")
 
-                    log.info(block)
-
                     for b in "ABCDEFG":
                         if b in block:
-                            log.info(" " + b)
                             teacher[b] = each_row['course'] + " " + each_row['sec']
                             teacher[b + "_id"] = 0
                 else:
@@ -51,16 +56,21 @@ def import_data(filename: str):
                 if (len(block) > 1):
                     block = block.replace("Fri", "fri")
 
-                    log.info(block)
-
                     for b in "ABCDEFG":
                         if b in block:
-                            log.info(" " + b)
                             teacher[b] = each_row['course'] + " " + each_row['sec']
-                            teacher[b + "_id"] = 0
+
+                            if not teacher.get(b + "_id"):
+                                teacher[b + "_id"] = 0
+                            else:
+                                log.info("Teacher id " + teacher.get(b + "_id") + " preserved")
                 else:
                     teacher[block] = each_row['course'] + " " + each_row['sec']
-                    teacher[block + "_id"] = 0
+
+                    if not teacher.get(block + "_id"):
+                        teacher[block + "_id"] = 0
+                    else:
+                        log.info("Teacher id " + teacher.get(block + "_id") + " preserved")
 
                 teachers.upsert(teacher, ["id"])
 

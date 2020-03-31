@@ -13,8 +13,8 @@ def make_calendar(email, firstname, lastname):
     user_schedule = ScheduleManager().getSchedule(email)
     user_schedule.fetch_schedule()
     
-    today_offset = datetime.date.today().weekday()
-    this_monday = datetime.date.today() - datetime.timedelta(days=-today_offset)
+    today_offset = datetime.date.today().weekday() 
+    this_monday = datetime.date.today() - datetime.timedelta(days=today_offset)
     log.info(this_monday)
 
     log.info(this_monday.day)
@@ -34,8 +34,13 @@ def make_calendar(email, firstname, lastname):
                 event['LOCATION'] = "https://zoom.us/j/" + str(block_data.get('meeting_id'))
                 event['summary'] = block_data.get('course_name').title()
                 event['DESCRIPTION'] = "Zoom link: https://zoom.us/j/" + str(block_data.get('meeting_id')) + "\nMeeting ID: " + str(block_data.get('meeting_id'))
+                event.add('rrule', {'freq': 'weekly', 'count': 10})
+
                 event.add('dtstart', start_time)
                 event.add('dtend', start_time + datetime.timedelta(minutes=50))
+
+                log.info(event)
+
                 cal.add_component(event)
     return cal
 
