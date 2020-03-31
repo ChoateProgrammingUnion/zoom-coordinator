@@ -54,7 +54,7 @@ def cal():
 
     if email:
 
-        cal = make_response(make_calendar(email, firstname, lastname).to_ical())
+        cal = make_response(make_calendar(email).to_ical())
         cal.mimetype = 'text/calendar'
         return cal
 
