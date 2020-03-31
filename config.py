@@ -1,0 +1,5 @@
+# SERVER_NAME = "zoom.choate.edu"
+SERVER_NAME = "127.0.0.1:5000"
+DB = "sqlite:///index.db"
+GOOGLE_CLIENT_ID = ""
+GOOGLE_CLIENT_SECRET = ""
