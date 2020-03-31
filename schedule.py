@@ -335,7 +335,8 @@ class Schedule():
         return matched_teachers
 
     # @functools.lru_cache(maxsize=1000)
-    def search_teacher_exact(self, teacher_name):
+       # return None
+    def search_teacher_exact(self, teacher_name, reverse=True):
         all_teachers = self.teachers_database.find()
 
         sanitize = lambda name: str(name).replace(' ', '').replace(',', '').replace('.', '').replace('-', '').lower().rstrip()
@@ -346,5 +347,5 @@ class Schedule():
 
         log.info("teacher_search_exact queried " + teacher_name + " and got no result")
 
-        return self.search_teacher(teacher_name)[0]
-        # return None
+        if reverse:
+            return self.search_teacher_exact(" ".join(list(reversed(teacher_name.split()))), reverse=False)
