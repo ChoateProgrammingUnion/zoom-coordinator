@@ -13,15 +13,13 @@ class Auth:
         self.db = dataset.connect(DB)
         self.keys = self.db['auth']
 
-    def create_token(self, email: str, firstname: str, lastname: str) -> str:
+    def create_token(self, email: str) -> str:
         """
         Creates token. If creation was successful, return token. If not, return False
         """
         if check_choate_email(email):
             user = {}
             user['email'] = str(email)
-            user['first_name'] = str(firstname)
-            user['last_name'] = str(lastname)
 
             token = secrets.token_hex(16)
             user['token'] = token
@@ -38,8 +36,8 @@ class Auth:
         """
         if self.possible_token(token):
             key = self.keys.find_one(token=str(token))
-            if key:
-                return key['email'], key['first_name'], key['last_name']
+            if secrets.compare_digest(self.fetch_token(key['email']), token):
+                return key['email']
         return ''
 
     def is_token(self, token: str) -> bool:
@@ -52,7 +50,7 @@ class Auth:
                 return True
         return False
 
-    def fetch_token(self, email: str, firstname: str, lastname: str) -> Union[str, bool]:
+    def fetch_token(self, email: str) -> Union[str, bool]:
         """
         Tries to fetch or make a token for a user. If not successful, return False
         """
@@ -61,7 +59,7 @@ class Auth:
             if self.get_profile_from_token(token):
                 return token
         else:
-            return self.create_token(str(email), firstname, lastname)
+            return self.create_token(str(email))
         return False
 
     def possible_token(self, token: str) -> str:
