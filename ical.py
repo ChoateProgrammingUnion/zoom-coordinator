@@ -13,8 +13,8 @@ def make_calendar(email, firstname, lastname):
     user_schedule = ScheduleManager().getSchedule(email)
     user_schedule.fetch_schedule()
     
-    today_offset = datetime.date.today().weekday()
-    this_monday = datetime.date.today() - datetime.timedelta(days=-today_offset)
+    today_offset = datetime.date.today().weekday() 
+    this_monday = datetime.date.today() - datetime.timedelta(days=today_offset)
     log.info(this_monday)
 
     log.info(this_monday.day)
