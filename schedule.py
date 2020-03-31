@@ -13,6 +13,8 @@ from datetime import datetime, timedelta
 from preprocess import DB_LOC
 from rapidfuzz import fuzz
 
+from utils import *
+
 CLASS_SCHEDULE = {
     "Monday": "ABCDE",
     "Tuesday": "FGAB",
@@ -148,13 +150,6 @@ def check_teacher(email: str) -> bool:
     else:
         return False
 
-class SingletonMeta(type):
-    def __call__(cls, *args, **kwargs):
-        if not hasattr(cls, '_obj'):
-            cls._obj = cls.__new__(cls)
-            cls._obj.__init__(*args, **kwargs)
-        return cls._obj
-
 class ScheduleManager(metaclass=SingletonMeta):
     def __init__(self):
         self.schedules = {}
@@ -283,10 +278,10 @@ class Schedule():
         else:
             classes_to_update = list(self.courses_database.find(course=course, sec=section, student_email=self.email))
 
-        print(str(len(classes_to_update)) + " entries to update")
+        log.info(str(len(classes_to_update)) + " entries to update")
 
         for c in classes_to_update:
-            print("Updated " + c['student_name'])
+            log.info("Updated " + c['student_name'])
 
             c['meeting_id'] = meeting_id
             self.course_database_upsert(c)
@@ -303,12 +298,12 @@ class Schedule():
         block = ""
         for b in "ABCDEFG":
             if t[b] == course:
-                print("Updating " + b + " Block")
+                log.info("Updating " + b + " Block")
                 block = b
                 t[block + "_id"] = str(id)
 
         if block == "":
-            print("Class Not Found")
+            log.info("Class Not Found")
             return
 
         self.teacher_database_upsert(t)
@@ -346,4 +341,5 @@ class Schedule():
             if sanitize(teacher_name) == sanitize(teacher['name']):
                 return teacher
 
+        log.error("teacher_search_exact queried " + teacher_name + " and got no result")
         return None

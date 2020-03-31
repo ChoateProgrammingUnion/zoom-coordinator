@@ -2,9 +2,9 @@ import csv
 import sys
 import dataset
 
+from utils import *
+
 DB_LOC = "sqlite:///index.db"
-
-
 
 def import_data(filename: str):
 
@@ -31,11 +31,11 @@ def import_data(filename: str):
 
                     block = block.replace("Fri", "fri")
 
-                    print(block)
+                    log.info(block)
 
                     for b in "ABCDEFG":
                         if b in block:
-                            print(" " + b)
+                            log.info(" " + b)
                             teacher[b] = each_row['course'] + " " + each_row['sec']
                             teacher[b + "_id"] = 0
                 else:
@@ -46,11 +46,11 @@ def import_data(filename: str):
                 if (len(block) > 1):
                     block = block.replace("Fri", "fri")
 
-                    print(block)
+                    log.info(block)
 
                     for b in "ABCDEFG":
                         if b in block:
-                            print(" " + b)
+                            log.info(" " + b)
                             teacher[b] = each_row['course'] + " " + each_row['sec']
                             teacher[b + "_id"] = 0
                 else:

@@ -13,6 +13,8 @@ import secrets
 from schedule import Schedule, ScheduleManager, check_choate_email, check_teacher, block_iter
 from ical import make_calendar
 
+from utils import *
+
 # Temp (INSECURE, REMOVE IN PROD)
 os.environ['OAUTHLIB_INSECURE_TRANSPORT'] = '1'
 
@@ -39,7 +41,7 @@ app.register_blueprint(google_bp, url_prefix="/login", reprompt_select_account=T
 def cal():
     email, name = get_profile()
     if email and name:
-        print("here")
+        log.info("here")
         cal = make_response(make_calendar(email, name).to_ical())
         cal.mimetype = 'text/calendar'
         return cal
@@ -117,7 +119,7 @@ def index():
         user_schedule = ScheduleManager().getSchedule(email)
 
         # render_template here
-        # print(Schedule().search_teacher_exact("Guelakis Patrick"))
+        # log.info(Schedule().search_teacher_exact("Guelakis Patrick"))
 
         user_schedule.fetch_schedule()
 
@@ -126,7 +128,7 @@ def index():
 
         toc = {'A': '', 'B': '', 'C': '', 'D': '', 'E': '', 'F': '', 'G': ''}
 
-        # print(block_iter())
+        # log.info(block_iter())
         # if check_teacher(email):
             # uuid = secrets.token_hex(8)
             # cards += render_template("class_card.html")
@@ -151,7 +153,7 @@ def index():
                 try:
                     schedule = {"block": "Office", "course": "Office Hours", "course_name": "Office Hours", "teacher_name": user_schedule.name, "meeting_id": user_schedule.search_teacher_exact(user_schedule.name).get('office_id')}
                 except IndexError as e:
-                    print("Account created", e, user_schedule.name, email, name)
+                    log.info(("Account created", e, user_schedule.name, email, name))
                     user_schedule.db["teachers"].insert(dict(name=user_schedule.name, office_id="0")) # prevent IndexError quickfix
                     schedule = {"block": "Office", "course": "Office Hours", "course_name": "Office Hours", "teacher_name": user_schedule.name, "meeting_id": user_schedule.search_teacher_exact(user_schedule.name).get('office_id')}
             else:
@@ -239,10 +241,10 @@ def get_profile():
                     email = str(response.get("email"))
                     name = str(response.get("name"))
                     if check_choate_email(email):
-                        print("Logged in", email, name)
+                        log.info(("Logged in", email, name))
                         return email, name
                 else:
-                    print("get_profile fail", response) # log next
+                    log.info(("get_profile fail", response)) # log next
     except:
         pass
 
