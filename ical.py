@@ -34,7 +34,8 @@ def make_calendar(email, firstname, lastname):
                 event['LOCATION'] = "https://zoom.us/j/" + str(block_data.get('meeting_id'))
                 event['summary'] = block_data.get('course_name').title()
                 event['DESCRIPTION'] = "Zoom link: https://zoom.us/j/" + str(block_data.get('meeting_id')) + "\nMeeting ID: " + str(block_data.get('meeting_id'))
-                event['RRULE'] = "FREQ=WEEKLY;COUNT=10"
+                event.add('rrule', {'freq': 'weekly', 'count': 10})
+
                 event.add('dtstart', start_time)
                 event.add('dtend', start_time + datetime.timedelta(minutes=50))
                 cal.add_component(event)
