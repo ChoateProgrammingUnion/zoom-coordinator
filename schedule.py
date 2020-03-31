@@ -10,7 +10,7 @@ import validators
 import time
 from datetime import datetime, timedelta
 
-from preprocess import DB_LOC
+from config import  DB as DB_LOC
 from rapidfuzz import fuzz
 
 from utils import *

@@ -3,8 +3,7 @@ import sys
 import dataset
 
 from utils import *
-
-DB_LOC = "sqlite:///index.db"
+from config import DB as DB_LOC
 
 def import_data(filename: str):
 

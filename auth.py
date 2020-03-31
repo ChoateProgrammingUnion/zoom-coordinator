@@ -3,13 +3,14 @@ from typing import Union
 from app import check_choate_email
 import string
 import secrets
+from config import *
 
 class Auth:
     """
     Generates and validates user auth tokens
     """
     def __init__(self):
-        self.db = dataset.connect('sqlite:///index.db')
+        self.db = dataset.connect(DB)
         self.keys = self.db['auth']
 
     def create_token(self, email: str) -> str:

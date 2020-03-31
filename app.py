@@ -8,7 +8,7 @@ import git
 import functools
 from icalendar import Calendar, Event
 from flask_dance.contrib.google import make_google_blueprint, google 
-from config import GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET
+from config import *
 import secrets
 from schedule import Schedule, ScheduleManager, check_choate_email, check_teacher, block_iter
 from ical import make_calendar
@@ -31,7 +31,7 @@ app.config.update(
 app.config["GOOGLE_OAUTH_CLIENT_ID"] = GOOGLE_CLIENT_ID 
 app.config["GOOGLE_OAUTH_CLIENT_SECRET"] = GOOGLE_CLIENT_SECRET 
 app.config["OAUTHLIB_RELAX_TOKEN_SCOPE"] = "true"
-# app.config['SERVER_NAME'] = "demo.homelabs.space"
+app.config['SERVER_NAME'] = SERVER_NAME 
 app.config['PREFERRED_URL_SCHEME'] = "https"
 os.environ["OAUTHLIB_RELAX_TOKEN_SCOPE"] = "true" 
 
