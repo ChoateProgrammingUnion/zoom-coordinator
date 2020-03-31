@@ -345,4 +345,6 @@ class Schedule():
                 return teacher
 
         log.info("teacher_search_exact queried " + teacher_name + " and got no result")
-        return None
+
+        return self.search_teacher(teacher_name)[0]
+        # return None
