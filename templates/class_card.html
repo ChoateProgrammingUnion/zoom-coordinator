@@ -16,10 +16,10 @@
 
 
                 <span id="span{{ uuid }}">
-                    <button style="background-color: rgb(0,147,213); font-family: Montserrat; margin: 5px;" type="button" class="btn waves-effect waves-light" onclick="window.open('https://zoom.us/j/{{ meeting_id }}'); target='_blank'">Join Class<span id="full-text"> (id: {{ meeting_id }})</span></button>
+                    <button style="background-color: rgb(0,147,213); font-family: Montserrat; margin: 5px;" type="button" class="btn waves-effect waves-light" id="join-class-btn-STU" onclick="window.open('https://zoom.us/j/{{ meeting_id }}'); target='_blank'">Join Class<span id="full-text"> (id: {{ meeting_id }})</span></button>
                 </span>
                 {% if office_meeting_id %}
-                    <button style="background-color: rgb(0,147,213); font-family: Montserrat; margin: 5px;" type="button" class="btn waves-effect waves-light" onclick="window.open('https://zoom.us/j/{{ office_meeting_id }}'); target='_blank'">Office Hours<span id="full-text"> (id: {{ office_meeting_id }})</span></button>
+                    <button style="background-color: rgb(0,147,213); font-family: Montserrat; margin: 5px;" type="button" class="btn waves-effect waves-light" id="join-office-btn-STU" onclick="window.open('https://zoom.us/j/{{ office_meeting_id }}'); target='_blank'">Office Hours<span id="full-text"> (id: {{ office_meeting_id }})</span></button>
                 {% endif %}
 
                 {% if user_can_change %}

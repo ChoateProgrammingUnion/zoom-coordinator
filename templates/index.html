@@ -11,6 +11,22 @@
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css" integrity="sha256-OweaP/Ic6rsV+lysfyS4h+LM6sRwuO3euTYfr6M124g=" crossorigin="anonymous" />
         <!--Import JQuery-->
         <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
+        <!-- Global site tag (gtag.js) - Google Analytics -->
+        <script async src="https://www.googletagmanager.com/gtag/js?id=UA-155202040-3"></script>
+        <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+
+        gtag('config', 'UA-155202040-3');
+        </script>
+        <!-- Google Tag Manager -->
+        <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+        new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+        j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+        'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+        })(window,document,'script','dataLayer','GTM-NCQSS44');</script>
+        <!-- End Google Tag Manager -->
 
         <link rel="icon" href="https://www.choate.edu/uploaded/favicon-crh.ico">
   
@@ -72,6 +88,13 @@
                 margin: 0 auto 10px;
             }
 
+            .egg {
+                color: white;
+            }
+            .egg::selection {
+                background-color: pink;
+            }
+
             a.anchor {
                 display: block;
                 position: relative;
@@ -91,6 +114,11 @@
   
     <!-- MAIN BODY -->
     <body>
+        <!-- Google Tag Manager (noscript) -->
+        <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-NCQSS44"
+        height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+        <!-- End Google Tag Manager (noscript) -->
+        
         <!-- HEADER -->
         <div class="navbar-fixed">
             <nav style="background-color: #005596;">
@@ -153,7 +181,7 @@
                 <div style="position: fixed; margin-left:.75rem;">
                     <h5 style="padding-left: 1rem;"><b>FAQs</b></h6>
                     <h6 style="padding-left: 1rem"><b>How do I update a Zoom ID?</b></h6>
-                    <p style="padding-left: 1rem; font-size: 1rem; padding-right: 25%; line-height: normal;">Under the join class button, enter the new meeting ID into the text field. The ID will automatically update when the link is confirmed ot be valid.</p>
+                    <p style="padding-left: 1rem; font-size: 1rem; padding-right: 25%; line-height: normal;">Under the join class button, enter the new meeting ID into the text field. The ID will automatically update when the link is confirmed to be valid.</p>
                     <h6 style="padding-left: 1rem"><b>Why can't I see my teacher's office hours Zoom ID?</b></h6>
                     <p style="padding-left: 1rem; font-size: 1rem; padding-right: 25%; line-height: normal;">Office Hours ID buttons only show up when a teacher has set their office hours Zoom ID. Please contact your teacher asking them to update their ID.</p>
                 </div>
@@ -204,6 +232,7 @@
                     </ul>
 
                     <a class="waves-effect waves-light btn" style="background-color: #7DA7D9; font-family: Montserrat; margin-top: 1rem;" href="/help"><i class="material-icons left">help_outline</i>More help</a>
+                    <p class="egg">baby</p>
                 </div>
             </div>
         </div>
