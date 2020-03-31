@@ -45,6 +45,9 @@ def cal():
     # if email and firstname and lastname and check_choate_email(email):
         # log.info("here")
     token = request.args.get('token')
+    email = request.args.get('email')
+    firstname = request.args.get('first')
+    lastname = request.args.get('last')
     authentication = auth.Auth()
 
     email, firstname, lastname = authentication.get_profile_from_token(token)
@@ -85,7 +88,7 @@ def search():
 
         commit = get_commit()
         calendar_token = get_calendar()
-        return render_template("index.html", cards=Markup(cards), card_js="", commit=commit, calendar_token=calendar_token)
+        return render_template("index.html", cards=Markup(cards), card_js="", commit=commit, calendar_token=calendar_token, email=email, firstname=firstname, lastname=lastname)
     else:
         return redirect("/")
 
@@ -204,6 +207,9 @@ def index():
                                toc=Markup(toc['A'] + toc['B'] + toc['C'] + toc['D'] + toc['E'] + toc['F'] + toc['G']),
                                top_label=top_label,
                                calendar_token=calendar_token,
+                               email=email,
+                               firstname=firstname,
+                               lastname=lastname,
                                commit=commit)
     else:
         button = render_template("login.html")
