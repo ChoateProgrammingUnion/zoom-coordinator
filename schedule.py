@@ -56,9 +56,9 @@ def block_iter(email, datetime_needed=False, weekday=False):
         midnight += timedelta(hours=48)
         classes_not_today = True
 
-    elif current_datetime > midnight + OFFSETS[weekday][-1] + timedelta(minutes=50) and not weekday:
+    elif current_datetime > midnight + OFFSETS[weekday][-1] + timedelta(minutes=50) and not datetime_needed:
         midnight += timedelta(hours=24)
-        weekday = (current_datetime + timedelta(hours=24)).strftime("%A")
+        weekday = midnight.strftime("%A")
         classes_not_today = True
 
         if weekday == "Saturday":
