@@ -4,7 +4,7 @@ MAINTAINER InnovativeInventor
 
 WORKDIR /usr/src/app
 
-RUN apt-get update && apt-get install python-pip python-dev libmysqlclient-dev -y
+RUN apt-get update && apt-get install python-pip python-dev libmariadb-dev-compat libmariadb-dev -y
 RUN pip3 install waitress gunicorn flask Flask-Dance validators dataset pytz filelock gitpython icalendar rapidfuzz mysqlclient PyMySQL
 COPY . /usr/src/app
 #RUN rm index.db && python3 preprocess.py
