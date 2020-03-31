@@ -310,7 +310,7 @@ class Schedule():
 
     # @functools.lru_cache(maxsize=1000)
     def search_teacher(self, teacher_name: str) -> list:
-        teacher_name = teacher_name.replace(".", "").replace(",", "").lower().rstrip()
+        teacher_name = teacher_name.replace(".", "").replace(",", "").replace("-", "").lower().rstrip()
         matched_teachers = []
         all_teachers = self.teachers_database.find()
 
@@ -320,7 +320,7 @@ class Schedule():
             all_teachers.remove(exact_teacher)
 
         for teacher in all_teachers:
-            teacher_lower = teacher['name'].lower()
+            teacher_lower = teacher['name'].replace(".", "").replace(",", "").replace("-", "").lower().rstrip()
             # if (len(find_near_matches(teacher_name, teacher['name'], max_l_dist=1)) > 0):
             if teacher_name in teacher_lower:
                 matched_teachers.insert(0, teacher)
