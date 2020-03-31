@@ -18,10 +18,15 @@ def import_data(filename: str):
         for count, each_row in enumerate(reader):
             log.info("Updating Class: " + str(each_row['course']))
 
-            each_row['meeting_id'] = 0
+            if not each_row.get('meeting_id'):
+                each_row['meeting_id'] = 0
+
+            log.info(each_row)
+
+            each_row['teacher_name'] = each_row['first_name'].rstrip().title() + ' ' + each_row['last_name'].rstrip().title()
             each_row['first_name'] = sanitize(each_row['first_name'])
             each_row['last_name'] = sanitize(each_row['last_name'])
-            each_row['teacher_name'] = each_row['last_name'] + ' ' + each_row['first_name']
+
             courses.upsert(dict(each_row), ["id"]) #upserting info
 
             teacher = teachers.find_one(name=each_row['teacher_name'])
