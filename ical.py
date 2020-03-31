@@ -38,6 +38,9 @@ def make_calendar(email, firstname, lastname):
 
                 event.add('dtstart', start_time)
                 event.add('dtend', start_time + datetime.timedelta(minutes=50))
+
+                log.info(event)
+
                 cal.add_component(event)
     return cal
 
