@@ -141,3 +141,5 @@ dmypy.json
 # pytype static type analyzer
 .pytype/
 
+config.py
+data/courses.csv
