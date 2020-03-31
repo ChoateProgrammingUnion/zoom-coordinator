@@ -17,7 +17,7 @@ from utils import *
 
 CLASS_SCHEDULE = {
     "Monday": "ABCDE",
-    "Tuesday": "FGAB",
+    "Tuesday": "FGBA",
     "Wednesday": "ECD",
     "Thursday": "FAGB",
     "Friday": "CDEFG",
