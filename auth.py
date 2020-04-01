@@ -46,7 +46,7 @@ class Auth:
         """
         if token and self.possible_token(token):
             email = self.keys.find_one(token=str(token)).get('email')
-            if check_choate_email(email) and self.get_profile_from_token(token):
+            if check_choate_email(email):
                 return True
         return False
 
