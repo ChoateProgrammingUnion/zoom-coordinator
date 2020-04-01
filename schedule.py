@@ -383,7 +383,6 @@ class Schedule():
         else:
             log.info(self.logheader + caller + " (transactional_upsert) Automatic re-trying failed with these args: " + str((table, data, key, attempt)))
 
-        self.end_db_connection(caller + '(transactional_upsert) ')
         return False
 
     def teacher_database_insert(self, data, caller=''):
