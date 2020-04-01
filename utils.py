@@ -41,6 +41,24 @@ DEFAULT_LOGGING = {
 logging.config.dictConfig(DEFAULT_LOGGING)
 log = logging.getLogger(__name__)
 
+def log_info(msg, header=None, caller=None):
+    if caller:
+        msg = color.GREEN + caller + color.END + msg
+
+    if header:
+        msg = color.YELLOW + header + color.END + msg
+
+    log.info(msg)
+
+def log_error(msg, header=None, caller=None):
+    if caller:
+        msg = color.GREEN + caller + color.END + msg
+
+    if header:
+        msg = color.YELLOW + header + color.END + msg
+
+    log.error(color.RED + msg + color.END)
+
 class SingletonMeta(type):
     def __call__(cls, *args, **kwargs):
         if not hasattr(cls, '_obj'):

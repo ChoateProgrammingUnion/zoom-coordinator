@@ -15,9 +15,7 @@ def make_calendar(email, firstname, lastname):
     
     today_offset = datetime.date.today().weekday() 
     this_monday = datetime.date.today() - datetime.timedelta(days=today_offset)
-    log.info(this_monday)
 
-    log.info(this_monday.day)
     # Taken from documentation
     cal = Calendar()
     cal['summary'] = 'Choate Zoom Coordinator Schedule'
@@ -27,8 +25,6 @@ def make_calendar(email, firstname, lastname):
             
             block_data = user_schedule.schedule[block]
             if block_data:
-                log.info(block_data)
-
                 event = Event()
                 # event['summary'] = block + ' block class'
                 event['LOCATION'] = "https://zoom.us/j/" + str(block_data.get('meeting_id'))
@@ -38,8 +34,6 @@ def make_calendar(email, firstname, lastname):
 
                 event.add('dtstart', start_time)
                 event.add('dtend', start_time + datetime.timedelta(minutes=50))
-
-                log.info(event)
 
                 cal.add_component(event)
     return cal

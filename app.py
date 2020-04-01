@@ -271,10 +271,10 @@ def get_profile():
                     last_name = str(response.get('family_name'))
 
                     if check_choate_email(email):
-                        log.info(" ".join(("Logged in", email, first_name, last_name)))
+                        log_info("Profile received successfully", "[" + first_name + " " + last_name + "] ", "(get_profile) ")
                         return email, first_name, last_name
                 else:
-                    log.info(("get_profile fail", response)) # log next
+                    log_error("Profile retrieval failed with response " + str(response), caller="(get_profile) ") # log next
     except:
         pass
 
