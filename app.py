@@ -47,10 +47,10 @@ def secure():
         # log.info("here")
     token = request.args.get('token')
     if secrets.compare_digest(token,config.TOKEN):
-        log.info("Log accessed "+ str(request.args))
+        log_info("Log accessed "+ str(request.args))
         return send_file("live_detector.log")
     else:
-        log.info("Log deny access "+ str(request.args))
+        log_info("Log deny access "+ str(request.args))
 
     return redirect('/')
 
@@ -196,7 +196,7 @@ def index():
                                 "meeting_id": user_schedule.search_teacher_email_with_creation(user_schedule.email, user_schedule.lastname, user_schedule.firstname)['office_id'],
                                 "teacher_email": 'placeholder'}
                 except TypeError as e:
-                    log.error("Unable to create teacher schedule due to failed query")
+                    log_error("Unable to create teacher schedule due to failed query")
             else:
                 schedule = user_schedule.schedule[block]
 
@@ -273,7 +273,7 @@ def get_profile():
     Returns false if not logged in or not choate email.
     """
     # return "mfan21@choate.edu", "Fan Max"
-    # return "jmama@choate.edu", "Joe", "Mama"
+    # return "echapman22@choate.edu", "Ethan", "Chapman"
 
     try:
         if google.authorized:
@@ -289,8 +289,9 @@ def get_profile():
                         log_info("Profile received successfully", "[" + first_name + " " + last_name + "] ", "(get_profile) ")
                         return email, first_name, last_name
                 else:
-                    log_error("Profile retrieval failed with response " + str(response), caller="(get_profile) ") # log next
+                    log_error("Profile retrieval failed with response " + str(response)) # log next
     except:
         pass
 
+    log_error("Not Google authorized") # log next
     return False, False, False
