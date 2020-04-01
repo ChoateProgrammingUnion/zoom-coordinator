@@ -84,7 +84,7 @@ def import_data(filename: str):
                     if not teacher.get(block + "_id"):
                         teacher[block + "_id"] = 0
                     else:
-                        log.info("Teacher id " + teacher.get(block + "_id") + " preserved")
+                        log.info("Teacher id " + str(teacher.get(block + "_id")) + " preserved")
 
                 teachers.upsert(teacher, ["id"])
 
