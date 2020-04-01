@@ -178,7 +178,8 @@ def index():
                                 "course": "Office Hours",
                                 "course_name": "Office Hours",
                                 "teacher_name": user_schedule.firstname + " " + user_schedule.lastname,
-                                "meeting_id": user_schedule.search_teacher_email_with_creation(user_schedule.email, user_schedule.lastname, user_schedule.firstname)['office_id']}
+                                "meeting_id": user_schedule.search_teacher_email_with_creation(user_schedule.email, user_schedule.lastname, user_schedule.firstname)['office_id'],
+                                "teacher_email": 'placeholder'}
                 except TypeError as e:
                     log.error("Unable to create teacher schedule due to failed query")
             else:
@@ -187,6 +188,7 @@ def index():
             if schedule is None:
                 continue
             elif not check_teacher(email):
+                log.info("SCHEDULE: " + str(schedule))
                 teacher = user_schedule.search_teacher_email(schedule["teacher_email"])
                 schedule["office_meeting_id"] = teacher.get('office_id')
                 schedule["user_can_change"] = not bool(teacher.get(schedule.get('block') + "_id"))
