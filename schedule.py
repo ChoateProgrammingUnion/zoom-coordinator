@@ -196,18 +196,25 @@ class Schedule():
 
         self.schedule = {'A': None, 'B': None, 'C': None, 'D': None, 'E': None, 'F': None, 'G': None}
 
-    def transactional_upsert(self, table: str, data: dict, key: list) -> bool:
-        log.info("Called Schedule.transactional_upsert with paramaters: " + str((table, data, key)))
-
-        lock = FileLock("index.db.lock")
-        with lock:
-            self.db.begin()
+    def transactional_upsert(self, table: str, data: dict, key: list, attempt=0) -> bool:
+        log.info("Called Schedule.transactional_upsert with paramaters: " + str((table, data, key, attempt)))
+        if attempt <= 3:
             try:
-                self.db[str(table)].upsert(dict(copy.deepcopy(data)), list(key))
-                self.db.commit()
-                return True
+                lock = FileLock("index.db.lock")
+                with lock:
+                    self.db.begin()
+                    try:
+                        self.db[str(table)].upsert(dict(copy.deepcopy(data)), list(key))
+                        self.db.commit()
+                        return True
+                    except:
+                        self.db.rollback()
+                        log.info("Exception caught with DB, rolling back and trying again " + str((table, data, key, attempt)))
+                        return self.transactional_upsert(table, data, key, attempt=attempt+1)
             except:
-                self.db.rollback()
+                return self.transactional_upsert(table, data, key, attempt=attempt+1)
+        else:
+            log.info("Automatic re-trying failed with these args: " + str((table, data, key, attempt)))
 
         return False
 
