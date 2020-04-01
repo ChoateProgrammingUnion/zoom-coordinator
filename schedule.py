@@ -366,7 +366,7 @@ class Schedule():
         all_teachers = self.teachers_database.find()
 
         for teacher in all_teachers:
-            if teacher.get('email').rstrip() == email.rstrip():
+            if teacher.get('email') and str(teacher.get('email')).rstrip() == email.rstrip():
                 return teacher
 
         log.info("teacher_search_email queried " + str(email) + " and got no result")
