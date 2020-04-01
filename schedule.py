@@ -193,7 +193,7 @@ class Schedule():
 
         # Fetch the schedule and store in dictionary
 
-        classes = self.courses_database_find(student_email=self.email)
+        classes = self.courses_database_find(student_email=self.email, caller='(fetch_schedule) ')
 
         for c in classes:
             c = dict(c)
@@ -214,7 +214,7 @@ class Schedule():
 
         # Fetch the schedule and store in dictionary
 
-        classes = self.courses_database_find(teacher_email=self.email)
+        classes = self.courses_database_find(teacher_email=self.email, caller='(fetch_schedule_teacher) ')
 
         for c in classes:
             c = dict(c)
@@ -239,13 +239,13 @@ class Schedule():
         log.info("Called Schedule.update_schedule with paramaters: " + str((course, section, meeting_id)))
 
         if (self.isTeacher):
-            classes_to_update = list(self.courses_database_find(course=course, sec=section))
+            classes_to_update = list(self.courses_database_find(course=course, sec=section, caller='(update_schedule) '))
 
             self.update_teacher_database_block_id(course + " " + str(section), meeting_id)
 
             self.fetch_schedule_teacher()
         else:
-            classes_to_update = list(self.courses_database_find(course=course, sec=section, student_email=self.email))
+            classes_to_update = list(self.courses_database_find(course=course, sec=section, student_email=self.email, caller='(update_schedule) '))
 
         log.info(str(len(classes_to_update)) + " entries to update")
 
@@ -253,7 +253,7 @@ class Schedule():
             log.info("Updated " + c['student_name'])
 
             c['meeting_id'] = meeting_id
-            self.course_database_upsert(c)
+            self.course_database_upsert(c, caller='(update_schedule) ')
 
     def update_teacher_database_office_id(self, firstname, lastname, office_id):
         log.info("Called Schedule.update_teacher_database_office_id with paramaters: " + str((firstname, lastname, office_id)))
@@ -262,19 +262,19 @@ class Schedule():
         firstname = sanitize(firstname)
         lastname = sanitize(lastname)
 
-        t = self.teacher_database_find_one(first_name=firstname, last_name=lastname)
+        t = self.teacher_database_find_one(first_name=firstname, last_name=lastname, caller='(update_teacher_database_office_id) ')
 
         if t is None:
             log.error("Failed to query teacher database for " + str((firstname, lastname)))
 
         t['office_id'] = office_id
 
-        self.teacher_database_upsert(t)
+        self.teacher_database_upsert(t, caller='(update_teacher_database_office_id) ')
 
-    def update_teacher_database_block_id(self, course, id):
-        log.info("Called Schedule.update_teacher_database_block_id with paramaters: " + str((course, id)))
+    def update_teacher_database_block_id(self, course, id, caller=''):
+        log.info(caller + "Called Schedule.update_teacher_database_block_id with paramaters: " + str((course, id)))
 
-        t = self.teacher_database_find_one(first_name=self.firstname, last_name=self.lastname)
+        t = self.teacher_database_find_one(first_name=self.firstname, last_name=self.lastname, caller=caller+'(update_teacher_database_block_id) ')
 
         block = ""
         for b in "ABCDEFG":
@@ -287,7 +287,7 @@ class Schedule():
             log.info("Class Not Found")
             return
 
-        self.teacher_database_upsert(t)
+        self.teacher_database_upsert(t, caller=caller+'(update_teacher_database_block_id) ')
 
     # @functools.lru_cache(maxsize=1000)
     def search_teacher(self, teacher_name: str) -> list:
@@ -295,7 +295,7 @@ class Schedule():
 
         teacher_name = teacher_name.replace(".", "").replace(",", "").replace("-", "").lower().rstrip()
         matched_teachers = []
-        all_teachers = self.get_all_teachers()
+        all_teachers = self.get_all_teachers(caller='(search_teacher) ')
 
         # if self.search_teacher_exact(teacher_name):
         #     exact_teacher = self.search_teacher_exact(teacher_name)
@@ -314,16 +314,16 @@ class Schedule():
 
         return matched_teachers
 
-    def search_teacher_email(self, email):
-        log.info("Called Schedule.search_teacher_email with paramaters: " + str((email)))
+    def search_teacher_email(self, email, caller=''):
+        log.info(caller + "Called Schedule.search_teacher_email with paramaters: " + str((email)))
 
-        all_teachers = self.get_all_teachers()
+        all_teachers = self.get_all_teachers(caller=caller+"(search_teacher_email) ")
 
         for teacher in all_teachers:
             if teacher.get('email') and str(teacher.get('email')).rstrip() == email.rstrip():
                 return teacher
 
-        log.info("(teacher_search_email) Queried " + str(email) + " and got no result")
+        log.info(caller + "(teacher_search_email) Queried " + str(email) + " and got no result")
 
     def search_teacher_email_with_creation(self, email, lastname, firstname, reverse=True):
         log.info("Called Schedule.search_teacher_email_with_creation with paramaters: " + str((email, lastname, firstname, reverse)))
@@ -341,12 +341,12 @@ class Schedule():
                                        "email": email,
                                        "office_id":0})
 
-        return self.teacher_database_find_one(email=email)
+        return self.teacher_database_find_one(email=email, caller='(search_teacher_email_with_creation) ')
 
 
 
-    def transactional_upsert(self, table: str, data: dict, key: list, attempt=0) -> bool:
-        log.info("Called Schedule.transactional_upsert with paramaters: " + str((table, data, key, attempt)))
+    def transactional_upsert(self, table: str, data: dict, key: list, attempt=0, caller='') -> bool:
+        log.info(caller + "Called Schedule.transactional_upsert with paramaters: " + str((table, data, key, attempt)))
         if attempt <= 3:
             try:
                 lock = FileLock("index.db.lock")
@@ -358,87 +358,71 @@ class Schedule():
                         return True
                     except:
                         self.db.rollback()
-                        log.info("Exception caught with DB, rolling back and trying again " + str((table, data, key, attempt)))
+                        log.info(caller + " (transactional_upsert) Exception caught with DB, rolling back and trying again " + str((table, data, key, attempt)))
                         return self.transactional_upsert(table, data, key, attempt=attempt+1)
             except:
                 return self.transactional_upsert(table, data, key, attempt=attempt+1)
         else:
-            log.info("Automatic re-trying failed with these args: " + str((table, data, key, attempt)))
+            log.info(caller + " (transactional_upsert) Automatic re-trying failed with these args: " + str((table, data, key, attempt)))
 
         return False
 
-    def teacher_database_insert(self, data):
-        log.info("Called Schedule.teacher_database_insert with paramaters: " + str((data)))
+    def teacher_database_insert(self, data, caller=''):
+        log.info(caller + "Called Schedule.teacher_database_insert with paramaters: " + str((data)))
 
-        self.init_db_connection('teacher_database_insert')
+        self.init_db_connection(caller + '(teacher_database_insert) ')
         self.db['teachers'].insert(data)
-        self.end_db_connection('teacher_database_insert')
+        self.end_db_connection(caller + '(teacher_database_insert) ')
 
-    def get_all_teachers(self):
-        log.info("Called Schedule.get_all_teachers")
+    def get_all_teachers(self, caller=''):
+        log.info(caller + "Called Schedule.get_all_teachers")
 
-        self.init_db_connection('get_all_teachers')
+        self.init_db_connection(caller + '(get_all_teachers) ')
         result = self.db['teachers'].all()
-        self.end_db_connection('get_all_teachers')
+        self.end_db_connection(caller + '(get_all_teachers) ')
         return result
 
-    def teacher_database_upsert(self, data):
-        log.info("Called Schedule.teacher_database_upsert with paramaters: " + str((data)))
+    def teacher_database_upsert(self, data, caller=''):
+        log.info(caller + "Called Schedule.teacher_database_upsert with paramaters: " + str((data)))
 
-        self.init_db_connection('teacher_database_upsert')
+        self.init_db_connection(caller + '(teacher_database_upsert) ')
 
         while not self.transactional_upsert('teachers', data, ['id']):
             pass
 
-        self.end_db_connection('teacher_database_upsert')
+        self.end_db_connection(caller + '(teacher_database_upsert) ')
 
-    def course_database_upsert(self, data):
-        log.info("Called Schedule.course_database_upsert with paramaters: " + str((data)))
+    def course_database_upsert(self, data, caller=''):
+        log.info(caller + "Called Schedule.course_database_upsert with paramaters: " + str((data)))
 
-        self.init_db_connection('course_database_upsert')
+        self.init_db_connection(caller + '(course_database_upsert) ')
 
         while not self.transactional_upsert('courses', data, ['id']):
             pass
 
-        self.end_db_connection('course_database_upsert')
+        self.end_db_connection(caller + '(course_database_upsert) ')
 
-    def teacher_database_find_one(self, *args, **kwargs):
-        log.info("Called Schedule.teacher_database_find_one with paramaters: " + str((args, kwargs)))
+    def teacher_database_find_one(self, caller='', *args, **kwargs):
+        log.info(caller + "Called Schedule.teacher_database_find_one with paramaters: " + str((args, kwargs)))
 
-        self.init_db_connection('teacher_database_find_one')
+        self.init_db_connection(caller + '(teacher_database_find_one) ')
         result = self.db['teachers'].find_one(*args, **kwargs)
-        self.end_db_connection('teacher_database_find_one')
+        self.end_db_connection(caller + '(teacher_database_find_one) ')
         return result
 
-    def courses_database_find_one(self, *args, **kwargs):
-        log.info("Called Schedule.courses_database_find_one with paramaters: " + str((args, kwargs)))
+    def courses_database_find(self, caller='', *args, **kwargs):
+        log.info(caller + "Called Schedule.courses_database_find with paramaters: " + str((args, kwargs)))
 
-        self.init_db_connection('courses_database_find_one')
-        result = self.db['courses'].find_one(*args, **kwargs)
-        self.end_db_connection('courses_database_find_one')
-        return result
-
-    def teacher_database_find(self, *args, **kwargs):
-        log.info("Called Schedule.teacher_database_find with paramaters: " + str((args, kwargs)))
-
-        self.init_db_connection('teacher_database_find')
-        result = self.db['teachers'].find(*args, **kwargs)
-        self.end_db_connection('teacher_database_find')
-        return result
-
-    def courses_database_find(self, *args, **kwargs):
-        log.info("Called Schedule.courses_database_find with paramaters: " + str((args, kwargs)))
-
-        self.init_db_connection('courses_database_find')
+        self.init_db_connection(caller + '(courses_database_find) ')
         result = self.db['courses'].find(*args, **kwargs)
-        self.end_db_connection('courses_database_find')
+        self.end_db_connection(caller + '(courses_database_find) ')
         return result
 
-    def init_db_connection(self, function_name):
+    def init_db_connection(self, caller=''):
         self.db = dataset.connect(DB_LOC)
-        log.info("(" + function_name + ") New Database Connection")
+        log.info(caller + "New Database Connection")
 
-    def end_db_connection(self, function_name):
+    def end_db_connection(self, caller=''):
         self.db.close()
         del self.db
-        log.info("(" + function_name + ") Disconnected From Database")
+        log.info(caller + "Disconnected From Database")
