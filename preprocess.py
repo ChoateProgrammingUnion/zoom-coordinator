@@ -77,7 +77,7 @@ def import_data(filename: str):
                             if not teacher.get(b + "_id"):
                                 teacher[b + "_id"] = 0
                             else:
-                                log.info("Teacher id " + teacher.get(b + "_id") + " preserved")
+                                log.info("Teacher id " + str(teacher.get(b + "_id")) + " preserved")
                 else:
                     teacher[block] = each_row['course'] + " " + each_row['sec']
 
