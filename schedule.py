@@ -432,7 +432,8 @@ class Schedule():
         except ConnectionResetError as e:
             self.log_info("ConnectionResetError " + str(e) + ", attempt: " + str(attempt))
             if attempt <= 3:
-                self.init_db_connection()
+                self.db.close()
+                self.init_db_connection(attempt=attempt+1)
 
     def end_db_connection(self):
         self.db.close()
