@@ -242,6 +242,7 @@ class Schedule():
     def update_schedule(self, course, section, meeting_id):
         log.info(self.logheader + "Called Schedule.update_schedule with paramaters: " + str((course, section, meeting_id)))
 
+        self.init_db_connection(caller + '(update_schedule) ')
         if (self.isTeacher):
             classes_to_update = list(self.courses_database_find(course=course, sec=section, caller='(update_schedule) '))
 
@@ -259,6 +260,8 @@ class Schedule():
             c['meeting_id'] = meeting_id
             self.course_database_upsert(c, caller='(update_schedule) ')
 
+        self.end_db_connection(caller + '(update_schedule) ')
+
     def update_teacher_database_office_id(self, firstname, lastname, office_id):
         log.info(self.logheader + "Called Schedule.update_teacher_database_office_id with paramaters: " + str((firstname, lastname, office_id)))
 
@@ -266,6 +269,7 @@ class Schedule():
         firstname = sanitize(firstname)
         lastname = sanitize(lastname)
 
+        self.init_db_connection(caller + '(update_teacher_database_office_id) ')
         t = self.teacher_database_find_one(first_name=firstname, last_name=lastname, caller='(update_teacher_database_office_id) ')
 
         if t is None:
@@ -274,10 +278,12 @@ class Schedule():
         t['office_id'] = office_id
 
         self.teacher_database_upsert(t, caller='(update_teacher_database_office_id) ')
+        self.end_db_connection(caller + '(update_teacher_database_office_id) ')
 
     def update_teacher_database_block_id(self, course, id, caller=''):
         log.info(self.logheader + caller + "Called Schedule.update_teacher_database_block_id with paramaters: " + str((course, id)))
 
+        self.init_db_connection(caller + '(update_teacher_database_block_id) ')
         t = self.teacher_database_find_one(first_name=self.firstname, last_name=self.lastname, caller=caller+'(update_teacher_database_block_id) ')
 
         block = ""
@@ -292,6 +298,7 @@ class Schedule():
             return
 
         self.teacher_database_upsert(t, caller=caller+'(update_teacher_database_block_id) ')
+        self.end_db_connection(caller + '(update_teacher_database_block_id) ')
 
     # @functools.lru_cache(maxsize=1000)
     def search_teacher(self, teacher_name: str) -> list:
@@ -331,6 +338,7 @@ class Schedule():
 
     def search_teacher_email_with_creation(self, email, lastname, firstname, reverse=True):
         log.info(self.logheader + "Called Schedule.search_teacher_email_with_creation with paramaters: " + str((email, lastname, firstname, reverse)))
+        self.init_db_connection(caller + '(search_teacher_email_with_creation) ')
 
         result = self.search_teacher_email(email)
 
@@ -345,6 +353,8 @@ class Schedule():
                                        "email": email,
                                        "office_id":0})
 
+        self.end_db_connection(caller + '(search_teacher_email_with_creation) ')
+
         return self.teacher_database_find_one(email=email, caller='(search_teacher_email_with_creation) ')
 
 
@@ -352,6 +362,7 @@ class Schedule():
     def transactional_upsert(self, table: str, data: dict, key: list, attempt=0, caller='') -> bool:
         log.info(self.logheader + caller + "Called Schedule.transactional_upsert with paramaters: " + str((table, data, key, attempt)))
         if attempt <= 3:
+            self.init_db_connection(caller + '(transactional_upsert) ')
             try:
                 lock = FileLock("index.db.lock")
                 with lock:
@@ -359,16 +370,20 @@ class Schedule():
                     try:
                         self.db[str(table)].upsert(dict(copy.deepcopy(data)), list(key))
                         self.db.commit()
+                        self.end_db_connection(caller + '(transactional_upsert) ')
                         return True
                     except:
                         self.db.rollback()
                         log.info(self.logheader + caller + " (transactional_upsert) Exception caught with DB, rolling back and trying again " + str((table, data, key, attempt)))
+                        self.end_db_connection(caller + '(transactional_upsert) ')
                         return self.transactional_upsert(table, data, key, attempt=attempt+1)
             except:
+                self.end_db_connection(caller + '(transactional_upsert) ')
                 return self.transactional_upsert(table, data, key, attempt=attempt+1)
         else:
             log.info(self.logheader + caller + " (transactional_upsert) Automatic re-trying failed with these args: " + str((table, data, key, attempt)))
 
+        self.end_db_connection(caller + '(transactional_upsert) ')
         return False
 
     def teacher_database_insert(self, data, caller=''):
