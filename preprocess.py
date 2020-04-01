@@ -45,7 +45,7 @@ def import_data(filename: str):
                     teacher = {"name":each_row['teacher_name'],
                                'first_name': each_row['first_name'],
                                'last_name': each_row['last_name'],
-                               'email': secrets.token_hex(10), #each_row['teacher_email'],
+                               'email': each_row['teacher_email'],
                                'office_id':0}
 
                     block = block.replace("Fri", "fri")
@@ -58,12 +58,15 @@ def import_data(filename: str):
                     teacher = {"name":each_row['teacher_name'],
                                'first_name': each_row['first_name'],
                                'last_name': each_row['last_name'],
-                               'email': secrets.token_hex(10), #each_row['teacher_email'],
+                               'email': each_row['teacher_email'],
                                'office_id':0,
                                str(block):each_row['course'] + " " + each_row['sec'], str(block) + "_id":0}
 
                 teachers.upsert(teacher, ["id"])
             else:
+                if not teacher.get("email"):
+                    teacher['email'] = each_row["teacher_email"]
+
                 if (len(block) > 1):
                     block = block.replace("Fri", "fri")
 
@@ -84,9 +87,6 @@ def import_data(filename: str):
                         log.info("Teacher id " + teacher.get(block + "_id") + " preserved")
 
                 teachers.upsert(teacher, ["id"])
-
-
-            each_row['teacher_email'] = teacher['email']
 
             courses.upsert(dict(each_row), ["id"]) #upserting info
 
