@@ -50,7 +50,7 @@ def cal():
     lastname = request.args.get('last')
     authentication = auth.Auth()
 
-    email, firstname, lastname = authentication.get_profile_from_token(token)
+    email, firstname, lastname = authentication.get_email_from_token(token)
 
     if email:
 
@@ -64,7 +64,7 @@ def get_calendar():
     email, firstname, lastname = get_profile()
     if email and firstname and lastname and check_choate_email(email):
         authentication = auth.Auth()
-        return authentication.fetch_token(email, firstname, lastname)
+        return authentication.fetch_token(email)
     return False
 
 @app.route('/search')
@@ -174,7 +174,12 @@ def index():
 
             if block == "Office Hours":
                 try:
-                    schedule = {"block": "Office", "course": "Office Hours", "course_name": "Office Hours", "teacher_name": user_schedule.firstname + " " + user_schedule.lastname, "meeting_id": user_schedule.search_teacher_exact_with_creation(user_schedule.lastname, user_schedule.firstname)['office_id']}
+                    schedule = {"block": "Office",
+                                "course": "Office Hours",
+                                "course_name": "Office Hours",
+                                "teacher_name": user_schedule.firstname + " " + user_schedule.lastname,
+                                "meeting_id": user_schedule.search_teacher_email_with_creation(user_schedule.email, user_schedule.lastname, user_schedule.firstname)['office_id'],
+                                "teacher_email": 'placeholder'}
                 except TypeError as e:
                     log.error("Unable to create teacher schedule due to failed query")
             else:
@@ -183,7 +188,8 @@ def index():
             if schedule is None:
                 continue
             elif not check_teacher(email):
-                teacher = user_schedule.search_teacher_exact(schedule["last_name"], schedule["first_name"])
+                log.info("SCHEDULE: " + str(schedule))
+                teacher = user_schedule.search_teacher_email(schedule["teacher_email"])
                 schedule["office_meeting_id"] = teacher.get('office_id')
                 schedule["user_can_change"] = not bool(teacher.get(schedule.get('block') + "_id"))
             else:
@@ -253,7 +259,7 @@ def get_profile():
     Returns false if not logged in or not choate email.
     """
     # return "mfan21@choate.edu", "Fan Max"
-    # return "jpfeil@choate.edu", "Jessica", "Pfeil"
+    # return "jmama@choate.edu", "Joe", "Mama"
 
     try:
         if google.authorized:

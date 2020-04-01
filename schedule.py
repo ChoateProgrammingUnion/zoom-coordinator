@@ -196,18 +196,25 @@ class Schedule():
 
         self.schedule = {'A': None, 'B': None, 'C': None, 'D': None, 'E': None, 'F': None, 'G': None}
 
-    def transactional_upsert(self, table: str, data: dict, key: list) -> bool:
-        log.info("Called Schedule.transactional_upsert with paramaters: " + str((table, data, key)))
-
-        lock = FileLock("index.db.lock")
-        with lock:
-            self.db.begin()
+    def transactional_upsert(self, table: str, data: dict, key: list, attempt=0) -> bool:
+        log.info("Called Schedule.transactional_upsert with paramaters: " + str((table, data, key, attempt)))
+        if attempt <= 3:
             try:
-                self.db[str(table)].upsert(dict(copy.deepcopy(data)), list(key))
-                self.db.commit()
-                return True
+                lock = FileLock("index.db.lock")
+                with lock:
+                    self.db.begin()
+                    try:
+                        self.db[str(table)].upsert(dict(copy.deepcopy(data)), list(key))
+                        self.db.commit()
+                        return True
+                    except:
+                        self.db.rollback()
+                        log.info("Exception caught with DB, rolling back and trying again " + str((table, data, key, attempt)))
+                        return self.transactional_upsert(table, data, key, attempt=attempt+1)
             except:
-                self.db.rollback()
+                return self.transactional_upsert(table, data, key, attempt=attempt+1)
+        else:
+            log.info("Automatic re-trying failed with these args: " + str((table, data, key, attempt)))
 
         return False
 
@@ -248,29 +255,12 @@ class Schedule():
             else:
                 self.schedule[block] = c
 
-
-        # Represent schedule as string
-        #
-        # out = ""
-        #
-        # for block in "ABCDEFG":
-        #     course = self.schedule[block]
-        #
-        #     if course is None:
-        #         out += block + " Block: FREE<br>"
-        #     elif course['meeting_id'] != 0:
-        #         out += block + " Block: " + course['course_name'] + " (" + course['course'] + " " + course['sec'] + ") with " + course['teacher_name'] + ' (Meeting id ' + str(course['meeting_id']) + ')<br>'
-        #     else:
-        #         out += block + " Block: " + course['course_name'] + " (" + course['course'] + " " + course['sec'] + ") with " + course['teacher_name'] + '<br>'
-        #
-        # return out
-
     def fetch_schedule_teacher(self):
         log.info("Called Schedule.fetch_schedule_teacher")
 
         # Fetch the schedule and store in dictionary
 
-        classes = self.courses_database.find(first_name=self.firstname, last_name=self.lastname)
+        classes = self.courses_database.find(teacher_email=self.email)
 
         for c in classes:
             c = dict(c)
@@ -286,10 +276,10 @@ class Schedule():
                     if b in block:
                         c['block'] = b
                         self.schedule[b] = c.copy()
-                        self.schedule[b]['meeting_id'] = self.teachers_database.find_one(first_name=self.firstname, last_name=self.lastname)[b + '_id']
+                        self.schedule[b]['meeting_id'] = self.search_teacher_email(self.email)[b + '_id']
             else:
                 self.schedule[block] = c
-                self.schedule[block]['meeting_id'] = self.teachers_database.find_one(first_name=self.firstname, last_name=self.lastname)[block + '_id']
+                self.schedule[block]['meeting_id'] = self.search_teacher_email(self.email)[block + '_id']
 
     def update_schedule(self, course, section, meeting_id):
         log.info("Called Schedule.update_schedule with paramaters: " + str((course, section, meeting_id)))
@@ -370,37 +360,31 @@ class Schedule():
 
         return matched_teachers
 
-    # @functools.lru_cache(maxsize=1000)
-       # return None
-    def search_teacher_exact(self, lastname, firstname, reverse=True):
-        log.info("Called Schedule.search_teacher_exact with paramaters: " + str((lastname, firstname, reverse)))
+    def search_teacher_email(self, email):
+        log.info("Called Schedule.search_teacher_email with paramaters: " + str((email)))
 
         all_teachers = self.teachers_database.find()
 
-        sanitize = lambda name: str(name).replace(' ', '').replace(',', '').replace('.', '').replace('-', '').lower().rstrip()
-
         for teacher in all_teachers:
-            if sanitize(lastname) == sanitize(teacher['last_name']) and sanitize(firstname) == sanitize(teacher['first_name']):
+            if teacher['email'].rstrip() == email.rstrip():
                 return teacher
 
-        log.info("teacher_search_exact queried " + str([lastname, firstname]) + " and got no result")
+        log.info("teacher_search_email queried " + str(email) + " and got no result")
 
-    def search_teacher_exact_with_creation(self, lastname, firstname, reverse=True):
-        log.info("Called Schedule.search_teacher_exact with paramaters: " + str((lastname, firstname, reverse)))
+    def search_teacher_email_with_creation(self, email, lastname, firstname, reverse=True):
+        log.info("Called Schedule.search_teacher_email_with_creation with paramaters: " + str((email, lastname, firstname, reverse)))
 
-        all_teachers = self.teachers_database.find()
+        result = self.search_teacher_email(email)
 
-        sanitize = lambda name: str(name).replace(' ', '').replace(',', '').replace('.', '').replace('-', '').lower().rstrip()
+        if result:
+            return result
 
-        for teacher in all_teachers:
-            if sanitize(lastname) == sanitize(teacher['last_name']) and sanitize(firstname) == sanitize(teacher['first_name']):
-                return teacher
-
-        log.info("teacher_search_exact queried " + str([lastname, firstname]) + " and got no result, creating profile now")
+        log.info("Schedule.search_teacher_email_with_creation failed to find entry, creating new one")
 
         self.teachers_database.insert({"name": firstname.rstrip().title() + " " + lastname.rstrip().title(),
                                        "first_name": firstname,
                                        "last_name": lastname,
+                                       "email": email,
                                        "office_id":0})
 
-        return self.teachers_database.find_one(first_name=firstname, last_name=lastname)
+        return self.teachers_database.find_one(email=email)
