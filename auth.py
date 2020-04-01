@@ -4,8 +4,9 @@ from app import check_choate_email
 import string
 import secrets
 from config import *
+from utils import *
 
-class Auth:
+class Auth(metaclass=SingletonMeta):
     """
     Generates and validates user auth tokens
     """
