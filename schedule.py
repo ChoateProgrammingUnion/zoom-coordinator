@@ -425,9 +425,15 @@ class Schedule():
         self.end_db_connection()
         return result
 
-    def init_db_connection(self):
-        self.db = dataset.connect(DB_LOC)
-        self.log_info("New Database Connection")
+    def init_db_connection(self, attempt=0):
+        try:
+            self.db = dataset.connect(DB_LOC)
+            self.log_info("New Database Connection")
+        except ConnectionResetError as e:
+            self.log_info("ConnectionResetError " + str(e) + ", attempt: " + str(attempt))
+            if attempt <= 3:
+                self.db.close()
+                self.init_db_connection(attempt=attempt+1)
 
     def end_db_connection(self):
         self.db.close()
