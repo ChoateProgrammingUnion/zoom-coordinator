@@ -188,7 +188,6 @@ def index():
             if schedule is None:
                 continue
             elif not check_teacher(email):
-                log.info("SCHEDULE: " + str(schedule))
                 teacher = user_schedule.search_teacher_email(schedule["teacher_email"])
                 schedule["office_meeting_id"] = teacher.get('office_id')
                 schedule["user_can_change"] = not bool(teacher.get(schedule.get('block') + "_id"))
