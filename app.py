@@ -2,7 +2,7 @@
 import re
 import urllib.request
 
-from flask import Flask, render_template, redirect, url_for, request, Markup, make_response, session
+from flask import Flask, render_template, redirect, url_for, request, Markup, make_response, session, send_file
 import os
 import git
 import functools
@@ -13,6 +13,7 @@ import secrets
 from schedule import Schedule, ScheduleManager, check_choate_email, check_teacher, block_iter
 from ical import make_calendar
 import auth
+import config
 
 from utils import *
 
@@ -38,6 +39,20 @@ os.environ["OAUTHLIB_RELAX_TOKEN_SCOPE"] = "true"
 google_bp = make_google_blueprint(scope=["https://www.googleapis.com/auth/userinfo.profile", "https://www.googleapis.com/auth/userinfo.email"])
 # app.register_blueprint(google_bp, url_prefix="/login", reprompt_select_account=True, reprompt_consent=True)
 app.register_blueprint(google_bp, url_prefix="/login")
+
+@app.route('/admin/secure.log')
+def secure():
+    # email, firstname, lastname = get_profile()
+    # if email and firstname and lastname and check_choate_email(email):
+        # log.info("here")
+    token = request.args.get('token')
+    if secrets.compare_digest(token,config.TOKEN):
+        log.info("Log accessed "+ str(request.args))
+        return send_file("live_detector.log")
+    else:
+        log.info("Log deny access "+ str(request.args))
+
+    return redirect('/')
 
 @app.route('/api/calendar.ics')
 def cal():
@@ -271,10 +286,10 @@ def get_profile():
                     last_name = str(response.get('family_name'))
 
                     if check_choate_email(email):
-                        log.info(" ".join(("Logged in", email, first_name, last_name)))
+                        log_info("Profile received successfully", "[" + first_name + " " + last_name + "] ", "(get_profile) ")
                         return email, first_name, last_name
                 else:
-                    log.info(("get_profile fail", response)) # log next
+                    log_error("Profile retrieval failed with response " + str(response), caller="(get_profile) ") # log next
     except:
         pass
 
