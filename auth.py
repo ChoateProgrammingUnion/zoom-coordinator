@@ -25,7 +25,7 @@ class Auth:
             user['token'] = token
             self.keys.upsert(user, ['email'])
 
-            if self.get_profile_from_token(token):
+            if self.get_email_from_token(token):
                 return token
 
         return False
@@ -59,7 +59,6 @@ class Auth:
             return token
         else:
             return self.create_token(str(email))
-        return False
 
     def possible_token(self, token: str) -> str:
         """

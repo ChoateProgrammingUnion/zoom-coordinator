@@ -50,11 +50,11 @@ def cal():
     lastname = request.args.get('last')
     authentication = auth.Auth()
 
-    email, firstname, lastname = authentication.get_profile_from_token(token)
+    email, firstname, lastname = authentication.get_email_from_token(token)
 
     if email:
 
-        cal = make_response(make_calendar(email).to_ical())
+        cal = make_response(make_calendar(email, firstname, lastname).to_ical())
         cal.mimetype = 'text/calendar'
         return cal
 
@@ -64,7 +64,7 @@ def get_calendar():
     email, firstname, lastname = get_profile()
     if email and firstname and lastname and check_choate_email(email):
         authentication = auth.Auth()
-        return authentication.fetch_token(email, firstname, lastname)
+        return authentication.fetch_token(email)
     return False
 
 @app.route('/search')
@@ -257,7 +257,7 @@ def get_profile():
     Returns false if not logged in or not choate email.
     """
     # return "mfan21@choate.edu", "Fan Max"
-    # return "jpfeil@choate.edu", "Jessica", "Pfeil"
+    # return "jmama@choate.edu", "Joe", "Mama"
 
     try:
         if google.authorized:

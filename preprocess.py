@@ -1,6 +1,7 @@
 import csv
 import sys
 import dataset
+import secrets
 
 from utils import *
 from config import DB as DB_LOC
@@ -18,6 +19,9 @@ def import_data(filename: str):
         for count, each_row in enumerate(reader):
             c = courses.find_one(course=each_row['course'], sec=each_row['sec'], student_email=each_row['student_email'])
 
+            if c:
+                each_row['id'] = c['id']
+
             if c and c['meeting_id'] != 0:
                 log.info("Preserved Meeting id " + str(c['meeting_id']))
                 each_row['meeting_id'] = c['meeting_id']
@@ -30,8 +34,6 @@ def import_data(filename: str):
             each_row['first_name'] = sanitize(each_row['first_name'])
             each_row['last_name'] = sanitize(each_row['last_name'])
 
-            courses.upsert(dict(each_row), ["id"]) #upserting info
-
             teacher = teachers.find_one(name=each_row['teacher_name'])
 
             block = each_row['block']
@@ -43,7 +45,7 @@ def import_data(filename: str):
                     teacher = {"name":each_row['teacher_name'],
                                'first_name': each_row['first_name'],
                                'last_name': each_row['last_name'],
-                               'email': each_row['teacher_email'],
+                               'email': secrets.token_hex(10), #each_row['teacher_email'],
                                'office_id':0}
 
                     block = block.replace("Fri", "fri")
@@ -56,7 +58,7 @@ def import_data(filename: str):
                     teacher = {"name":each_row['teacher_name'],
                                'first_name': each_row['first_name'],
                                'last_name': each_row['last_name'],
-                               'email': each_row['teacher_email'],
+                               'email': secrets.token_hex(10), #each_row['teacher_email'],
                                'office_id':0,
                                str(block):each_row['course'] + " " + each_row['sec'], str(block) + "_id":0}
 
@@ -82,6 +84,11 @@ def import_data(filename: str):
                         log.info("Teacher id " + teacher.get(block + "_id") + " preserved")
 
                 teachers.upsert(teacher, ["id"])
+
+
+            each_row['teacher_email'] = teacher['email']
+
+            courses.upsert(dict(each_row), ["id"]) #upserting info
 
 
 

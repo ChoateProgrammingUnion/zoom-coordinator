@@ -8,8 +8,8 @@ from utils import *
 
 CLASSDAYS = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday']
 
-def make_calendar(email):
-    ScheduleManager().createSchedule(email, check_teacher(email))
+def make_calendar(email, firstname, lastname):
+    ScheduleManager().createSchedule(email, firstname, lastname, check_teacher(email))
     user_schedule = ScheduleManager().getSchedule(email)
     user_schedule.fetch_schedule()
     
