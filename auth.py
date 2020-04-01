@@ -30,7 +30,7 @@ class Auth:
 
         return False
 
-    def get_profile_from_token(self, token: str) -> (str, str, str):
+    def get_email_from_token(self, token: str) -> str:
         """
         Checks if token matches expected value
         """
@@ -56,8 +56,7 @@ class Auth:
         """
         if self.keys.find_one(email=str(email)) and self.is_token(self.keys.find_one(email=str(email)).get('token')): # change when switch to 3.8
             token = self.keys.find_one(email=str(email)).get('token')
-            if self.get_profile_from_token(token):
-                return token
+            return token
         else:
             return self.create_token(str(email))
         return False
