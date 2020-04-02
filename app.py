@@ -275,23 +275,20 @@ def get_profile():
     # return "mfan21@choate.edu", "Fan Max"
     # return "echapman22@choate.edu", "Ethan", "Chapman"
 
-    try:
-        if google.authorized:
-            resp = google.get("/oauth2/v1/userinfo")
-            if resp.ok and resp.text:
-                response = resp.json()
-                if response.get("verified_email") == True and response.get("hd") == "choate.edu":
-                    email = str(response.get("email"))
-                    first_name = str(response.get('given_name'))
-                    last_name = str(response.get('family_name'))
+    if google.authorized:
+        resp = google.get("/oauth2/v1/userinfo")
+        if resp.ok and resp.text:
+            response = resp.json()
+            if response.get("verified_email") == True and response.get("hd") == "choate.edu":
+                email = str(response.get("email"))
+                first_name = str(response.get('given_name'))
+                last_name = str(response.get('family_name'))
 
-                    if check_choate_email(email):
-                        log_info("Profile received successfully", "[" + first_name + " " + last_name + "] ")
-                        return email, first_name, last_name
-                else:
-                    log_error("Profile retrieval failed with response " + str(response)) # log next
-    except:
-        pass
+                if check_choate_email(email):
+                    log_info("Profile received successfully", "[" + first_name + " " + last_name + "] ")
+                    return email, first_name, last_name
+            else:
+                log_error("Profile retrieval failed with response " + str(response)) # log next
 
     log_info("Not Google authorized") # log next
     return False, False, False
