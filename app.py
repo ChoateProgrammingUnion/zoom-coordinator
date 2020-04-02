@@ -137,7 +137,7 @@ def update():
     user_schedule = ScheduleManager().getSchedule(email)
 
     if course == "Office Hours":
-        user_schedule.update_teacher_database_office_id(firstname, lastname, id_num)
+        user_schedule.update_teacher_database_office_id(email, id_num)
     elif email:
         user_schedule.update_schedule(course, section, id_num)
 
