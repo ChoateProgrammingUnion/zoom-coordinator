@@ -293,5 +293,5 @@ def get_profile():
     except:
         pass
 
-    log_error("Not Google authorized") # log next
+    log_info("Not Google authorized") # log next
     return False, False, False
