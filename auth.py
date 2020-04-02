@@ -11,7 +11,7 @@ class Auth(metaclass=SingletonMeta):
     Generates and validates user auth tokens
     """
     def __init__(self):
-        self.db = dataset.connect(DB, engine_kwargs={‘pool_recycle’: 3600})
+        self.db = dataset.connect(DB, engine_kwargs={'pool_recycle': 3600})
         self.keys = self.db['auth']
 
     def create_token(self, email: str) -> str:
