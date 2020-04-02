@@ -164,7 +164,11 @@ class ScheduleManager(metaclass=SingletonMeta):
 
     # def getSchedule(self, email) -> Schedule:
     def getSchedule(self, email, firstname, lastname, isTeacher) -> Schedule:
-        return Schedule(email, firstname, lastname, isTeacher)
+        user_schedule = Schedule(email, firstname, lastname, isTeacher)
+        user_schedule.init_db_connection()
+        user_schedule.end_db_connection()
+        # user_schedule.init_db_connection()
+        return user_schedule
         # return self.schedules[email]
 
 
