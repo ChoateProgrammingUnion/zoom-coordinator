@@ -134,7 +134,7 @@ def update():
             # return "Error"
 
     email, firstname, lastname = get_profile()
-    if email and firstname and lastname:
+    if course and meeting_id and email and firstname and lastname:
         user_schedule = ScheduleManager().getSchedule(email)
 
         if course == "Office Hours":
