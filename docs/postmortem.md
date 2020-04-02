@@ -43,8 +43,16 @@ Zoom was down. At this point we decided to remove our Zoom-checking function and
 
 
 ## Takeaways and Lessons Learned
-- Verbose logs are always better
-- Always aggressively test
-- Vet the quality of the data you're getting
-- Establish clear communication about when a project is ready for production
-- Avoid updating your DB in production
+### Verbose logs are always better
+Since most of the time was spent writing better logging code, it would have been much easier and quicker if we had good logs from the get-go.
+
+### Always aggressively test
+Especially when you're deploying fixes in production, comprehensive, aggressive tests can minimize errors.
+
+### Vet the quality of the data you're getting
+If we had discovered the inconsistencies and problems with the database data we were getting, most of our "bugs" and reliability issues would not have existed.
+
+### Establish clear communication about when a project is ready for production
+A lot of the panic came from being faced with coping with a sudden influx of unexpected traffic and this made it harder to properly debug and deploy fixes. 
+### Avoid updating your DB in production
+Goes without saying.
