@@ -91,8 +91,8 @@ def search():
     if email and firstname and lastname:
         query = request.args.get('search')
 
-        ScheduleManager().createSchedule(email, firstname, lastname, check_teacher(email))
-        user_schedule = ScheduleManager().getSchedule(email)
+        # ScheduleManager().createSchedule(email, firstname, lastname, check_teacher(email))
+        user_schedule = ScheduleManager().getSchedule(email, firstname, lastname, check_teacher(email))
         user_schedule.init_db_connection()
 
         search_results = user_schedule.search_teacher(query)
@@ -137,7 +137,7 @@ def update():
 
     email, firstname, lastname = get_profile()
     if course and meeting_id and email and firstname and lastname:
-        user_schedule = ScheduleManager().getSchedule(email)
+        user_schedule = ScheduleManager().getSchedule(email, firstname, lastname, check_teacher(email))
         user_schedule.init_db_connection()
 
         if course == "Office Hours":
@@ -157,8 +157,8 @@ def index():
     # if email := get_email():
     email, firstname, lastname = get_profile()
     if email and firstname and lastname:
-        ScheduleManager().createSchedule(email, firstname, lastname, check_teacher(email))
-        user_schedule = ScheduleManager().getSchedule(email)
+        # ScheduleManager().createSchedule(email, firstname, lastname, check_teacher(email))
+        user_schedule = ScheduleManager().getSchedule(email, firstname, lastname, check_teacher(email))
         user_schedule.init_db_connection()
 
         # render_template here
@@ -180,7 +180,7 @@ def index():
         top_label = "Today's Classes:"
         bottom_label = "Not Today"
 
-        for block, start_time in block_iter(email):
+        for block, start_time in block_iter(email, firstname, lastname, isTeacher=check_teacher(email)):
             if block == "Not Today":
                 top_label = start_time + "'s Classes"
                 bottom_label = "Not On " + start_time

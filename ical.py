@@ -9,8 +9,8 @@ from utils import *
 CLASSDAYS = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday']
 
 def make_calendar(email, firstname, lastname):
-    ScheduleManager().createSchedule(email, firstname, lastname, check_teacher(email))
-    user_schedule = ScheduleManager().getSchedule(email)
+    # ScheduleManager().createSchedule(email, firstname, lastname, check_teacher(email))
+    user_schedule = ScheduleManager().getSchedule(email, firstname, lastname, check_teacher(email))
     user_schedule.init_db_connection()
     user_schedule.fetch_schedule()
     
@@ -21,7 +21,7 @@ def make_calendar(email, firstname, lastname):
     cal = Calendar()
     cal['summary'] = 'Choate Zoom Coordinator Schedule'
     for count, each_day in enumerate(CLASSDAYS):
-        for block, start_time in block_iter(email, datetime_needed=True, weekday=each_day):
+        for block, start_time in block_iter(email, firstname, lastname, isTeacher=check_teacher(email), datetime_needed=True, weekday=each_day):
             start_time = start_time.replace(day=this_monday.day) + datetime.timedelta(days=count)
             
             block_data = user_schedule.schedule[block]

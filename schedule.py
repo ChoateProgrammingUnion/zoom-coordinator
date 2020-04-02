@@ -35,7 +35,7 @@ OFFSETS = {
     "Sunday": []
 }
 
-def block_iter(email, datetime_needed=False, weekday=False):
+def block_iter(email, firstname, lastname, datetime_needed=False, weekday=False, isTeacher=False):
     current_datetime = datetime.now(pytz.timezone('US/Eastern')).replace(second=0, microsecond=0)
     midnight = current_datetime.replace(hour=0, minute=0, second=0, microsecond=0)
 
@@ -77,7 +77,7 @@ def block_iter(email, datetime_needed=False, weekday=False):
     upcoming = []
     tomorrow = []
 
-    schedule = ScheduleManager().getSchedule(email)
+    schedule = ScheduleManager().getSchedule(email, firstname, lastname, isTeacher)
 
     if schedule.isTeacher:
         office_hours = [("Office Hours", "N/A")]
@@ -162,8 +162,10 @@ class ScheduleManager(metaclass=SingletonMeta):
         if not self.schedules.get(email):
             self.schedules.update({email: Schedule(email, firstname, lastname, isTeacher)})
 
-    def getSchedule(self, email) -> Schedule:
-        return self.schedules[email]
+    # def getSchedule(self, email) -> Schedule:
+    def getSchedule(self, email, firstname, lastname, isTeacher) -> Schedule:
+        return Schedule(email, firstname, lastname, isTeacher)
+        # return self.schedules[email]
 
 
 class Schedule():
