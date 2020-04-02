@@ -65,7 +65,7 @@ def cal():
     lastname = request.args.get('last')
     authentication = auth.Auth()
 
-    email, firstname, lastname = authentication.get_email_from_token(token)
+    email = authentication.get_email_from_token(token)
 
     if email:
 
