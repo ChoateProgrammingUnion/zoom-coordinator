@@ -259,17 +259,14 @@ class Schedule():
             c['meeting_id'] = meeting_id
             self.course_database_upsert(c)
 
-    def update_teacher_database_office_id(self, firstname, lastname, office_id):
-        print_function_call((firstname, lastname, office_id), header=self.logheader)
+    def update_teacher_database_office_id(self, email, office_id):
+        print_function_call((email, office_id), header=self.logheader)
 
-        sanitize = lambda name: str(name).replace(' ', '').replace(',', '').replace('.', '').replace('-', '').lower().rstrip()
-        firstname = sanitize(firstname)
-        lastname = sanitize(lastname)
-
-        t = self.teacher_database_find_one(first_name=firstname, last_name=lastname)
+        t = self.teacher_database_find_one(email=email)
 
         if t is None:
-            self.log_error("Failed to query teacher database for " + str((firstname, lastname)))
+            self.log_error("Failed to query teacher database for " + str(email))
+            return
 
         t['office_id'] = office_id
 
@@ -394,8 +391,8 @@ class Schedule():
 
         self.init_db_connection()
 
-        while not self.transactional_upsert('teachers', data, ['id']):
-            pass
+        if not self.transactional_upsert('teachers', data, ['id']):
+            self.log_error("Transactional upsert failed")
 
         self.end_db_connection()
 
@@ -404,8 +401,8 @@ class Schedule():
 
         self.init_db_connection()
 
-        while not self.transactional_upsert('courses', data, ['id']):
-            pass
+        if not self.transactional_upsert('courses', data, ['id']):
+            self.log_error("Transactional upsert failed")
 
         self.end_db_connection()
 
