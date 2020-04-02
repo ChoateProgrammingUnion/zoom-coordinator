@@ -368,53 +368,53 @@ class Schedule():
     def teacher_database_insert(self, data):
         print_function_call((data), header=self.logheader)
 
-        self.init_db_connection()
+        # self.init_db_connection()
         self.db['teachers'].insert(data)
-        self.end_db_connection()
+        # self.end_db_connection()
 
     def get_all_teachers(self):
         print_function_call(header=self.logheader)
         self.log_info("Called Schedule.get_all_teachers", )
 
-        self.init_db_connection()
+        # self.init_db_connection()
         result = self.db['teachers'].all()
-        self.end_db_connection()
+        # self.end_db_connection()
         return result
 
     def teacher_database_upsert(self, data):
         print_function_call((data), header=self.logheader)
 
-        self.init_db_connection()
+        # self.init_db_connection()
 
         if not self.transactional_upsert('teachers', data, ['id']):
             self.log_error("Transactional upsert failed")
 
-        self.end_db_connection()
+        # self.end_db_connection()
 
     def course_database_upsert(self, data):
         print_function_call((data), header=self.logheader)
 
-        self.init_db_connection()
+        # self.init_db_connection()
 
         if not self.transactional_upsert('courses', data, ['id']):
             self.log_error("Transactional upsert failed")
 
-        self.end_db_connection()
+        # self.end_db_connection()
 
     def teacher_database_find_one(self, *args, **kwargs):
         print_function_call((args, kwargs), header=self.logheader)
 
-        self.init_db_connection()
+        # self.init_db_connection()
         result = self.db['teachers'].find_one(*args, **kwargs)
-        self.end_db_connection()
+        # self.end_db_connection()
         return result
 
     def courses_database_find(self, *args, **kwargs):
         print_function_call((args, kwargs), header=self.logheader)
 
-        self.init_db_connection()
+        # self.init_db_connection()
         result = self.db['courses'].find(*args, **kwargs)
-        self.end_db_connection()
+        # self.end_db_connection()
         return result
 
     def init_db_connection(self, attempt=0):
@@ -423,6 +423,11 @@ class Schedule():
             self.log_info("New Database Connection")
         except ConnectionResetError as e:
             self.log_info("ConnectionResetError " + str(e) + ", attempt: " + str(attempt))
+            if attempt <= 3:
+                self.db.close()
+                self.init_db_connection(attempt=attempt+1)
+        except AttributeError as e:
+            self.log_info("AttributeError " + str(e) + ", attempt: " + str(attempt))
             if attempt <= 3:
                 self.db.close()
                 self.init_db_connection(attempt=attempt+1)

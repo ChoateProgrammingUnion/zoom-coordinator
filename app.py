@@ -93,6 +93,7 @@ def search():
 
         ScheduleManager().createSchedule(email, firstname, lastname, check_teacher(email))
         user_schedule = ScheduleManager().getSchedule(email)
+        user_schedule.init_db_connection()
 
         search_results = user_schedule.search_teacher(query)
 
@@ -103,6 +104,7 @@ def search():
 
         commit = get_commit()
         calendar_token = get_calendar()
+        user_schedule.end_db_connection()
         return render_template("index.html", cards=Markup(cards), card_js="", commit=commit, calendar_token=calendar_token, email=email, firstname=firstname, lastname=lastname)
     else:
         return redirect("/")
@@ -136,12 +138,14 @@ def update():
     email, firstname, lastname = get_profile()
     if course and meeting_id and email and firstname and lastname:
         user_schedule = ScheduleManager().getSchedule(email)
+        user_schedule.init_db_connection()
 
         if course == "Office Hours":
             user_schedule.update_teacher_database_office_id(email, id_num)
         elif email:
             user_schedule.update_schedule(course, section, id_num)
 
+        user_schedule.end_db_connection()
         return str(id_num)
     return "Error"
 
@@ -155,6 +159,7 @@ def index():
     if email and firstname and lastname:
         ScheduleManager().createSchedule(email, firstname, lastname, check_teacher(email))
         user_schedule = ScheduleManager().getSchedule(email)
+        user_schedule.init_db_connection()
 
         # render_template here
         # log.info(Schedule().search_teacher_exact("Guelakis Patrick"))
@@ -223,6 +228,7 @@ def index():
 
         commit = get_commit()
         calendar_token = get_calendar()
+        user_schedule.end_db_connection()
         return render_template("index.html",
                                cards=Markup(cards),
                                card_js=Markup(card_script),
