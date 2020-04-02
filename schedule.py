@@ -427,7 +427,7 @@ class Schedule():
 
     def init_db_connection(self, attempt=0):
         try:
-            self.db = dataset.connect(DB_LOC)
+            self.db = dataset.connect(DB_LOC, engine_kwargs={‘pool_recycle’: 3600})
             self.log_info("New Database Connection")
         except ConnectionResetError as e:
             self.log_info("ConnectionResetError " + str(e) + ", attempt: " + str(attempt))
