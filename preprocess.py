@@ -10,7 +10,7 @@ def import_data(filename: str):
     sanitize = lambda name: str(name).replace(' ', '').replace(',', '').replace('.', '').replace('-', '').lower().rstrip()
 
     # Connecting to the DB
-    db =  dataset.connect(DB_LOC)
+    db =  dataset.connect(DB_LOC, engine_kwargs={‘pool_recycle’: 3600})
     courses = db['courses']
     teachers = db['teachers']
 
