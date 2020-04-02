@@ -351,19 +351,14 @@ class Schedule():
         print_function_call((table, data, key, attempt), header=self.logheader)
         
         if attempt <= 3:
+            self.db.begin()
             try:
-                lock = FileLock("index.db.lock")
-                with lock:
-                    self.db.begin()
-                    try:
-                        self.db[str(table)].upsert(dict(copy.deepcopy(data)), list(key))
-                        self.db.commit()
-                        return True
-                    except:
-                        self.db.rollback()
-                        self.log_info("Exception caught with DB, rolling back and trying again " + str((table, data, key, attempt)))
-                        return self.transactional_upsert(table, data, key, attempt=attempt+1)
+                self.db[str(table)].upsert(dict(copy.deepcopy(data)), list(key))
+                self.db.commit()
+                return True
             except:
+                self.db.rollback()
+                self.log_info("Exception caught with DB, rolling back and trying again " + str((table, data, key, attempt)))
                 return self.transactional_upsert(table, data, key, attempt=attempt+1)
         else:
             self.log_info("Automatic re-trying failed with these args: " + str((table, data, key, attempt)))

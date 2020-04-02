@@ -128,10 +128,10 @@ def update():
     if (id_num == -1):
         return "Error"
 
-    with urllib.request.urlopen('https://zoom.us/j/' + str(id_num)) as response:
-        html = response.read()
-        if "Invalid meeting ID." in str(html):
-            return "Error"
+    # with urllib.request.urlopen('https://zoom.us/j/' + str(id_num)) as response:
+        # html = response.read()
+        # if "Invalid meeting ID." in str(html):
+            # return "Error"
 
     email, firstname, lastname = get_profile()
     user_schedule = ScheduleManager().getSchedule(email)
