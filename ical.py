@@ -11,6 +11,7 @@ CLASSDAYS = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday']
 def make_calendar(email, firstname, lastname):
     ScheduleManager().createSchedule(email, firstname, lastname, check_teacher(email))
     user_schedule = ScheduleManager().getSchedule(email)
+    user_schedule.init_db_connection()
     user_schedule.fetch_schedule()
     
     today_offset = datetime.date.today().weekday() 
@@ -36,5 +37,6 @@ def make_calendar(email, firstname, lastname):
                 event.add('dtend', start_time + datetime.timedelta(minutes=50))
 
                 cal.add_component(event)
+    user_schedule.end_db_connection()
     return cal
 
