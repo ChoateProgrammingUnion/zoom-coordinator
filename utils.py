@@ -91,7 +91,7 @@ def log_info(msg, header=None, frame=None, traceback_length=5):
     else:
         frame = inspect.currentframe().f_back
 
-    log_function(log.info, msg, header, frame, traceback_length)
+    log_function(log.info, str(msg), header, frame, traceback_length)
 
 def log_error(msg, header=None, frame=None, traceback_length=5):
     if frame:
@@ -99,7 +99,7 @@ def log_error(msg, header=None, frame=None, traceback_length=5):
     else:
         frame = inspect.currentframe().f_back
 
-    log_function(log.error, msg, header, frame, traceback_length)
+    log_function(log.error, str(msg), header, frame, traceback_length)
 
 def print_function_call(params=None, header=''):
     frame = inspect.currentframe().f_back
