@@ -42,6 +42,9 @@ app.register_blueprint(google_bp, url_prefix="/login")
 
 @app.route('/admin/secure.log')
 def secure():
+    """
+    Securely returns a log of all actions taken
+    """
     # email, firstname, lastname = get_profile()
     # if email and firstname and lastname and check_choate_email(email):
         # log.info("here")
@@ -56,6 +59,9 @@ def secure():
 
 @app.route('/api/calendar.ics')
 def cal():
+    """
+    Checks authorization of user to request ical file
+    """
     # email, firstname, lastname = get_profile()
     # if email and firstname and lastname and check_choate_email(email):
         # log.info("here")
