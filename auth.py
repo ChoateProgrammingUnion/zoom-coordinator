@@ -11,8 +11,30 @@ class Auth(metaclass=SingletonMeta):
     Generates and validates user auth tokens
     """
     def __init__(self):
-        self.db = dataset.connect(DB, engine_kwargs={'pool_recycle': 3600, 'pool_pre_ping': True})
+        self.init_db_connection()
+        self..end_db_connection()
+        self.init_db_connection()
         self.keys = self.db['auth']
+
+    def init_db_connection(self, attempt=0):
+        try:
+            self.db = dataset.connect(DB, engine_kwargs={'pool_recycle': 3600, 'pool_pre_ping': True})
+            self.log_info("New Database Connection")
+        except ConnectionResetError as e:
+            self.log_info("ConnectionResetError " + str(e) + ", attempt: " + str(attempt))
+            if attempt <= 3:
+                self.db.close()
+                self.init_db_connection(attempt=attempt+1)
+        except AttributeError as e:
+            self.log_info("AttributeError " + str(e) + ", attempt: " + str(attempt))
+            if attempt <= 3:
+                self.db.close()
+                self.init_db_connection(attempt=attempt+1)
+
+    def end_db_connection(self):
+        self.db.close()
+        # del self.db
+        self.log_info("Disconnected From Database")
 
     def create_token(self, email: str) -> str:
         """

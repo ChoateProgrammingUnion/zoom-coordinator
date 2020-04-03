@@ -67,7 +67,7 @@ def cal():
 
     email = authentication.get_email_from_token(token)
 
-    authentication.db.close()
+    authentication.end_db_connection()
 
     if email:
 
@@ -82,7 +82,7 @@ def get_calendar():
     if email and firstname and lastname and check_choate_email(email):
         authentication = auth.Auth()
         token = authentication.fetch_token(email)
-        authentication.db.close()
+        authentication.end_db_connection()
         return token
     return False
 
