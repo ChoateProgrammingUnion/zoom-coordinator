@@ -325,3 +325,4 @@ def get_profile(attempt=0):
         return False, False, False
     else:
         log_info("Attempts exhausted: " + str(attempt)) # log next
+        return False, False, False
