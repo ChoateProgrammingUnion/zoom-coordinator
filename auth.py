@@ -12,7 +12,7 @@ class Auth(metaclass=SingletonMeta):
     """
     def __init__(self):
         self.init_db_connection()
-        self..end_db_connection()
+        self.end_db_connection()
         self.init_db_connection()
         self.keys = self.db['auth']
 
