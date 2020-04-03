@@ -285,7 +285,7 @@ class Schedule():
 
         block = ""
         for b in "ABCDEFG":
-            if t or t.get(b) == course:
+            if t and t.get(b) == course:
                 self.log_info("Updating " + b + " Block")
                 block = b
                 t[block + "_id"] = str(id)
