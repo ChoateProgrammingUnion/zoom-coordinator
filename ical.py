@@ -25,7 +25,7 @@ def make_calendar(email, firstname, lastname):
     cal['summary'] = 'Choate Zoom Coordinator Schedule'
     for count, each_day in enumerate(CLASSDAYS):
         for block, start_time in block_iter(email, firstname, lastname, isTeacher=check_teacher(email), datetime_needed=True, weekday=each_day):
-            start_time = start_time.replace(day=this_monday.day) + datetime.timedelta(days=count)
+            start_time = start_time.replace(year=this_monday.year, month=this_monday.month, day=this_monday.day) + datetime.timedelta(days=count)
             
             block_data = user_schedule.schedule[block]
             if block_data:
