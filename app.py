@@ -211,7 +211,7 @@ def index():
                     schedule = {"block": "Office",
                                 "course": "Office Hours",
                                 "course_name": "Office Hours",
-                                "teacher_name": user_schedule.firstname + " " + user_schedule.lastname,
+                                "teacher_name": str(user_schedule.firstname).title() + " " + str(user_schedule.lastname).title(),
                                 "meeting_id": user_schedule.search_teacher_email_with_creation(user_schedule.email, user_schedule.lastname, user_schedule.firstname)['office_id'],
                                 "teacher_email": 'placeholder'}
                 except TypeError as e:
@@ -248,8 +248,8 @@ def index():
                                top_label=top_label,
                                calendar_token=calendar_token,
                                email=email,
-                               firstname=firstname,
-                               lastname=lastname,
+                               firstname=str(firstname).title(),
+                               lastname=str(lastname).title(),
                                commit=commit)
     else:
         button = render_template("login.html")
