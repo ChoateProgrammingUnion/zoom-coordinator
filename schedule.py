@@ -43,7 +43,7 @@ def block_iter(email, firstname, lastname, datetime_needed=False, weekday=False,
         weekday = current_datetime.strftime("%A")
 
     if datetime_needed:
-        current_datetime = current_datetime.replace(hour=1, minute=0, second=0, microsecond=0)
+        current_datetime = current_datetime.replace(hour=0, minute=0, second=1, microsecond=1)
 
     # else:
         # current_datetime = current_datetime.replace(month=day=
