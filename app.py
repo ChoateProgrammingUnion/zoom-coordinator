@@ -265,7 +265,7 @@ def login():
     if not google.authorized:
         return redirect(url_for("google.login"))
     else:
-        resp = make_response("Invalid credentials! Make sure you're logging in with your Choate account. <a href=" + url_for("google.login") + ">Try again.</a>")
+        resp = make_response("Invalid credentials! Make sure you're logging in with your Choate account. <a href=\"/logout\">Try again.</a>")
         return resp
 
 @app.route('/logout')
