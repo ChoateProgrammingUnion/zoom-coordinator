@@ -9,6 +9,9 @@ from utils import *
 CLASSDAYS = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday']
 
 def make_calendar(email, firstname, lastname):
+    """
+    Returns an ical of the user's schedule
+    """
     # ScheduleManager().createSchedule(email, firstname, lastname, check_teacher(email))
     user_schedule = ScheduleManager().getSchedule(email, firstname, lastname, check_teacher(email))
     user_schedule.init_db_connection()

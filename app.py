@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 import re
 import urllib.request
+import oauthlib
 
 from flask import Flask, render_template, redirect, url_for, request, Markup, make_response, session, send_file
 import os
@@ -42,6 +43,9 @@ app.register_blueprint(google_bp, url_prefix="/login")
 
 @app.route('/admin/secure.log')
 def secure():
+    """
+    Securely returns a log of all actions taken
+    """
     # email, firstname, lastname = get_profile()
     # if email and firstname and lastname and check_choate_email(email):
         # log.info("here")
@@ -56,6 +60,9 @@ def secure():
 
 @app.route('/api/calendar.ics')
 def cal():
+    """
+    Checks authorization of user to request ical file
+    """
     # email, firstname, lastname = get_profile()
     # if email and firstname and lastname and check_choate_email(email):
         # log.info("here")
@@ -205,7 +212,7 @@ def index():
                     schedule = {"block": "Office",
                                 "course": "Office Hours",
                                 "course_name": "Office Hours",
-                                "teacher_name": user_schedule.firstname + " " + user_schedule.lastname,
+                                "teacher_name": str(user_schedule.firstname).title() + " " + str(user_schedule.lastname).title(),
                                 "meeting_id": user_schedule.search_teacher_email_with_creation(user_schedule.email, user_schedule.lastname, user_schedule.firstname)['office_id'],
                                 "teacher_email": 'placeholder'}
                 except TypeError as e:
@@ -242,8 +249,8 @@ def index():
                                top_label=top_label,
                                calendar_token=calendar_token,
                                email=email,
-                               firstname=firstname,
-                               lastname=lastname,
+                               firstname=str(firstname).title(),
+                               lastname=str(lastname).title(),
                                commit=commit)
     else:
         button = render_template("login.html")
@@ -265,7 +272,7 @@ def login():
     if not google.authorized:
         return redirect(url_for("google.login"))
     else:
-        resp = make_response("Invalid credentials! Make sure you're logging in with your Choate account. <a href=" + url_for("google.login") + ">Try again.</a>")
+        resp = make_response("Invalid credentials! Make sure you're logging in with your Choate account. <a href=\"/logout\">Try again.</a>")
         return resp
 
 @app.route('/logout')
@@ -281,7 +288,7 @@ def get_commit():
     repo = git.Repo(search_parent_directories=True)
     return repo.head.object.hexsha
 
-def get_profile():
+def get_profile(attempt=0):
     """
     Checks and sanitizes email. 
     Returns false if not logged in or not choate email.
@@ -289,20 +296,29 @@ def get_profile():
     # return "mfan21@choate.edu", "Fan Max"
     # return "echapman22@choate.edu", "Ethan", "Chapman"
 
-    if google.authorized:
-        resp = google.get("/oauth2/v1/userinfo")
-        if resp.ok and resp.text:
-            response = resp.json()
-            if response.get("verified_email") == True and response.get("hd") == "choate.edu":
-                email = str(response.get("email"))
-                first_name = str(response.get('given_name'))
-                last_name = str(response.get('family_name'))
+    try:
+        if google.authorized:
+            resp = google.get("/oauth2/v1/userinfo")
+            if resp.ok and resp.text:
+                response = resp.json()
+                if response.get("verified_email") == True and response.get("hd") == "choate.edu":
+                    email = str(response.get("email"))
+                    first_name = str(response.get('given_name'))
+                    last_name = str(response.get('family_name'))
 
-                if check_choate_email(email):
-                    log_info("Profile received successfully", "[" + first_name + " " + last_name + "] ")
-                    return email, first_name, last_name
-            else:
-                log_error("Profile retrieval failed with response " + str(response)) # log next
+                    if check_choate_email(email):
+                        log_info("Profile received successfully", "[" + first_name + " " + last_name + "] ")
+                        return email, first_name, last_name
+                else:
+                    log_error("Profile retrieval failed with response " + str(response) + ", attempt" + str(attempt)) # log next
+    except oauthlib.oauth2.rfc6749.errors.InvalidClientIdError:
+        session.clear()
+        log_info("Not Google authorized and InvalidClientIdError, attempt:" + str(attempt)) # log next
+        return get_profile(attempt=attempt+1)
+    except oauthlib.oauth2.rfc6749.errors.TokenExpiredError:
+        session.clear()
+        log_info("Not Google authorized and TokenExpiredError, attempt:" + str( attempt)) # log next
+        return get_profile(attempt=attempt+1)
 
-    log_info("Not Google authorized") # log next
+    log_info("Not Google authorized, attempt: " + str(attempt)) # log next
     return False, False, False
