@@ -281,11 +281,11 @@ class Schedule():
     def update_teacher_database_block_id(self, course, id):
         print_function_call((course, id), header=self.logheader)
 
-        t = self.teacher_database_find_one(first_name=self.firstname, last_name=self.lastname)
+        t = self.teacher_database_find_one(email = self.email)
 
         block = ""
         for b in "ABCDEFG":
-            if t or t.get(b) == course:
+            if t and t.get(b) == course:
                 self.log_info("Updating " + b + " Block")
                 block = b
                 t[block + "_id"] = str(id)
