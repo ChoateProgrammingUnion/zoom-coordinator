@@ -296,29 +296,32 @@ def get_profile(attempt=0):
     # return "mfan21@choate.edu", "Fan Max"
     # return "echapman22@choate.edu", "Ethan", "Chapman"
 
-    try:
-        if google.authorized:
-            resp = google.get("/oauth2/v1/userinfo")
-            if resp.ok and resp.text:
-                response = resp.json()
-                if response.get("verified_email") == True and response.get("hd") == "choate.edu":
-                    email = str(response.get("email"))
-                    first_name = str(response.get('given_name'))
-                    last_name = str(response.get('family_name'))
+    if attempt <= 0:
+        try:
+            if google.authorized:
+                resp = google.get("/oauth2/v1/userinfo")
+                if resp.ok and resp.text:
+                    response = resp.json()
+                    if response.get("verified_email") == True and response.get("hd") == "choate.edu":
+                        email = str(response.get("email"))
+                        first_name = str(response.get('given_name'))
+                        last_name = str(response.get('family_name'))
 
-                    if check_choate_email(email):
-                        log_info("Profile received successfully", "[" + first_name + " " + last_name + "] ")
-                        return email, first_name, last_name
-                else:
-                    log_error("Profile retrieval failed with response " + str(response) + ", attempt" + str(attempt)) # log next
-    except oauthlib.oauth2.rfc6749.errors.InvalidClientIdError:
-        session.clear()
-        log_info("Not Google authorized and InvalidClientIdError, attempt:" + str(attempt)) # log next
-        return get_profile(attempt=attempt+1)
-    except oauthlib.oauth2.rfc6749.errors.TokenExpiredError:
-        session.clear()
-        log_info("Not Google authorized and TokenExpiredError, attempt:" + str( attempt)) # log next
-        return get_profile(attempt=attempt+1)
+                        if check_choate_email(email):
+                            log_info("Profile received successfully", "[" + first_name + " " + last_name + "] ")
+                            return email, first_name, last_name
+                    else:
+                        log_error("Profile retrieval failed with response " + str(response) + ", attempt" + str(attempt)) # log next
+        except oauthlib.oauth2.rfc6749.errors.InvalidClientIdError:
+            session.clear()
+            log_info("Not Google authorized and InvalidClientIdError, attempt:" + str(attempt)) # log next
+            return get_profile(attempt=attempt+1)
+        except oauthlib.oauth2.rfc6749.errors.TokenExpiredError:
+            session.clear()
+            log_info("Not Google authorized and TokenExpiredError, attempt:" + str( attempt)) # log next
+            return get_profile(attempt=attempt+1)
 
-    log_info("Not Google authorized, attempt: " + str(attempt)) # log next
-    return False, False, False
+        log_info("Not Google authorized, attempt: " + str(attempt)) # log next
+        return False, False, False
+    else:
+        log_info("Attempts exhausted: " + str(attempt)) # log next
