@@ -65,6 +65,7 @@ def cal():
     lastname = request.args.get('last')
     authentication = auth.Auth()
 
+    authentication.init_db_connection()
     email = authentication.get_email_from_token(token)
 
     authentication.end_db_connection()
@@ -81,6 +82,7 @@ def get_calendar():
     email, firstname, lastname = get_profile()
     if email and firstname and lastname and check_choate_email(email):
         authentication = auth.Auth()
+        authentication.init_db_connection()
         token = authentication.fetch_token(email)
         authentication.end_db_connection()
         return token
