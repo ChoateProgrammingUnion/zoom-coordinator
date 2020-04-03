@@ -67,6 +67,8 @@ def cal():
 
     email = authentication.get_email_from_token(token)
 
+    authentication.db.close()
+
     if email:
 
         cal = make_response(make_calendar(email, firstname, lastname).to_ical())
@@ -79,7 +81,9 @@ def get_calendar():
     email, firstname, lastname = get_profile()
     if email and firstname and lastname and check_choate_email(email):
         authentication = auth.Auth()
-        return authentication.fetch_token(email)
+        token = authentication.fetch_token(email)
+        authentication.db.close()
+        return token
     return False
 
 @app.route('/search')

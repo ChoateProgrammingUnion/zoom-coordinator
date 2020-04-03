@@ -285,12 +285,12 @@ class Schedule():
 
         block = ""
         for b in "ABCDEFG":
-            if t[b] == course:
+            if t or t.get(b) == course:
                 self.log_info("Updating " + b + " Block")
                 block = b
                 t[block + "_id"] = str(id)
 
-        if block == "":
+        if t or block == "":
             self.log_info("Class Not Found")
             return
 
