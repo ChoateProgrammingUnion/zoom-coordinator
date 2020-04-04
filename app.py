@@ -267,6 +267,7 @@ def login():
 
 @app.route('/logout')
 def logout():
+    auth.deauth_token(request)
     session.clear()
     return redirect("/")
 

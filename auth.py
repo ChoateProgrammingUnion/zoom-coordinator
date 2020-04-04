@@ -62,8 +62,8 @@ class Auth():
         """
         if self.possible_token(token):
             key = self.db['auth'].find_one(token=str(token))
-            if secrets.compare_digest(self.fetch_token(key['email']), token):
-                return key['email']
+            if key and secrets.compare_digest(self.fetch_token(key.get('email')), token):
+                return key.get('email')
         return ''
 
     def email_token_pair_check(self, email: str, token: str) -> bool:
@@ -78,9 +78,11 @@ class Auth():
         Checks if token exists and is valid
         """
         if token and self.possible_token(token):
-            email = self.db['auth'].find_one(token=str(token)).get('email')
-            if check_choate_email(email):
-                return True
+            db_resp = self.db['auth'].find_one(token=str(token))
+            if db_resp:
+                email = db_resp.get('email')
+                if check_choate_email(email):
+                    return True
         return False
 
     def fetch_token(self, email: str) -> Union[str, bool]:
@@ -131,6 +133,17 @@ def check_login(request) -> str:
         authentication.end_db_connection()
         log_info("Unsuccessfully checked cookie login for " + str(email))
         return get_profile()
+
+def deauth_token(request):
+    email, _, _ = check_login(request)
+    if email:
+        log_info("Deauthed cookie login for " + str(email))
+        authentication = Auth()
+        authentication.init_db_connection()
+        authentication.create_token(email)
+        authentication.end_db_connection()
+    else:
+        log_info("Deauthed cookie login failed for " + str(email))
 
 def set_login(response, request) -> str:
     """
