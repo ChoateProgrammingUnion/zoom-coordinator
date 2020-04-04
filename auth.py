@@ -1,4 +1,5 @@
 import dataset
+from flask_dance.contrib.google import make_google_blueprint, google 
 from typing import Union
 from app import check_choate_email
 import string
@@ -6,6 +7,8 @@ import secrets
 import inspect
 from config import *
 from utils import *
+import oauthlib
+import urllib.request
 
 class Auth():
     """
@@ -59,18 +62,27 @@ class Auth():
         """
         if self.possible_token(token):
             key = self.db['auth'].find_one(token=str(token))
-            if secrets.compare_digest(self.fetch_token(key['email']), token):
-                return key['email']
+            if key and secrets.compare_digest(self.fetch_token(key.get('email')), token):
+                return key.get('email')
         return ''
+
+    def email_token_pair_check(self, email: str, token: str) -> bool:
+        expected_email = self.get_email_from_token(token)
+        if self.is_token(token) and secrets.compare_digest(email, expected_email) and secrets.compare_digest(token, self.fetch_token(expected_email)):
+            return True
+        return False
+
 
     def is_token(self, token: str) -> bool:
         """
         Checks if token exists and is valid
         """
         if token and self.possible_token(token):
-            email = self.db['auth'].find_one(token=str(token)).get('email')
-            if check_choate_email(email):
-                return True
+            db_resp = self.db['auth'].find_one(token=str(token))
+            if db_resp:
+                email = db_resp.get('email')
+                if check_choate_email(email):
+                    return True
         return False
 
     def fetch_token(self, email: str) -> Union[str, bool]:
@@ -100,3 +112,100 @@ class Auth():
 
     def log_error(self, msg):
         log_error(msg, self.logheader, frame=inspect.currentframe().f_back)
+
+def check_login(request) -> str:
+    """
+    Returns tuple of email, firstname, and lastname
+    """
+    token = request.cookies.get('token')
+    email = request.cookies.get('email')
+    firstname = request.cookies.get('firstname')
+    lastname = request.cookies.get('lastname')
+
+    authentication = Auth()
+
+    authentication.init_db_connection()
+    if authentication.email_token_pair_check(email, token):
+        authentication.end_db_connection()
+        log_info("Successfully checked cookie login for " + email)
+        return email, firstname, lastname
+    else:
+        authentication.end_db_connection()
+        log_info("Unsuccessfully checked cookie login for " + str(email))
+        return get_profile()
+
+def deauth_token(request):
+    email, _, _ = check_login(request)
+    if email:
+        log_info("Deauthed cookie login for " + str(email))
+        authentication = Auth()
+        authentication.init_db_connection()
+        authentication.create_token(email)
+        authentication.end_db_connection()
+    else:
+        log_info("Deauthed cookie login failed for " + str(email))
+
+def set_login(response, request) -> str:
+    """
+    Here, we assume that users are already authenticated
+    """
+    email, firstname, lastname = check_login(request)
+    if email and firstname and lastname:
+        response.set_cookie('email', email)
+        response.set_cookie('firstname', firstname)
+        response.set_cookie('lastname', lastname)
+
+        token = get_token(request)
+        response.set_cookie('token', token)
+        log_info("Set login for " + email)
+        return response
+    return response
+
+def get_profile(attempt=0):
+    """
+    Checks and sanitizes email. 
+    Returns false if not logged in or not choate email.
+    """
+    # return "mfan21@choate.edu", "Fan Max"
+    # return "echapman22@choate.edu", "Ethan", "Chapman"
+
+    if attempt <= 0:
+        try:
+            if google.authorized:
+                resp = google.get("/oauth2/v1/userinfo")
+                if resp.ok and resp.text:
+                    response = resp.json()
+                    if response.get("verified_email") == True and response.get("hd") == "choate.edu":
+                        email = str(response.get("email"))
+                        first_name = str(response.get('given_name'))
+                        last_name = str(response.get('family_name'))
+
+                        if check_choate_email(email):
+                            log_info("Profile received successfully", "[" + first_name + " " + last_name + "] ")
+                            return email, first_name, last_name
+                    else:
+                        log_error("Profile retrieval failed with response " + str(response) + ", attempt" + str(attempt)) # log next
+        except oauthlib.oauth2.rfc6749.errors.InvalidClientIdError:
+            session.clear()
+            log_info("Not Google authorized and InvalidClientIdError, attempt:" + str(attempt)) # log next
+            return get_profile(attempt=attempt+1)
+        except oauthlib.oauth2.rfc6749.errors.TokenExpiredError:
+            session.clear()
+            log_info("Not Google authorized and TokenExpiredError, attempt:" + str( attempt)) # log next
+            return get_profile(attempt=attempt+1)
+
+        log_info("Not Google authorized, attempt: " + str(attempt)) # log next
+        return False, False, False
+    else:
+        log_info("Attempts exhausted: " + str(attempt)) # log next
+        return False, False, False
+
+def get_token(request):
+    email, firstname, lastname = check_login(request)
+    if email and firstname and lastname and check_choate_email(email):
+        authentication = Auth()
+        authentication.init_db_connection()
+        token = authentication.fetch_token(email)
+        authentication.end_db_connection()
+        return token
+    return False

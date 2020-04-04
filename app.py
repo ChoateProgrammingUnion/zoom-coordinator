@@ -1,7 +1,5 @@
 #!/usr/bin/env python3
 import re
-import urllib.request
-import oauthlib
 
 from flask import Flask, render_template, redirect, url_for, request, Markup, make_response, session, send_file, escape
 import os
@@ -85,22 +83,13 @@ def cal():
 
     return redirect('/')
 
-def get_calendar():
-    email, firstname, lastname = get_profile()
-    if email and firstname and lastname and check_choate_email(email):
-        authentication = auth.Auth()
-        authentication.init_db_connection()
-        token = authentication.fetch_token(email)
-        authentication.end_db_connection()
-        return token
-    return False
 
 @app.route('/search')
 def search():
     """
     Searches for teacher meeting ids
     """
-    email, firstname, lastname = get_profile()
+    email, firstname, lastname = auth.check_login(request)
     if email and firstname and lastname:
         query = request.args.get('search')
 
@@ -122,7 +111,7 @@ def search():
             cards += render_template("teacher_card.html", **result)
 
         commit = get_commit()
-        calendar_token = get_calendar()
+        calendar_token = auth.get_token(request)
         user_schedule.end_db_connection()
         return render_template("index.html", cards=Markup(cards), card_js="", commit=commit, calendar_token=calendar_token, email=email, firstname=firstname, lastname=lastname)
     else:
@@ -139,7 +128,7 @@ def update():
     meeting_id = str(request.form.get('meeting_id'))
 
     if course == "Office Hours" and section == "DESC":
-        email, firstname, lastname = get_profile()
+        email, firstname, lastname = auth.check_login(request)
         if email and firstname and lastname:
             if meeting_id is None:
                 meeting_id = ''
@@ -171,8 +160,8 @@ def update():
         # if "Invalid meeting ID." in str(html):
             # return "Error"
 
-    email, firstname, lastname = get_profile()
-    if course and section and meeting_id and email and firstname and lastname:
+    email, firstname, lastname = auth.check_login(request)
+    if course and meeting_id and email and firstname and lastname:
         user_schedule = ScheduleManager().getSchedule(email, firstname, lastname, check_teacher(email))
         user_schedule.init_db_connection()
 
@@ -194,7 +183,7 @@ def index():
     Will contain the default views for faculty, students, and teachers
     """
     # if email := get_email():
-    email, firstname, lastname = get_profile()
+    email, firstname, lastname = auth.check_login(request)
     if email and firstname and lastname:
         # ScheduleManager().createSchedule(email, firstname, lastname, check_teacher(email))
         user_schedule = ScheduleManager().getSchedule(email, firstname, lastname, check_teacher(email))
@@ -284,9 +273,9 @@ def index():
                 card_script += render_template("card.js", **schedule)
 
         commit = get_commit()
-        calendar_token = get_calendar()
+        calendar_token = auth.get_token(request)
         user_schedule.end_db_connection()
-        return render_template("index.html",
+        response = make_response(render_template("index.html",
                                cards=Markup(cards),
                                card_js=Markup(card_script),
                                toc=Markup(toc['A'] + toc['B'] + toc['C'] + toc['D'] + toc['E'] + toc['F'] + toc['G']),
@@ -295,7 +284,8 @@ def index():
                                email=email,
                                firstname=str(firstname).title(),
                                lastname=str(lastname).title(),
-                               commit=commit)
+                               commit=commit))
+        return auth.set_login(response, request)
     else:
         button = render_template("login.html")
         commit = get_commit()
@@ -313,7 +303,7 @@ def login():
     """
     Redirects to the proper login page (right now /google/login), but may change
     """
-    if not google.authorized:
+    if (not google.authorized) or auth.get_token(request):
         return redirect(url_for("google.login"))
     else:
         resp = make_response("Invalid credentials! Make sure you're logging in with your Choate account. <a href=\"/logout\">Try again.</a>")
@@ -321,6 +311,7 @@ def login():
 
 @app.route('/logout')
 def logout():
+    auth.deauth_token(request)
     session.clear()
     return redirect("/")
 
@@ -332,41 +323,3 @@ def get_commit():
     repo = git.Repo(search_parent_directories=True)
     return repo.head.object.hexsha
 
-def get_profile(attempt=0):
-    """
-    Checks and sanitizes email. 
-    Returns false if not logged in or not choate email.
-    """
-    # return "mfan21@choate.edu", "Fan Max"
-    # return "echapman22@choate.edu", "Ethan", "Chapman"
-
-    if attempt <= 0:
-        try:
-            if google.authorized:
-                resp = google.get("/oauth2/v1/userinfo")
-                if resp.ok and resp.text:
-                    response = resp.json()
-                    if response.get("verified_email") == True and response.get("hd") == "choate.edu":
-                        email = str(response.get("email"))
-                        first_name = str(response.get('given_name'))
-                        last_name = str(response.get('family_name'))
-
-                        if check_choate_email(email):
-                            log_info("Profile received successfully", "[" + first_name + " " + last_name + "] ")
-                            return email, first_name, last_name
-                    else:
-                        log_error("Profile retrieval failed with response " + str(response) + ", attempt" + str(attempt)) # log next
-        except oauthlib.oauth2.rfc6749.errors.InvalidClientIdError:
-            session.clear()
-            log_info("Not Google authorized and InvalidClientIdError, attempt:" + str(attempt)) # log next
-            return get_profile(attempt=attempt+1)
-        except oauthlib.oauth2.rfc6749.errors.TokenExpiredError:
-            session.clear()
-            log_info("Not Google authorized and TokenExpiredError, attempt:" + str( attempt)) # log next
-            return get_profile(attempt=attempt+1)
-
-        log_info("Not Google authorized, attempt: " + str(attempt)) # log next
-        return False, False, False
-    else:
-        log_info("Attempts exhausted: " + str(attempt)) # log next
-        return False, False, False
