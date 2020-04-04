@@ -3,7 +3,7 @@ import re
 import urllib.request
 import oauthlib
 
-from flask import Flask, render_template, redirect, url_for, request, Markup, make_response, session, send_file
+from flask import Flask, render_template, redirect, url_for, request, Markup, make_response, session, send_file, escape
 import os
 import git
 import functools
@@ -113,6 +113,12 @@ def search():
         cards = ""
 
         for result in search_results:
+            desc = result.get('office_desc')
+            if desc is None:
+                desc = ""
+
+            result["office_desc"] = Markup(str(escape(desc)).replace("\n", "<br>"))
+
             cards += render_template("teacher_card.html", **result)
 
         commit = get_commit()
@@ -131,7 +137,24 @@ def update():
     course = request.form.get('course')
     section = request.form.get('section')
     meeting_id = str(request.form.get('meeting_id'))
-    id_num = -1
+
+    if course == "Office Hours" and section == "DESC":
+        email, firstname, lastname = get_profile()
+        if email and firstname and lastname:
+            if meeting_id is None:
+                meeting_id = ''
+
+            user_schedule = ScheduleManager().getSchedule(email, firstname, lastname, check_teacher(email))
+            user_schedule.init_db_connection()
+
+            user_schedule.update_teacher_database_office_description(email, escape(meeting_id))
+
+            return "Success"
+
+        return "Error"
+
+    if not(course and section and meeting_id):
+        return "Error"
 
     lines = meeting_id.split("\n")
 
@@ -149,12 +172,15 @@ def update():
             # return "Error"
 
     email, firstname, lastname = get_profile()
-    if course and meeting_id and email and firstname and lastname:
+    if course and section and meeting_id and email and firstname and lastname:
         user_schedule = ScheduleManager().getSchedule(email, firstname, lastname, check_teacher(email))
         user_schedule.init_db_connection()
 
         if course == "Office Hours":
-            user_schedule.update_teacher_database_office_id(email, id_num)
+            if section == "ID":
+                user_schedule.update_teacher_database_office_id(email, id_num)
+            if section == "DESC":
+                user_schedule.update_teacher_database_office_description(email, id_num)
         elif email:
             user_schedule.update_schedule(course, section, id_num)
 
@@ -209,12 +235,18 @@ def index():
 
             if block == "Office Hours":
                 try:
+                    teacher = user_schedule.search_teacher_email_with_creation(user_schedule.email, user_schedule.lastname, user_schedule.firstname)
+
                     schedule = {"block": "Office",
                                 "course": "Office Hours",
                                 "course_name": "Office Hours",
                                 "teacher_name": str(user_schedule.firstname).title() + " " + str(user_schedule.lastname).title(),
-                                "meeting_id": user_schedule.search_teacher_email_with_creation(user_schedule.email, user_schedule.lastname, user_schedule.firstname)['office_id'],
-                                "teacher_email": 'placeholder'}
+                                "meeting_id": teacher['office_id'],
+                                "teacher_email": 'placeholder',
+                                "office_desc": teacher.get('office_desc')}
+
+                    if schedule['office_desc'] is None:
+                        schedule['office_desc'] = ''
                 except TypeError as e:
                     log_error("Unable to create teacher schedule due to failed query")
             else:
@@ -225,6 +257,12 @@ def index():
             elif not check_teacher(email):
                 teacher = user_schedule.search_teacher_email(schedule["teacher_email"])
                 schedule["office_meeting_id"] = teacher.get('office_id')
+
+                desc = teacher.get('office_desc')
+                if desc is None:
+                    desc = ""
+
+                schedule["office_desc"] = Markup(str(escape(desc)).replace("\n", "<br>"))
                 schedule["user_can_change"] = not bool(teacher.get(schedule.get('block') + "_id"))
             else:
                 schedule["user_can_change"] = True
@@ -236,8 +274,14 @@ def index():
             schedule["uuid"] = uuid
             schedule["time"] = start_time
 
-            cards += render_template("class_card.html", **schedule)
-            card_script += render_template("card.js", **schedule)
+            if block == "Office Hours":
+                schedule['office_desc'] = str(escape(str(schedule['office_desc']).replace('\\', '\\\\'))).replace('\n', '\\n')
+
+                cards += render_template("office_hours_card.html", **schedule)
+                card_script += render_template("office_hours.js", **schedule)
+            else:
+                cards += render_template("class_card.html", **schedule)
+                card_script += render_template("card.js", **schedule)
 
         commit = get_commit()
         calendar_token = get_calendar()

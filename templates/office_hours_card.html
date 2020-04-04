@@ -7,11 +7,7 @@
                 <div class="card-title" style="font-family: Montserrat;">{{ block }} Block ({{ course_name.title() }} - {{ teacher_name }})</div>
 
                 <!-- CARD BODY -->
-                <p style="margin-bottom: 1rem;"style="font-family: Montserrat;">{{ time }}</p>
-
-                {% if office_desc %}
-                    <p style="margin-bottom: 1rem;"style="font-family: Montserrat;"><b><u>Office Hours</u></b><br>{{ office_desc }}</p>
-                {% endif %}
+                <p style="margin-bottom: 25px;"style="font-family: Montserrat;">{{ time }}</p>
                 <!--<h4 class="card-title">Primary card title</h4>-->
                 <!--<p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>-->
                 <!--<ol class="breadcrumb">-->
@@ -26,9 +22,13 @@
                     <button style="background-color: rgb(0,147,213); font-family: Montserrat; margin: 5px;" type="button" class="btn waves-effect waves-light" id="join-office-btn-STU" onclick="window.open('https://zoom.us/j/{{ office_meeting_id }}'); target='_blank'">Office Hours<span id="full-text"> (id: {{ office_meeting_id }})</span></button>
                 {% endif %}
 
+                <textarea rows=7 class="form-control office_desc_{{ uuid }}" placeholder="Specify Office Hours. Ex:&#10;Monday: 8-9pm&#10;Tuesday: 8-9pm&#10;Friday: 9-10am" id="office_desc{{ uuid }}" style="overflow: hidden; resize: none; height: auto; margin-top: 25px; border-bottom: 1px solid #333 ; box-shadow: 0 1px 0 0 #000;"></textarea>
+
+                <button style="background-color: rgb(0,147,213); font-family: Montserrat; margin: 2px;" type="button" class="btn waves-effect waves-light" id="update-office-hours-btn" onclick="submit_desc{{ uuid }}()">Save Description</button>
+
                 {% if user_can_change %}
                     <hr style="margin-top: 25px; border: 1px solid rgb(187, 187, 187);">
-                    <input type="text" class="form-control meeting_id{{ uuid }}" placeholder="Change Class ID" value=""id="meeting_id{{ uuid }}" style="margin-top: 25px; border-bottom: 1px solid #333 ; box-shadow: 0 1px 0 0 #000;">
+                    <input type="text" class="form-control meeting_id{{ uuid }}" placeholder="Change Class ID" value="" id="meeting_id{{ uuid }}" style="margin-top: 25px; border-bottom: 1px solid #333 ; box-shadow: 0 1px 0 0 #000;">
                 {% endif %}
 
                 <p id="course{{ uuid }}" hidden>{{ course }}</p>
