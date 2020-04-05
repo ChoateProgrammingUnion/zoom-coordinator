@@ -1,9 +1,7 @@
 #!/usr/bin/env python3
 import re
-import urllib.request
-import oauthlib
 
-from flask import Flask, render_template, redirect, url_for, request, Markup, make_response, session, send_file
+from flask import Flask, render_template, redirect, url_for, request, Markup, make_response, session, send_file, escape
 import os
 import git
 import functools
@@ -85,22 +83,13 @@ def cal():
 
     return redirect('/')
 
-def get_calendar():
-    email, firstname, lastname = get_profile()
-    if email and firstname and lastname and check_choate_email(email):
-        authentication = auth.Auth()
-        authentication.init_db_connection()
-        token = authentication.fetch_token(email)
-        authentication.end_db_connection()
-        return token
-    return False
 
 @app.route('/search')
 def search():
     """
     Searches for teacher meeting ids
     """
-    email, firstname, lastname = get_profile()
+    email, firstname, lastname = auth.check_login(request)
     if email and firstname and lastname:
         query = request.args.get('search')
 
@@ -113,10 +102,16 @@ def search():
         cards = ""
 
         for result in search_results:
+            desc = result.get('office_desc')
+            if desc is None:
+                desc = ""
+
+            result["office_desc"] = Markup(str(escape(desc)).replace("\n", "<br>"))
+
             cards += render_template("teacher_card.html", **result)
 
         commit = get_commit()
-        calendar_token = get_calendar()
+        calendar_token = auth.get_token(request)
         user_schedule.end_db_connection()
         return render_template("index.html", cards=Markup(cards), card_js="", commit=commit, calendar_token=calendar_token, email=email, firstname=firstname, lastname=lastname)
     else:
@@ -131,7 +126,24 @@ def update():
     course = request.form.get('course')
     section = request.form.get('section')
     meeting_id = str(request.form.get('meeting_id'))
-    id_num = -1
+
+    if course == "Office Hours" and section == "DESC":
+        email, firstname, lastname = auth.check_login(request)
+        if email and firstname and lastname:
+            if meeting_id is None:
+                meeting_id = ''
+
+            user_schedule = ScheduleManager().getSchedule(email, firstname, lastname, check_teacher(email))
+            user_schedule.init_db_connection()
+
+            user_schedule.update_teacher_database_office_description(email, escape(meeting_id))
+
+            return "Success"
+
+        return "Error"
+
+    if not(course and section and meeting_id):
+        return "Error"
 
     lines = meeting_id.split("\n")
 
@@ -148,13 +160,16 @@ def update():
         # if "Invalid meeting ID." in str(html):
             # return "Error"
 
-    email, firstname, lastname = get_profile()
+    email, firstname, lastname = auth.check_login(request)
     if course and meeting_id and email and firstname and lastname:
         user_schedule = ScheduleManager().getSchedule(email, firstname, lastname, check_teacher(email))
         user_schedule.init_db_connection()
 
         if course == "Office Hours":
-            user_schedule.update_teacher_database_office_id(email, id_num)
+            if section == "ID":
+                user_schedule.update_teacher_database_office_id(email, id_num)
+            if section == "DESC":
+                user_schedule.update_teacher_database_office_description(email, id_num)
         elif email:
             user_schedule.update_schedule(course, section, id_num)
 
@@ -168,7 +183,7 @@ def index():
     Will contain the default views for faculty, students, and teachers
     """
     # if email := get_email():
-    email, firstname, lastname = get_profile()
+    email, firstname, lastname = auth.check_login(request)
     if email and firstname and lastname:
         # ScheduleManager().createSchedule(email, firstname, lastname, check_teacher(email))
         user_schedule = ScheduleManager().getSchedule(email, firstname, lastname, check_teacher(email))
@@ -209,12 +224,18 @@ def index():
 
             if block == "Office Hours":
                 try:
+                    teacher = user_schedule.search_teacher_email_with_creation(user_schedule.email, user_schedule.lastname, user_schedule.firstname)
+
                     schedule = {"block": "Office",
                                 "course": "Office Hours",
                                 "course_name": "Office Hours",
                                 "teacher_name": str(user_schedule.firstname).title() + " " + str(user_schedule.lastname).title(),
-                                "meeting_id": user_schedule.search_teacher_email_with_creation(user_schedule.email, user_schedule.lastname, user_schedule.firstname)['office_id'],
-                                "teacher_email": 'placeholder'}
+                                "meeting_id": teacher['office_id'],
+                                "teacher_email": 'placeholder',
+                                "office_desc": teacher.get('office_desc')}
+
+                    if schedule['office_desc'] is None:
+                        schedule['office_desc'] = ''
                 except TypeError as e:
                     log_error("Unable to create teacher schedule due to failed query")
             else:
@@ -225,6 +246,12 @@ def index():
             elif not check_teacher(email):
                 teacher = user_schedule.search_teacher_email(schedule["teacher_email"])
                 schedule["office_meeting_id"] = teacher.get('office_id')
+
+                desc = teacher.get('office_desc')
+                if desc is None:
+                    desc = ""
+
+                schedule["office_desc"] = Markup(str(escape(desc)).replace("\n", "<br>"))
                 schedule["user_can_change"] = not bool(teacher.get(schedule.get('block') + "_id"))
             else:
                 schedule["user_can_change"] = True
@@ -236,13 +263,19 @@ def index():
             schedule["uuid"] = uuid
             schedule["time"] = start_time
 
-            cards += render_template("class_card.html", **schedule)
-            card_script += render_template("card.js", **schedule)
+            if block == "Office Hours":
+                schedule['office_desc'] = str(escape(str(schedule['office_desc']).replace('\\', '\\\\'))).replace('\n', '\\n')
+
+                cards += render_template("office_hours_card.html", **schedule)
+                card_script += render_template("office_hours.js", **schedule)
+            else:
+                cards += render_template("class_card.html", **schedule)
+                card_script += render_template("card.js", **schedule)
 
         commit = get_commit()
-        calendar_token = get_calendar()
+        calendar_token = auth.get_token(request)
         user_schedule.end_db_connection()
-        return render_template("index.html",
+        response = make_response(render_template("index.html",
                                cards=Markup(cards),
                                card_js=Markup(card_script),
                                toc=Markup(toc['A'] + toc['B'] + toc['C'] + toc['D'] + toc['E'] + toc['F'] + toc['G']),
@@ -251,7 +284,8 @@ def index():
                                email=email,
                                firstname=str(firstname).title(),
                                lastname=str(lastname).title(),
-                               commit=commit)
+                               commit=commit))
+        return auth.set_login(response, request)
     else:
         button = render_template("login.html")
         commit = get_commit()
@@ -269,7 +303,7 @@ def login():
     """
     Redirects to the proper login page (right now /google/login), but may change
     """
-    if not google.authorized:
+    if (not google.authorized) or auth.get_token(request):
         return redirect(url_for("google.login"))
     else:
         resp = make_response("Invalid credentials! Make sure you're logging in with your Choate account. <a href=\"/logout\">Try again.</a>")
@@ -277,6 +311,7 @@ def login():
 
 @app.route('/logout')
 def logout():
+    auth.deauth_token(request)
     session.clear()
     return redirect("/")
 
@@ -288,41 +323,3 @@ def get_commit():
     repo = git.Repo(search_parent_directories=True)
     return repo.head.object.hexsha
 
-def get_profile(attempt=0):
-    """
-    Checks and sanitizes email. 
-    Returns false if not logged in or not choate email.
-    """
-    # return "mfan21@choate.edu", "Fan Max"
-    # return "echapman22@choate.edu", "Ethan", "Chapman"
-
-    if attempt <= 0:
-        try:
-            if google.authorized:
-                resp = google.get("/oauth2/v1/userinfo")
-                if resp.ok and resp.text:
-                    response = resp.json()
-                    if response.get("verified_email") == True and response.get("hd") == "choate.edu":
-                        email = str(response.get("email"))
-                        first_name = str(response.get('given_name'))
-                        last_name = str(response.get('family_name'))
-
-                        if check_choate_email(email):
-                            log_info("Profile received successfully", "[" + first_name + " " + last_name + "] ")
-                            return email, first_name, last_name
-                    else:
-                        log_error("Profile retrieval failed with response " + str(response) + ", attempt" + str(attempt)) # log next
-        except oauthlib.oauth2.rfc6749.errors.InvalidClientIdError:
-            session.clear()
-            log_info("Not Google authorized and InvalidClientIdError, attempt:" + str(attempt)) # log next
-            return get_profile(attempt=attempt+1)
-        except oauthlib.oauth2.rfc6749.errors.TokenExpiredError:
-            session.clear()
-            log_info("Not Google authorized and TokenExpiredError, attempt:" + str( attempt)) # log next
-            return get_profile(attempt=attempt+1)
-
-        log_info("Not Google authorized, attempt: " + str(attempt)) # log next
-        return False, False, False
-    else:
-        log_info("Attempts exhausted: " + str(attempt)) # log next
-        return False, False, False

@@ -278,6 +278,19 @@ class Schedule():
 
         self.teacher_database_upsert(t)
 
+    def update_teacher_database_office_description(self, email, office_desc):
+        print_function_call((email, office_desc), header=self.logheader)
+
+        t = self.teacher_database_find_one(email=email)
+
+        if t is None:
+            self.log_error("Failed to query teacher database for " + str(email))
+            return
+
+        t['office_desc'] = office_desc
+
+        self.teacher_database_upsert(t)
+
     def update_teacher_database_block_id(self, course, id):
         print_function_call((course, id), header=self.logheader)
 
