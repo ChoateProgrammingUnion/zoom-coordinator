@@ -315,6 +315,10 @@ def logout():
     session.clear()
     return redirect("/")
 
+@app.route('/up')
+def up():
+    return "Yay!" 
+
 @functools.lru_cache()
 def get_commit():
     """
