@@ -303,7 +303,7 @@ class Schedule():
                 block = b
                 t[block + "_id"] = str(id)
 
-        if t or block == "":
+        if block == "":
             self.log_info("Class Not Found")
             return
 
