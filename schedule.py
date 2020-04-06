@@ -287,7 +287,7 @@ class Schedule():
             self.log_error("Failed to query teacher database for " + str(email))
             return
 
-        t['office_desc'] = office_desc
+        t['office_desc'] = str(office_desc)
 
         self.teacher_database_upsert(t)
 
