@@ -78,6 +78,20 @@
             $(document).ready(function () {
                 $('.collapsible').collapsible();
             })
+
+            setInterval(function(){
+                var uri = '/up'
+                var xhr = new XMLHttpRequest();
+                xhr.open("GET", uri, false);
+                xhr.send(null);
+                if (xhr.status == 200) {
+                    //is online
+                    location.reload()
+                } else {
+                    //is offline
+                    return null;
+                }
+            }, 300000);
             
         </script>
         <style>
