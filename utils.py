@@ -57,6 +57,9 @@ def log_function(func, msg, header=None, frame=None, traceback_length=5):
     caller = ""
 
     for i in range(traceback_length):
+        if frame is None:
+            break
+        
         temp_file_name = frame.f_code.co_filename.split('/')[-1].split('\\')[-1]
         temp_folder_name = frame.f_code.co_filename[:len(frame.f_code.co_filename)-len(temp_file_name)]
         temp_module_name = inspect.getmodule(frame).__name__
