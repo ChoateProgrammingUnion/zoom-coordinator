@@ -79,6 +79,22 @@
             $(document).ready(function () {
                 $('.collapsible').collapsible();
             })
+
+            function reload(){
+                var uri = '/up'
+                var xhr = new XMLHttpRequest();
+                xhr.open("GET", uri, false);
+                xhr.send(null);
+                if (xhr.status == 200 && xhr.responseText == "Yay!") {
+                    //is online
+                    location.reload()
+                } else {
+                    //is offline
+                    return null;
+                }
+            }
+
+            $(setInterval(reload, 30000));
             
         </script>
         <style>
