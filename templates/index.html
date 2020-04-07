@@ -79,19 +79,21 @@
                 $('.collapsible').collapsible();
             })
 
-            setInterval(function(){
+            function reload(){
                 var uri = '/up'
                 var xhr = new XMLHttpRequest();
                 xhr.open("GET", uri, false);
                 xhr.send(null);
-                if (xhr.status == 200) {
+                if (xhr.status == 200 && xhr.responseText == "Yay!") {
                     //is online
                     location.reload()
                 } else {
                     //is offline
                     return null;
                 }
-            }, 300000);
+            }
+
+            $(setInterval(reload, 30000));
             
         </script>
         <style>
