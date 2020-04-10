@@ -105,7 +105,7 @@ def get_next_class_day_schedule(time_to_get: datetime, is_today: bool = True) ->
     return today_schedule, is_today, time_to_get.date()
 
 
-def block_iter_datetime_today(date_to_use=datetime.now(pytz.timezone('US/Eastern')).date()) -> List[Tuple[str, datetime]]:
+def block_iter_datetime_today(date_to_use: date = None) -> List[Tuple[str, datetime]]:
     """
     Gets datetime for every class on a given day
 
@@ -114,6 +114,9 @@ def block_iter_datetime_today(date_to_use=datetime.now(pytz.timezone('US/Eastern
 
     Returns: A list of ("Block Letter", datetime of occurrence) for every class on the day
     """
+    
+    if date_to_use is None:
+        date_to_use = datetime.now(pytz.timezone('US/Eastern')).date()
 
     midnight = datetime.combine(date_to_use, time(hour=0, minute=0, second=0, microsecond=0, tzinfo=pytz.timezone('US/Eastern')))
     today_schedule = get_schedule_on_day(date_to_use)
@@ -126,7 +129,7 @@ def block_iter_datetime_today(date_to_use=datetime.now(pytz.timezone('US/Eastern
     return ret
 
 
-def block_iter_datetime_next_class_day(datetime_to_use=datetime.now(pytz.timezone('US/Eastern'))) -> Tuple[List[Tuple[str, datetime]], bool, date]:
+def block_iter_datetime_next_class_day(datetime_to_use: datetime = None) -> Tuple[List[Tuple[str, datetime]], bool, date]:
     """
     Gets datetime for every class on the day of the next class from a given datetime
 
@@ -135,6 +138,9 @@ def block_iter_datetime_next_class_day(datetime_to_use=datetime.now(pytz.timezon
 
     Returns: Tuple[the schedule, if next class is today, the datetime of the next class]
     """
+
+    if datetime_to_use is None:
+        datetime_to_use = datetime.now(pytz.timezone('US/Eastern'))
 
     midnight = datetime_to_use.replace(hour=0, minute=0, second=0, microsecond=0)
     schedule, is_today, date = get_next_class_day_schedule(datetime_to_use)
@@ -147,7 +153,7 @@ def block_iter_datetime_next_class_day(datetime_to_use=datetime.now(pytz.timezon
     return ret, is_today, date
 
 
-def block_iter(current_datetime=datetime.now(pytz.timezone('US/Eastern')), is_teacher=False):
+def block_iter(current_datetime: datetime = None, is_teacher=False):
     """
     Returns a list of classes and their times represented as a string. Intended to be iterated and displayed. Also
     returns some wildcards that are intended to help with rendering of the class cards.
@@ -166,6 +172,9 @@ def block_iter(current_datetime=datetime.now(pytz.timezone('US/Eastern')), is_te
 
     Returns: The list of classes and wildcards
     """
+
+    if current_datetime is None:
+        current_datetime = datetime.now(pytz.timezone('US/Eastern'))
 
     current_datetime = current_datetime.replace(second=0, microsecond=0)
 
