@@ -285,6 +285,7 @@ def index():
                                email=email,
                                firstname=str(firstname).title(),
                                lastname=str(lastname).title(),
+                               refresh=True,
                                commit=commit))
         return auth.set_login(response, request)
     else:
