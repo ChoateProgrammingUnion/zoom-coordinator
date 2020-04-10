@@ -209,7 +209,7 @@ def index():
         top_label = "Today's Classes:"
         bottom_label = "Not Today"
 
-        for block, start_time in block_iter(email, firstname, lastname, isTeacher=check_teacher(email)):
+        for block, start_time in block_iter(is_teacher=check_teacher(email)):
             if block == "Not Today":
                 top_label = start_time + "'s Classes"
                 bottom_label = "Not On " + start_time
