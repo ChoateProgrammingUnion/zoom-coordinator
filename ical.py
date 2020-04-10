@@ -24,8 +24,6 @@ def make_calendar(email, firstname, lastname):
     cal['summary'] = 'Choate Zoom Coordinator Schedule'
 
     while event_date <= END_DATE:
-        event_date += datetime.timedelta(days=1)
-
         for block, start_time in block_iter_datetime_today(event_date):
             block_data = user_schedule.schedule[block]
             if block_data:
@@ -40,6 +38,8 @@ def make_calendar(email, firstname, lastname):
                 event.add('dtend', start_time + CLASS_DURATION)
 
                 cal.add_component(event)
+
+        event_date += datetime.timedelta(days=1)
 
     user_schedule.end_db_connection()
     return cal
