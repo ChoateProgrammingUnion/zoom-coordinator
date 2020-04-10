@@ -82,13 +82,13 @@ def get_schedule_on_day(day: date) -> List[Tuple[str, timedelta]]:
     return week_schedule[day.weekday()]
 
 
-def get_next_class_day_schedule(time_to_get: datetime, days_offset: int = 0) -> Tuple[List[Tuple[str, timedelta]], bool, date]:
+def get_next_class_day_schedule(time_to_get: datetime, is_today: bool = True) -> Tuple[List[Tuple[str, timedelta]], bool, date]:
     """
     Gets the class schedule on the day of the next class after a given datetime
 
     Args:
         time_to_get: The datetime to get the schedule
-        days_offset: For internal use only (leave at 0)
+        is_today: For internal use only (leave at True)
 
     Returns: Tuple[the schedule, if next class is today, the date of the next class]
     """
@@ -97,12 +97,12 @@ def get_next_class_day_schedule(time_to_get: datetime, days_offset: int = 0) -> 
     midnight = time_to_get.replace(hour=0, minute=0, second=0, microsecond=0)
 
     if len(today_schedule) == 0:
-        return get_next_class_day_schedule(time_to_get, days_offset + 1)
+        return get_next_class_day_schedule(time_to_get + timedelta(days=1), False)
 
-    if midnight + today_schedule[-1][1] + CLASS_DURATION < time_to_get - timedelta(days=days_offset):
-        return get_next_class_day_schedule(time_to_get, days_offset + 1)
+    if is_today and midnight + today_schedule[-1][1] + CLASS_DURATION < time_to_get:
+        return get_next_class_day_schedule(time_to_get + timedelta(days=1), False)
 
-    return today_schedule, days_offset == 0, time_to_get.date()
+    return today_schedule, is_today, time_to_get.date()
 
 
 def block_iter_datetime_today(date_to_use=datetime.now(pytz.timezone('US/Eastern')).date()) -> List[Tuple[str, datetime]]:
