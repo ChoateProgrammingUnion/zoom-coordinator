@@ -1,4 +1,5 @@
 import dataset
+from flask import session
 from flask_dance.contrib.google import make_google_blueprint, google 
 from typing import Union
 from app import check_choate_email
@@ -22,7 +23,7 @@ class Auth():
     def init_db_connection(self, attempt=0):
         try:
             self.db = dataset.connect(DB, engine_kwargs={'pool_recycle': 3600, 'pool_pre_ping': True})
-            self.log_info("New Database Connection")
+            # self.log_info("New Database Connection")
         except ConnectionResetError as e:
             self.log_info("ConnectionResetError " + str(e) + ", attempt: " + str(attempt))
             if attempt <= 3:
@@ -36,7 +37,7 @@ class Auth():
 
     def end_db_connection(self):
         self.db.close()
-        self.log_info("Disconnected From Database")
+        # self.log_info("Disconnected From Database")
         # del self.db
 
     def create_token(self, email: str) -> str:
