@@ -18,46 +18,46 @@ from rapidfuzz import fuzz
 from utils import *
 
 
-def hours(h):
-    return timedelta(hours=h)
+def delta(h, minutes=0):
+    return timedelta(hours=h, minutes=minutes)
 
 
 SPECIAL_SCHEDULES: Dict[date, List[List[Tuple[str, timedelta]]]] = {
     date(year=2020, month=4, day=13): [
         [],  # Monday
-        [("B", hours(10)), ("G", hours(11)), ("F", hours(13)), ("A", hours(14))],  # Tuesday
-        [("E", hours(10)), ("C", hours(11)), ("D", hours(13))],  # Wednesday
-        [("F", hours(10)), ("A", hours(11)), ("G", hours(13)), ("B", hours(14))],  # Thursday
-        [("C", hours(10)), ("D", hours(11)), ("E", hours(13))],  # Friday
+        [("B", delta(10)), ("G", delta(11)), ("F", delta(12)), ("A", delta(13,30))],  # Tuesday
+        [("E", delta(10)), ("C", delta(11)), ("D", delta(12))],  # Wednesday
+        [("F", delta(10)), ("A", delta(11)), ("G", delta(12)), ("B", delta(13,30))],  # Thursday
+        [("C", delta(10)), ("D", delta(11)), ("E", delta(12))],  # Friday
         [],  # Saturday
         []  # Sunday
     ],
     date(year=2020, month=5, day=4): [
         [],  # Monday
-        [("B", hours(10)), ("G", hours(11)), ("F", hours(13)), ("A", hours(14))],  # Tuesday
-        [("E", hours(10)), ("C", hours(11)), ("D", hours(13))],  # Wednesday
-        [("F", hours(10)), ("A", hours(11)), ("G", hours(13)), ("B", hours(14))],  # Thursday
-        [("C", hours(10)), ("D", hours(11)), ("E", hours(13))],  # Friday
+        [("B", delta(10)), ("G", delta(11)), ("F", delta(12)), ("A", delta(13,30))],  # Tuesday
+        [("E", delta(10)), ("C", delta(11)), ("D", delta(12))],  # Wednesday
+        [("F", delta(10)), ("A", delta(11)), ("G", delta(12)), ("B", delta(13,30))],  # Thursday
+        [("C", delta(10)), ("D", delta(11)), ("E", delta(12))],  # Friday
         [],  # Saturday
         []  # Sunday
     ],
     date(year=2020, month=5, day=25): [
         [],  # Monday
-        [("B", hours(10)), ("G", hours(11)), ("F", hours(13)), ("A", hours(14))],  # Tuesday
-        [("E", hours(10)), ("C", hours(11)), ("D", hours(13))],  # Wednesday
-        [("F", hours(10)), ("A", hours(11)), ("G", hours(13)), ("B", hours(14))],  # Thursday
-        [("C", hours(10)), ("D", hours(11)), ("E", hours(13))],  # Friday
+        [("B", delta(10)), ("G", delta(11)), ("F", delta(12)), ("A", delta(13,30))],  # Tuesday
+        [("E", delta(10)), ("C", delta(11)), ("D", delta(12))],  # Wednesday
+        [("F", delta(10)), ("A", delta(11)), ("G", delta(12)), ("B", delta(13,30))],  # Thursday
+        [("C", delta(10)), ("D", delta(11)), ("E", delta(12))],  # Friday
         [],  # Saturday
         []  # Sunday
     ]
 }
 
 NORMAL_CLASS_SCHEDULE: List[List[Tuple[str, timedelta]]] = [
-    [("A", hours(10)), ("B", hours(11)), ("C", hours(13)), ("D", hours(14)), ("E", hours(15))],  # Monday
-    [("B", hours(10)), ("G", hours(11)), ("F", hours(13)), ("A", hours(14))],  # Tuesday
-    [("E", hours(10)), ("C", hours(11)), ("D", hours(13))],  # Wednesday
-    [("F", hours(10)), ("A", hours(11)), ("G", hours(13)), ("B", hours(14))],  # Thursday
-    [("C", hours(10)), ("D", hours(11)), ("E", hours(13)), ("F", hours(14)), ("G", hours(15))],  # Friday
+    [("A", delta(10)), ("B", delta(11)), ("C", delta(12)), ("D", delta(13,30)), ("E", delta(14,30))],  # Monday
+    [("F", delta(10)), ("G", delta(11)), ("B", delta(12)), ("A", delta(13,30))],  # Tuesday
+    [("E", delta(10)), ("C", delta(11)), ("D", delta(12))],  # Wednesday
+    [("F", delta(10)), ("A", delta(11)), ("G", delta(12)), ("B", delta(13,30))],  # Thursday
+    [("C", delta(10)), ("D", delta(11)), ("E", delta(12)), ("F", delta(13,30)), ("G", delta(14,30))],  # Friday
     [],  # Saturday
     []  # Sunday
 ]
@@ -497,8 +497,7 @@ class Schedule():
         # self.end_db_connection()
 
     def get_all_teachers(self):
-        print_function_call(header=self.logheader)
-        self.log_info("Called Schedule.get_all_teachers", )
+        # print_function_call(header=self.logheader)
 
         # self.init_db_connection()
         result = self.db['teachers'].all()
@@ -544,7 +543,7 @@ class Schedule():
     def init_db_connection(self, attempt=0):
         try:
             self.db = dataset.connect(DB_LOC, engine_kwargs={'pool_recycle': 3600, 'pool_pre_ping': True})
-            self.log_info("New Database Connection")
+            # self.log_info("New Database Connection")
         except ConnectionResetError as e:
             self.log_info("ConnectionResetError " + str(e) + ", attempt: " + str(attempt))
             if attempt <= 3:
@@ -559,7 +558,7 @@ class Schedule():
     def end_db_connection(self):
         self.db.close()
         # del self.db
-        self.log_info("Disconnected From Database")
+        # self.log_info("Disconnected From Database")
 
     def log_info(self, msg):
         log_info(msg, self.logheader, frame=inspect.currentframe().f_back)

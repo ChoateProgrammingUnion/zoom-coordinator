@@ -38,10 +38,15 @@ flask run
 
 [`preprocess.py`](/preprocess.py) imports the course list in `data/course.csv` and puts it into a SQL database
 
-[`deploy`](/preprocess.py) docker deployment script
+[`deploy`](/deploy) docker deployment script
 
-[`schedule.py`](/preprocess.py) contains schedule class that [`app.py`](/app.py) consumes
+[`serve`](/serve) docker serve script (not used rn)
+
+[`schedule.py`](/schedule.py) contains schedule class that [`app.py`](/app.py) consumes
+
+[`auth.py`](/auth.py) contains the authentication code [`app.py`](/app.py) consumes to manage tokens and user sessions
 
 
 ## TODO
 None, features are now frozen for production (mostly).
+
